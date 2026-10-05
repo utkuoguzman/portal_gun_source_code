@@ -29,8 +29,14 @@ extern const size_t snd_portal_close2_size;
 extern const uint8_t snd_getschwifty[];
 extern const size_t snd_getschwifty_size;
 
-extern const uint8_t env_getschwifty[];
-extern const size_t env_getschwifty_size;
+extern const uint8_t env_getschwifty_low[];
+extern const size_t env_getschwifty_low_size;
+
+extern const uint8_t env_getschwifty_mid[];
+extern const size_t env_getschwifty_mid_size;
+
+extern const uint8_t env_getschwifty_high[];
+extern const size_t env_getschwifty_high_size;
 
 extern const SubtitleLine getschwifty_lyrics[];
 extern const size_t getschwifty_lyrics_count;

@@ -36,27 +36,31 @@ void AudioSystem::begin() {
 
 void AudioSystem::update() {
     if (playing && currentData != nullptr) {
-        const size_t CHUNK_SIZE = 128; // Process 128 samples at a time to prevent blocking loop too long
-        int16_t buffer[CHUNK_SIZE];
+        uint32_t elapsed = millis() - playStartTime;
+        size_t targetPos = (elapsed * 11025) / 1000;
         
-        size_t samples_to_write = currentSize - currentPos;
-        if (samples_to_write > CHUNK_SIZE) {
-            samples_to_write = CHUNK_SIZE;
+        if (targetPos > currentSize) {
+            targetPos = currentSize;
         }
         
-        if (samples_to_write > 0) {
-            // Convert 8-bit unsigned PCM to 16-bit signed PCM
+        if (targetPos > currentPos) {
+            size_t samples_to_write = targetPos - currentPos;
+            const size_t CHUNK_SIZE = 256; 
+            if (samples_to_write > CHUNK_SIZE) samples_to_write = CHUNK_SIZE;
+            
+            int16_t buffer[CHUNK_SIZE];
             for (size_t i = 0; i < samples_to_write; i++) {
                 int8_t signed_sample = (int8_t)((int)currentData[currentPos + i] - 128);
                 buffer[i] = (int16_t)(signed_sample * 256.0f * currentVolume);
             }
             
             size_t bytes_written = 0;
-            esp_err_t err = i2s_write(I2S_PORT, buffer, samples_to_write * sizeof(int16_t), &bytes_written, 0); // 0 ticks = non-blocking
+            // Write to DMA (non-blocking). 
+            // In Wokwi, this may drop data because the hardware I2S isn't draining the buffer.
+            i2s_write(I2S_PORT, buffer, samples_to_write * sizeof(int16_t), &bytes_written, 0); 
             
-            if (err == ESP_OK && bytes_written > 0) {
-                currentPos += (bytes_written / sizeof(int16_t));
-            }
+            // ALWAYS advance time, even if I2S dropped it, so animations don't freeze
+            currentPos += samples_to_write; 
         }
         
         if (currentPos >= currentSize) {
@@ -96,6 +100,5 @@ void AudioSystem::setVolume(float volume) {
 
 uint32_t AudioSystem::getPositionMs() const {
     if (!playing) return 0;
-    // Calculate position based on samples handed to DMA
-    return (currentPos * 1000) / 11025;
+    return millis() - playStartTime;
 }

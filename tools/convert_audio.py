@@ -57,10 +57,12 @@ struct SubtitleLine {
             cpp_content += f"const size_t {array_name}_size = 0;\n\n"
             
             if array_name == "snd_getschwifty":
-                header_content += f"extern const uint8_t env_getschwifty[];\n"
-                header_content += f"extern const size_t env_getschwifty_size;\n\n"
-                cpp_content += f"const uint8_t env_getschwifty[] = {{0}};\n"
-                cpp_content += f"const size_t env_getschwifty_size = 0;\n\n"
+                for band_name in ["low", "mid", "high"]:
+                    arr_name = f"env_getschwifty_{band_name}"
+                    header_content += f"extern const uint8_t {arr_name}[];\n"
+                    header_content += f"extern const size_t {arr_name}_size;\n\n"
+                    cpp_content += f"const uint8_t {arr_name}[] = {{0}};\n"
+                    cpp_content += f"const size_t {arr_name}_size = 0;\n\n"
             continue
 
         print(f"Processing {in_path} to {array_name}...")
@@ -120,26 +122,58 @@ struct SubtitleLine {
             cpp_content += "    " + ", ".join([f"0x{b:02x}" for b in chunk]) + ",\n"
         cpp_content += "};\n\n"
 
-        # Generate envelope for Party mode
+        # Generate envelopes for Party Mode
         if array_name == "snd_getschwifty":
-            print("Generating amplitude envelope for Party Mode...")
-            samples_per_chunk = 1102 # 100ms chunks at 11025Hz
-            env_data = []
-            for i in range(0, len(raw_data), samples_per_chunk):
-                chunk = raw_data[i:i+samples_per_chunk]
-                amp = sum(abs(b - 128) for b in chunk) / len(chunk)
-                env_val = min(255, int(amp * 2.0))
-                env_data.append(env_val)
+            print("Generating 3-band amplitude envelopes for Party Mode...")
+            bands = {
+                "low": "lowpass=f=250",
+                "mid": "bandpass=f=1125:width_type=h:w=1750", # roughly 250 to 2000
+                "high": "highpass=f=2000"
+            }
+            
+            for band_name, filter_str in bands.items():
+                cmd_band = [
+                    ffmpeg_bin, "-y", "-i", in_path,
+                    "-af", filter_str,
+                    "-f", "u8", "-ar", "11025", "-ac", "1", f"temp_{band_name}.raw"
+                ]
+                try:
+                    subprocess.run(cmd_band, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                except Exception as e:
+                    print(f"Failed to generate {band_name} band. Error: {e}")
+                    continue
+                
+                with open(f"temp_{band_name}.raw", "rb") as f:
+                    band_raw = f.read()
+                
+                samples_per_chunk = 1102 # 100ms chunks at 11025Hz
+                env_data = []
+                for i in range(0, len(band_raw), samples_per_chunk):
+                    chunk = band_raw[i:i+samples_per_chunk]
+                    if len(chunk) == 0: continue
+                    amp = sum(abs(b - 128) for b in chunk) / len(chunk)
+                    
+                    # Boost factors to make them pop
+                    if band_name == "low":
+                        env_val = min(255, int(amp * 2.5))
+                    elif band_name == "mid":
+                        env_val = min(255, int(amp * 3.5))
+                    else:
+                        env_val = min(255, int(amp * 6.5)) # Massive boost for highs
+                    env_data.append(env_val)
+                
+                os.remove(f"temp_{band_name}.raw")
 
-            header_content += f"extern const uint8_t env_getschwifty[];\n"
-            header_content += f"extern const size_t env_getschwifty_size;\n\n"
+                arr_name = f"env_getschwifty_{band_name}"
+                header_content += f"extern const uint8_t {arr_name}[];\n"
+                header_content += f"extern const size_t {arr_name}_size;\n\n"
 
-            cpp_content += f"const size_t env_getschwifty_size = {len(env_data)};\n"
-            cpp_content += f"const uint8_t env_getschwifty[] = {{\n"
-            for i in range(0, len(env_data), 16):
-                chunk = env_data[i:i+16]
-                cpp_content += "    " + ", ".join([f"0x{b:02x}" for b in chunk]) + ",\n"
-            cpp_content += "};\n\n"
+                cpp_content += f"const size_t {arr_name}_size = {len(env_data)};\n"
+                cpp_content += f"const uint8_t {arr_name}[] = {{\n"
+                for i in range(0, len(env_data), 16):
+                    chunk = env_data[i:i+16]
+                    cpp_content += "    " + ", ".join([f"0x{b:02x}" for b in chunk]) + ",\n"
+                cpp_content += "};\n\n"
             
             # Parse SRT if it exists
             srt_path = os.path.join(source_dir, "GetSchwiftySongLyrics.srt")

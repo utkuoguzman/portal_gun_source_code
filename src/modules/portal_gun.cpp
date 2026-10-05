@@ -261,25 +261,31 @@ void PortalGun::handleParty() {
         return;
     }
 
-    // Party visuals based on envelope
+    // Party visuals based on 3-band envelope
     uint32_t posMs = audio.getPositionMs();
-    uint8_t vol = 127; // default dummy
-    if (env_getschwifty_size > 0) {
+    
+    uint8_t low_vol = 0;
+    uint8_t mid_vol = 0;
+    uint8_t high_vol = 0;
+    
+    if (env_getschwifty_low_size > 0 && env_getschwifty_mid_size > 0 && env_getschwifty_high_size > 0) {
         size_t envIdx = posMs / 100; // 10 samples per second
-        if (envIdx < env_getschwifty_size) {
-            vol = env_getschwifty[envIdx];
-        }
+        if (envIdx < env_getschwifty_low_size) low_vol = env_getschwifty_low[envIdx];
+        if (envIdx < env_getschwifty_mid_size) mid_vol = env_getschwifty_mid[envIdx];
+        if (envIdx < env_getschwifty_high_size) high_vol = env_getschwifty_high[envIdx];
     } else {
         // Fake envelope if no script output yet
-        vol = 127 + (sin(posMs / 150.0f) * 127.0f);
+        uint8_t dummy = 127 + (sin(posMs / 150.0f) * 127.0f);
+        low_vol = dummy; mid_vol = dummy; high_vol = dummy;
     }
     
-    float normVol = vol / 255.0f;
+    // Portal ring pulses mainly to bass
+    float normVol = low_vol / 255.0f;
     
-    // LEDs react
-    for(int i=0; i<3; i++) {
-        leds.setGreen(i, normVol > (0.3f * (i+1)) ? 1.0f : 0.0f);
-    }
+    // LEDs react as a 3-bar spectrogram
+    leds.setGreen(0, low_vol > 5 ? (low_vol / 255.0f) : 0.0f);
+    leds.setGreen(1, mid_vol > 5 ? (mid_vol / 255.0f) : 0.0f);
+    leds.setGreen(2, high_vol > 5 ? (high_vol / 255.0f) : 0.0f);
     
     leds.setPortalBrightness(normVol);
     for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {

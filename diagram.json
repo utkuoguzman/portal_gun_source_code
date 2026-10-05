@@ -12,10 +12,10 @@
     { "type": "wokwi-resistor", "id": "r3", "top": -60, "left": 250, "attrs": { "value": "220" } },
     { "type": "wokwi-analog-joystick", "id": "joy1", "top": 150, "left": -150, "attrs": {} },
     { "type": "wokwi-tm1637-7segment", "id": "disp1", "top": 200, "left": 150, "attrs": { "color": "red" } },
-    { "type": "wokwi-neopixel-strip", "id": "strip1", "top": 100, "left": 150, "attrs": { "pixels": "20" } },
+    { "type": "wokwi-neopixel-canvas", "id": "strip1", "top": 100, "left": 150, "attrs": { "rows": "1", "cols": "20" } },
+    { "type": "wokwi-neopixel-canvas", "id": "strip2", "top": 130, "left": 150, "attrs": { "rows": "1", "cols": "8" } },
     { "type": "wokwi-buzzer", "id": "buzzer1", "top": 250, "left": -100, "attrs": {} },
-    { "type": "wokwi-pushbutton", "id": "btn_power", "top": 100, "left": -150, "attrs": { "color": "green" } },
-    { "type": "wokwi-pushbutton", "id": "btn_joy", "top": 150, "left": -50, "attrs": { "color": "blue" } }
+    { "type": "wokwi-pushbutton", "id": "btn_power", "top": 100, "left": -150, "attrs": { "color": "green" } }
   ],
   "connections": [
     [ "esp:TX", "$serialMonitor:RX", "", [] ],
@@ -41,12 +41,13 @@
     [ "strip1:VDD", "esp:5V", "red", [ "v0" ] ],
     [ "strip1:VSS", "esp:GND.1", "black", [ "v0" ] ],
     [ "strip1:DIN", "esp:4", "green", [ "v0" ] ],
+    [ "strip2:VDD", "esp:5V", "red", [ "v0" ] ],
+    [ "strip2:VSS", "esp:GND.1", "black", [ "v0" ] ],
+    [ "strip2:DIN", "esp:5", "yellow", [ "v0" ] ],
     [ "buzzer1:1", "esp:GND.1", "black", [ "v0" ] ],
     [ "buzzer1:2", "esp:23", "purple", [ "v0" ] ],
     [ "btn_power:1.l", "esp:GND.1", "black", [ "v0" ] ],
-    [ "btn_power:2.l", "esp:33", "green", [ "v0" ] ],
-    [ "btn_joy:1.l", "esp:GND.1", "black", [ "v0" ] ],
-    [ "btn_joy:2.l", "esp:32", "blue", [ "v0" ] ]
+    [ "btn_power:2.l", "esp:33", "green", [ "v0" ] ]
   ],
   "dependencies": {}
 }

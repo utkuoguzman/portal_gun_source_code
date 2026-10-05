@@ -13,6 +13,7 @@ namespace Config {
     constexpr float DEFAULT_VOLUME = 0.70f;
     
     constexpr int PORTAL_LED_COUNT = 20;
+    constexpr int TOP_LED_COUNT = 8; // Adjust based on physical strip length
     
     constexpr int AUDIO_SAMPLE_RATE = 22050;
 

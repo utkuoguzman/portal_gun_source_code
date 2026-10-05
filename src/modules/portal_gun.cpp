@@ -279,15 +279,22 @@ void PortalGun::handleParty() {
         low_vol = dummy; mid_vol = dummy; high_vol = dummy;
     }
     
-    // Portal ring pulses mainly to bass
-    float normVol = low_vol / 255.0f;
+    // Multiply by 4 to make the visualizer much brighter, since the extracted envelopes are relatively quiet
+    float l_val = (low_vol > 5) ? (low_vol * 4.0f / 255.0f) : 0.0f;
+    float m_val = (mid_vol > 5) ? (mid_vol * 4.0f / 255.0f) : 0.0f;
+    float h_val = (high_vol > 5) ? (high_vol * 4.0f / 255.0f) : 0.0f;
     
+    if (l_val > 1.0f) l_val = 1.0f;
+    if (m_val > 1.0f) m_val = 1.0f;
+    if (h_val > 1.0f) h_val = 1.0f;
+
     // LEDs react as a 3-bar spectrogram
-    leds.setGreen(0, low_vol > 5 ? (low_vol / 255.0f) : 0.0f);
-    leds.setGreen(1, mid_vol > 5 ? (mid_vol / 255.0f) : 0.0f);
-    leds.setGreen(2, high_vol > 5 ? (high_vol / 255.0f) : 0.0f);
+    leds.setGreen(0, l_val);
+    leds.setGreen(1, m_val);
+    leds.setGreen(2, h_val);
     
-    leds.setPortalBrightness(normVol);
+    // Portal ring pulses mainly to bass
+    leds.setPortalBrightness(l_val);
     for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
         int hue = (i * 255 / Config::PORTAL_LED_COUNT + millis() / 10) % 255;
         // simplified spectrum

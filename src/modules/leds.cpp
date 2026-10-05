@@ -6,7 +6,8 @@
 
 LedSystem leds;
 
-static Adafruit_NeoPixel strip(Config::PORTAL_LED_COUNT, Pins::PortalData, NEO_GRB + NEO_KHZ800);
+static Adafruit_NeoPixel strip(Config::PORTAL_LED_COUNT, Pins::PortalData, NEO_GRBW + NEO_KHZ800);
+static Adafruit_NeoPixel topStrip(Config::TOP_LED_COUNT, Pins::TopData, NEO_GRB + NEO_KHZ800);
 
 void LedSystem::begin() {
     // Setup green LED PWM channels
@@ -26,6 +27,10 @@ void LedSystem::begin() {
     strip.begin();
     strip.show(); // Initialize all pixels to 'off'
     strip.setBrightness(255); // We handle brightness manually
+    
+    topStrip.begin();
+    topStrip.show();
+    topStrip.setBrightness(255);
 }
 
 void LedSystem::update() {
@@ -49,6 +54,14 @@ void LedSystem::update() {
             }
         }
     }
+    
+    // Top Strip follows the average of the 3 front green LEDs
+    float avgGreen = (currentGreen[0] + currentGreen[1] + currentGreen[2]) / 3.0f;
+    uint8_t topG = (uint8_t)(avgGreen * 255.0f);
+    for(int i = 0; i < Config::TOP_LED_COUNT; i++) {
+        topStrip.setPixelColor(i, topStrip.Color(0, topG, 0));
+    }
+    topStrip.show();
 }
 
 void LedSystem::setGreen(int channel, float brightness) {

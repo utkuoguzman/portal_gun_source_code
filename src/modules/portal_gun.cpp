@@ -245,6 +245,8 @@ void PortalGun::handleParty() {
     
     if (stateInit) {
         stateInit = false;
+        currentLyricIndex = 0;
+        isLyricScrolling = false;
         audio.playRaw(snd_getschwifty, snd_getschwifty_size);
     }
     
@@ -289,13 +291,33 @@ void PortalGun::handleParty() {
     }
     leds.showPortal();
     
-    // Display random segments reacting
-    if ((millis() / 50) % 2 == 0) {
-        uint8_t data[4];
-        for(int i=0; i<4; i++) {
-            data[i] = random(256) * normVol;
+    // Subtitle Sync for 4-Digit Display
+    if (currentLyricIndex < getschwifty_lyrics_count) {
+        uint32_t startMs = getschwifty_lyrics[currentLyricIndex].startTimeMs;
+        uint32_t endMs = getschwifty_lyrics[currentLyricIndex].endTimeMs;
+        
+        if (posMs >= startMs && posMs <= endMs) {
+            if (!isLyricScrolling) {
+                const char* text = getschwifty_lyrics[currentLyricIndex].text;
+                uint32_t duration = endMs - startMs;
+                int steps = strlen(text) + 4;
+                int speed = duration / steps;
+                if (speed == 0) speed = 100;
+                
+                display.startScrolling(text, speed);
+                isLyricScrolling = true;
+            }
         }
-        display.showSegments(data);
+        
+        if (posMs > endMs) {
+            currentLyricIndex++;
+            isLyricScrolling = false;
+            display.clear();
+        }
+    } else {
+        if (!isLyricScrolling) {
+            display.clear(); // Empty display if no lyrics are currently active
+        }
     }
 }
 

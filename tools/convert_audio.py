@@ -30,6 +30,12 @@ def main():
 #include <stdint.h>
 #include <stddef.h>
 
+struct SubtitleLine {
+    uint32_t startTimeMs;
+    uint32_t endTimeMs;
+    const char* text;
+};
+
 """
     cpp_content = """#include "audio_assets.h"
 // GENERATED FILE - DO NOT EDIT MANUALLY
@@ -121,10 +127,7 @@ def main():
             env_data = []
             for i in range(0, len(raw_data), samples_per_chunk):
                 chunk = raw_data[i:i+samples_per_chunk]
-                # data is centered around 128 (unsigned 8-bit)
-                # average amplitude (rectified)
                 amp = sum(abs(b - 128) for b in chunk) / len(chunk)
-                # scale to 0-255
                 env_val = min(255, int(amp * 2.0))
                 env_data.append(env_val)
 
@@ -137,6 +140,39 @@ def main():
                 chunk = env_data[i:i+16]
                 cpp_content += "    " + ", ".join([f"0x{b:02x}" for b in chunk]) + ",\n"
             cpp_content += "};\n\n"
+            
+            # Parse SRT if it exists
+            srt_path = os.path.join(source_dir, "GetSchwiftySongLyrics.srt")
+            
+            header_content += "extern const SubtitleLine getschwifty_lyrics[];\n"
+            header_content += "extern const size_t getschwifty_lyrics_count;\n\n"
+            
+            if os.path.exists(srt_path):
+                print("Found SRT lyrics! Parsing for Party Mode...")
+                import re
+                with open(srt_path, "r", encoding="utf-8") as srt_f:
+                    srt_data = srt_f.read()
+                
+                # regex to match: 00:00:01,000 --> 00:00:04,500\nText...
+                blocks = re.split(r'\n\s*\n', srt_data.strip())
+                cpp_content += f"const SubtitleLine getschwifty_lyrics[] = {{\n"
+                count = 0
+                for block in blocks:
+                    lines = block.strip().split('\n')
+                    if len(lines) >= 3:
+                        time_match = re.match(r'(\d{2}):(\d{2}):(\d{2}),(\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2}),(\d{3})', lines[1])
+                        if time_match:
+                            h1, m1, s1, ms1, h2, m2, s2, ms2 = map(int, time_match.groups())
+                            start_ms = (h1 * 3600000) + (m1 * 60000) + (s1 * 1000) + ms1
+                            end_ms = (h2 * 3600000) + (m2 * 60000) + (s2 * 1000) + ms2
+                            text = " ".join(lines[2:]).replace('"', '\\"').replace('\n', ' ')
+                            # strip basic html tags
+                            text = re.sub(r'<[^>]+>', '', text).upper()
+                            cpp_content += f'    {{{start_ms}, {end_ms}, "{text} "}},\n'
+                            count += 1
+                cpp_content += f"}};\nconst size_t getschwifty_lyrics_count = {count};\n\n"
+            else:
+                cpp_content += f"const SubtitleLine getschwifty_lyrics[] = {{}};\nconst size_t getschwifty_lyrics_count = 0;\n\n"
 
     # Cleanup
     if os.path.exists("temp.raw"):

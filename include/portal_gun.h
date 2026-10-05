@@ -1,6 +1,7 @@
 #pragma once
 #include "app_state.h"
 #include <stdint.h>
+#include <stddef.h>
 
 class PortalGun {
 public:
@@ -22,6 +23,10 @@ private:
 
     uint32_t stateStartTime = 0;
     bool stateInit = false;
+    
+    // Subtitle tracking
+    size_t currentLyricIndex = 0;
+    bool isLyricScrolling = false;
 };
 
 extern PortalGun portalGun;

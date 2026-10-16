@@ -723,14 +723,37 @@ struct SnakeSegment {
 
 static SnakeSegment snakeBody[28];
 static int snakeLen = 3;
-static int snakeDir = 3; // 0=UP, 1=DOWN, 2=LEFT, 3=RIGHT
-static int snakePrevDir = 3;
-static SnakeSegment snakeFood = {1, 3};
+static SnakeSegment snakeFood = {1, 6};
+static int8_t snakeTargetJunc = 1; // 0:TL, 1:TR, 2:ML, 3:MR, 4:BL, 5:BR
+static int8_t snakeMomentum = 3;   // 0:UP, 1:DOWN, 2:LEFT, 3:RIGHT
 static uint32_t lastSnakeMove = 0;
-static uint32_t snakeSpeed = 260;
+static uint32_t snakeSpeed = 220;
 static bool snakeDead = false;
 static uint32_t snakeDeadTime = 0;
 static int snakeScore = 0;
+
+struct SnakeRoute {
+    int8_t d_offset;
+    int8_t seg;
+    int8_t target_junction;
+    int8_t new_momentum;
+};
+
+// Routing table: [current_target_junction (0..5)][requested_direction (0:UP, 1:DOWN, 2:LEFT, 3:RIGHT)]
+static const SnakeRoute SNAKE_ROUTES[6][4] = {
+    // Junction 0: TL
+    { { 0, 4, 2, 0 }, { 0, 5, 2, 1 }, { -1, 0, 0, 2 }, { 0, 0, 1, 3 } },
+    // Junction 1: TR
+    { { 0, 2, 3, 0 }, { 0, 1, 3, 1 }, { 0, 0, 0, 2 }, { 1, 0, 1, 3 } },
+    // Junction 2: ML
+    { { 0, 5, 0, 0 }, { 0, 4, 4, 1 }, { -1, 6, 2, 2 }, { 0, 6, 3, 3 } },
+    // Junction 3: MR
+    { { 0, 1, 1, 0 }, { 0, 2, 5, 1 }, { 0, 6, 2, 2 }, { 1, 6, 3, 3 } },
+    // Junction 4: BL
+    { { 0, 4, 2, 0 }, { 0, 5, 0, 1 }, { -1, 3, 4, 2 }, { 0, 3, 5, 3 } },
+    // Junction 5: BR
+    { { 0, 2, 3, 0 }, { 0, 1, 1, 1 }, { 0, 3, 4, 2 }, { 1, 3, 5, 3 } }
+};
 
 static void spawnSnakeFood() {
     bool collides;
@@ -749,47 +772,6 @@ static void spawnSnakeFood() {
     } while (collides && attempts < 50);
 }
 
-static void getNextSnakeSegment(int d, int s, int dir, int prevDir, int &outD, int &outS) {
-    outD = d;
-    outS = s;
-    if (s == 0) { // a (top horiz)
-        if (dir == 0) { outD = d; outS = 3; } // toroidal wrap UP -> bottom d
-        else if (dir == 1) { outD = d; outS = (prevDir == 3) ? 1 : 5; } // turn down: into b if right, f if left
-        else if (dir == 2) { outD = (d - 1 + 4) % 4; outS = 0; } // toroidal wrap LEFT -> prev digit a
-        else if (dir == 3) { outD = (d + 1) % 4; outS = 0; } // toroidal wrap RIGHT -> next digit a
-    } else if (s == 1) { // b (top-right vert)
-        if (dir == 0) { outD = d; outS = 0; } // UP -> top a
-        else if (dir == 1) { outD = d; outS = 2; } // DOWN -> bot-right c
-        else if (dir == 2) { outD = d; outS = 6; } // LEFT -> mid g
-        else if (dir == 3) { outD = (d + 1) % 4; outS = 5; } // toroidal wrap RIGHT -> next digit f
-    } else if (s == 2) { // c (bot-right vert)
-        if (dir == 0) { outD = d; outS = 1; } // UP -> top-right b
-        else if (dir == 1) { outD = d; outS = 3; } // DOWN -> bot d
-        else if (dir == 2) { outD = d; outS = 6; } // LEFT -> mid g
-        else if (dir == 3) { outD = (d + 1) % 4; outS = 4; } // toroidal wrap RIGHT -> next digit e
-    } else if (s == 3) { // d (bot horiz)
-        if (dir == 0) { outD = d; outS = (prevDir == 3) ? 2 : 4; } // turn UP: into c if right, e if left
-        else if (dir == 1) { outD = d; outS = 0; } // toroidal wrap DOWN -> top a
-        else if (dir == 2) { outD = (d - 1 + 4) % 4; outS = 3; } // toroidal wrap LEFT -> prev digit d
-        else if (dir == 3) { outD = (d + 1) % 4; outS = 3; } // toroidal wrap RIGHT -> next digit d
-    } else if (s == 4) { // e (bot-left vert)
-        if (dir == 0) { outD = d; outS = 5; } // UP -> top-left f
-        else if (dir == 1) { outD = d; outS = 3; } // DOWN -> bot d
-        else if (dir == 2) { outD = (d - 1 + 4) % 4; outS = 2; } // toroidal wrap LEFT -> prev digit c
-        else if (dir == 3) { outD = d; outS = 6; } // RIGHT -> mid g
-    } else if (s == 5) { // f (top-left vert)
-        if (dir == 0) { outD = d; outS = 0; } // UP -> top a
-        else if (dir == 1) { outD = d; outS = 4; } // DOWN -> bot-left e
-        else if (dir == 2) { outD = (d - 1 + 4) % 4; outS = 1; } // toroidal wrap LEFT -> prev digit b
-        else if (dir == 3) { outD = d; outS = 6; } // RIGHT -> mid g
-    } else if (s == 6) { // g (mid horiz)
-        if (dir == 0) { outD = d; outS = (prevDir == 3) ? 1 : 5; } // UP -> b if right, f if left
-        else if (dir == 1) { outD = d; outS = (prevDir == 3) ? 2 : 4; } // DOWN -> c if right, e if left
-        else if (dir == 2) { outD = (d - 1 + 4) % 4; outS = 6; } // toroidal wrap LEFT -> prev digit g
-        else if (dir == 3) { outD = (d + 1) % 4; outS = 6; } // toroidal wrap RIGHT -> next digit g
-    }
-}
-
 void PortalGun::handleSnakeGame() {
     const auto& joy = input.getState();
     uint32_t now = millis();
@@ -797,24 +779,33 @@ void PortalGun::handleSnakeGame() {
     if (stateInit) {
         stateInit = false;
         snakeLen = 3;
-        snakeDir = 3; // RIGHT
-        snakePrevDir = 3;
-        snakeBody[0] = {2, 0}; // head
-        snakeBody[1] = {1, 0};
-        snakeBody[2] = {0, 0}; // tail
+        snakeMomentum = 3; // RIGHT
+        snakeTargetJunc = 1; // TR
+        snakeBody[0] = {2, 0}; // Head at Digit 2 a
+        snakeBody[1] = {1, 0}; // Neck at Digit 1 a
+        snakeBody[2] = {0, 0}; // Tail at Digit 0 a
         snakeDead = false;
         snakeScore = 0;
-        snakeSpeed = 260;
+        snakeSpeed = 220;
         lastSnakeMove = now;
         spawnSnakeFood();
         audio.playRaw(snd_portal_open1, snd_portal_open1_size);
     }
     
-    // Joystick direction steering (prevent direct 180-degree self-reversal)
-    if (joy.up && snakePrevDir != 1) snakeDir = 0;
-    else if (joy.down && snakePrevDir != 0) snakeDir = 1;
-    else if (joy.left && snakePrevDir != 3) snakeDir = 2;
-    else if (joy.right && snakePrevDir != 2) snakeDir = 3;
+    // Joystick direction request
+    int requestedDir = -1;
+    if (joy.up) requestedDir = 0;
+    else if (joy.down) requestedDir = 1;
+    else if (joy.left) requestedDir = 2;
+    else if (joy.right) requestedDir = 3;
+    
+    // Prevent immediate 180-degree self reversal into own neck
+    if (snakeLen > 1) {
+        if (requestedDir == 0 && snakeMomentum == 1) requestedDir = -1;
+        else if (requestedDir == 1 && snakeMomentum == 0) requestedDir = -1;
+        else if (requestedDir == 2 && snakeMomentum == 3) requestedDir = -1;
+        else if (requestedDir == 3 && snakeMomentum == 2) requestedDir = -1;
+    }
     
     if (snakeDead) {
         // Game Over handling
@@ -858,8 +849,22 @@ void PortalGun::handleSnakeGame() {
     if (now - lastSnakeMove >= snakeSpeed) {
         lastSnakeMove = now;
         
-        int nextD, nextS;
-        getNextSnakeSegment(snakeBody[0].digit, snakeBody[0].seg, snakeDir, snakePrevDir, nextD, nextS);
+        int effDir = snakeMomentum;
+        if (requestedDir != -1) {
+            effDir = requestedDir;
+        } else {
+            // Natural corner momentum when no steering is actively pressed
+            if (snakeTargetJunc == 5 && snakeMomentum == 1) effDir = 2; // BR moving down -> turns left
+            else if (snakeTargetJunc == 4 && snakeMomentum == 1) effDir = 3; // BL moving down -> turns right
+            else if (snakeTargetJunc == 1 && snakeMomentum == 0) effDir = 2; // TR moving up -> turns left
+            else if (snakeTargetJunc == 0 && snakeMomentum == 0) effDir = 3; // TL moving up -> turns right
+        }
+        
+        const SnakeRoute& route = SNAKE_ROUTES[snakeTargetJunc][effDir];
+        int nextD = (snakeBody[0].digit + route.d_offset + 4) % 4;
+        int nextS = route.seg;
+        int nextTJ = route.target_junction;
+        int newMom = route.new_momentum;
         
         // Check self collision (head colliding with body)
         for (int i = 0; i < snakeLen - 1; i++) {
@@ -872,26 +877,23 @@ void PortalGun::handleSnakeGame() {
         }
         
         // Check if eating food
-        if (nextD == snakeFood.digit && nextS == snakeFood.seg) {
+        bool ate = (nextD == snakeFood.digit && nextS == snakeFood.seg);
+        if (ate) {
             snakeScore++;
             if (snakeLen < 27) snakeLen++;
             audio.playRaw(snd_roulette_clack, snd_roulette_clack_size);
             spawnSnakeFood();
-            if (snakeSpeed > 140) snakeSpeed -= 6;
-            
-            // Shift body forward without dropping tail
-            for (int i = snakeLen - 1; i > 0; i--) {
-                snakeBody[i] = snakeBody[i - 1];
-            }
-        } else {
-            // Normal shift forward
-            for (int i = snakeLen - 1; i > 0; i--) {
-                snakeBody[i] = snakeBody[i - 1];
-            }
+            if (snakeSpeed > 130) snakeSpeed -= 5;
+        }
+        
+        // Shift body forward
+        for (int i = snakeLen - 1; i > 0; i--) {
+            snakeBody[i] = snakeBody[i - 1];
         }
         
         snakeBody[0] = { (int8_t)nextD, (int8_t)nextS };
-        snakePrevDir = snakeDir;
+        snakeTargetJunc = nextTJ;
+        snakeMomentum = newMom;
     }
     
     // Render snake display

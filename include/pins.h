@@ -4,8 +4,8 @@
 namespace Pins {
 #ifdef WOKWI_SIM
     // Generic ESP32 DevKitC pins for Wokwi simulation
-    constexpr int GreenLed1 = 25;
-    constexpr int GreenLed2 = 26;
+    constexpr int GreenLed1 = 12;
+    constexpr int GreenLed2 = 14;
     constexpr int GreenLed3 = 27;
 
     constexpr int PortalData = 4;

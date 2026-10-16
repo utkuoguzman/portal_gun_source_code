@@ -8,6 +8,14 @@ public:
     void begin();
     void update();
 
+    void triggerWebFire();
+    void triggerWebClose();
+    void triggerWebQuote();
+    void triggerWebTorch();
+    void triggerWebParty();
+    void setWebDimension(char letter, int number);
+    void setWebColor(uint8_t r, uint8_t g, uint8_t b);
+
 private:
     PortalState currentState = PortalState::PowerUp;
     
@@ -18,6 +26,13 @@ private:
     void handlePowerUpFinalize();
     void handleDimensionSelection();
     void handleParty();
+    void handleTorch();
+    void handleRadarScan();
+    void handleWifiPortal();
+    void handleEvilMorty();
+    void handleSnakeGame();
+    void handleRoulette();
+    void handleDinoGame();
     void handlePowerDown();
     void handleDeepSleep();
 
@@ -27,6 +42,11 @@ private:
     // Subtitle tracking
     size_t currentLyricIndex = 0;
     bool isLyricScrolling = false;
+
+    // Rick soundboard quote tracking
+    bool isQuoteActive = false;
+    bool quoteAudioStarted = false;
+    int currentQuoteIdx = 0;
 };
 
 extern PortalGun portalGun;

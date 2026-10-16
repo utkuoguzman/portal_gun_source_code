@@ -8,6 +8,7 @@ LedSystem leds;
 
 static Adafruit_NeoPixel strip(Config::PORTAL_LED_COUNT, Pins::PortalData, NEO_GRB + NEO_KHZ800);
 static Adafruit_NeoPixel topStrip(Config::TOP_LED_COUNT, Pins::TopData, NEO_GRB + NEO_KHZ800);
+static bool torchActive = false;
 
 void LedSystem::begin() {
     // Setup green LED PWM channels
@@ -34,6 +35,7 @@ void LedSystem::begin() {
 }
 
 void LedSystem::update() {
+    if (torchActive) return;
     uint32_t now = millis();
     
     // Update green LED animations
@@ -120,6 +122,41 @@ void LedSystem::setPortalColor(int index, uint8_t r, uint8_t g, uint8_t b) {
     strip.setPixelColor(index, strip.Color(r, g, b));
 }
 
+void LedSystem::setAllPortalColor(uint8_t r, uint8_t g, uint8_t b) {
+    for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
+        strip.setPixelColor(i, strip.Color(r, g, b));
+    }
+    strip.show();
+}
+
+void LedSystem::setTopColor(uint8_t r, uint8_t g, uint8_t b) {
+    for (int i = 0; i < Config::TOP_LED_COUNT; i++) {
+        topStrip.setPixelColor(i, topStrip.Color(r, g, b));
+    }
+    topStrip.show();
+}
+
+void LedSystem::setCustomPortalColor(uint8_t r, uint8_t g, uint8_t b) {
+    customR = r;
+    customG = g;
+    customB = b;
+    hasCustomColor = true;
+    for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
+        strip.setPixelColor(i, strip.Color(r, g, b));
+    }
+    strip.show();
+    for (int i = 0; i < Config::TOP_LED_COUNT; i++) {
+        topStrip.setPixelColor(i, topStrip.Color(r, g, b));
+    }
+    topStrip.show();
+}
+
+void LedSystem::getCustomColor(uint8_t &r, uint8_t &g, uint8_t &b) const {
+    r = customR;
+    g = customG;
+    b = customB;
+}
+
 void LedSystem::setPortalBrightness(float brightness) {
     if (brightness < 0.0f) brightness = 0.0f;
     if (brightness > Config::PORTAL_MAX_BRIGHTNESS) brightness = Config::PORTAL_MAX_BRIGHTNESS;
@@ -134,4 +171,78 @@ void LedSystem::showPortal() {
 void LedSystem::clearPortal() {
     strip.clear();
     strip.show();
+}
+
+void LedSystem::setTorchMode(bool enable) {
+    torchActive = enable;
+    if (enable) {
+        // High-power pure white on all 7 portal LEDs
+        for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
+            strip.setPixelColor(i, strip.Color(255, 255, 255));
+        }
+        strip.show();
+        // Solid green ambient light on top strip
+        for (int i = 0; i < Config::TOP_LED_COUNT; i++) {
+            topStrip.setPixelColor(i, topStrip.Color(0, 200, 0));
+        }
+        topStrip.show();
+        for (int i = 0; i < 3; i++) {
+            setGreen(i, 0.6f);
+        }
+    } else {
+        clearPortal();
+        for (int i = 0; i < 3; i++) {
+            setGreen(i, 0.0f);
+        }
+        for (int i = 0; i < Config::TOP_LED_COUNT; i++) {
+            topStrip.setPixelColor(i, topStrip.Color(0, 0, 0));
+        }
+        topStrip.show();
+    }
+}
+
+void LedSystem::setRadarSweep(int headPixel, bool alert) {
+    if (alert) {
+        // Rapid flashing red/amber alert
+        uint8_t r = ((millis() / 150) % 2 == 0) ? 255 : 0;
+        for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
+            strip.setPixelColor(i, strip.Color(r, 0, 0));
+        }
+        strip.show();
+        for (int i = 0; i < 3; i++) {
+            setGreen(i, (r > 0) ? 1.0f : 0.0f);
+        }
+        return;
+    }
+
+    // Normal radar sweep:
+    // Pixel 0 (center): gentle pulsing sonar beacon
+    float centerPulse = (sinf(millis() / 250.0f) + 1.0f) * 0.5f;
+    uint8_t cG = (uint8_t)(50 + 150 * centerPulse);
+    strip.setPixelColor(0, strip.Color(0, cG, 0));
+
+    // Pixels 1 to 6 (outer ring): rotating radar beam with a decaying trail
+    int ringSize = (Config::PORTAL_LED_COUNT > 1) ? (Config::PORTAL_LED_COUNT - 1) : 1;
+    int head = (headPixel % ringSize) + 1;
+    int trail1 = ((headPixel - 1 + ringSize) % ringSize) + 1;
+    int trail2 = ((headPixel - 2 + ringSize) % ringSize) + 1;
+
+    for (int i = 1; i < Config::PORTAL_LED_COUNT; i++) {
+        if (i == head) {
+            strip.setPixelColor(i, strip.Color(0, 255, 0)); // Bright leading beam
+        } else if (i == trail1) {
+            strip.setPixelColor(i, strip.Color(0, 90, 0));  // Trail 1
+        } else if (i == trail2) {
+            strip.setPixelColor(i, strip.Color(0, 25, 0));  // Trail 2
+        } else {
+            strip.setPixelColor(i, strip.Color(0, 0, 0));
+        }
+    }
+    strip.show();
+
+    // Front LEDs gentle instrument sweep
+    for (int i = 0; i < 3; i++) {
+        float fVal = (sinf((millis() / 200.0f) + (i * 1.2f)) + 1.0f) * 0.35f;
+        setGreen(i, fVal);
+    }
 }

@@ -5,6 +5,13 @@ enum class PortalState {
     PowerUpFinalize,
     DimensionSelection,
     Party,
+    Torch,
+    RadarScan,
+    WifiPortal,
+    EvilMorty,
+    SnakeGame,
+    Roulette,
+    DinoGame,
     PowerDown,
     DeepSleep
 };

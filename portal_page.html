@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Portal Gun C-137</title>
+    <style>
+        :root {
+            --portal-green: #39ff14;
+            --portal-green-glow: rgba(57, 255, 20, 0.4);
+            --portal-dark: #08120a;
+            --portal-card: rgba(14, 28, 18, 0.88);
+            --portal-border: rgba(57, 255, 20, 0.35);
+            --accent-cyan: #00e5ff;
+            --accent-amber: #ffaa00;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, monospace, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--portal-dark);
+            background-image: 
+                linear-gradient(rgba(5, 16, 8, 0.72), rgba(5, 16, 8, 0.82)),
+                url('site_assets/portal_background.jpg');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #e0ffe5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Header Card */
+        .header-card {
+            background: var(--portal-card);
+            border: 1px solid var(--portal-border);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 0 20px var(--portal-green-glow);
+            backdrop-filter: blur(8px);
+        }
+
+        .header-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--portal-green);
+            text-shadow: 0 0 10px var(--portal-green);
+            text-transform: uppercase;
+        }
+
+        .header-sub {
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            color: #8edaa0;
+            margin-top: 4px;
+        }
+
+        /* GIF / Visual Showcase Container */
+        .media-card {
+            background: var(--portal-card);
+            border: 1px solid var(--portal-border);
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 180px;
+            max-height: 240px;
+            box-shadow: inset 0 0 15px rgba(57, 255, 20, 0.15);
+            position: relative;
+        }
+
+        /* ==========================================================
+           CUSTOM BUTT GIF:
+           Place 'butt.gif' alongside this file.
+           If the file is not found, an animated SVG portal displays.
+           ========================================================== */
+        .media-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            max-height: 230px;
+            display: block;
+        }
+
+        /* Status Banner */
+        .status-box {
+            background: rgba(10, 22, 14, 0.95);
+            border-left: 4px solid var(--portal-green);
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--portal-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--portal-green);
+            animation: pulse-animation 1.5s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.7; }
+        }
+
+        .status-text {
+            font-weight: 600;
+            color: #c9ffd5;
+        }
+
+        .status-target {
+            font-family: monospace;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            font-size: 0.95rem;
+        }
+
+        /* Buttons Grid */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn {
+            background: linear-gradient(180deg, rgba(30, 60, 36, 0.85) 0%, rgba(16, 36, 20, 0.95) 100%);
+            border: 1px solid var(--portal-border);
+            border-radius: 12px;
+            padding: 16px 12px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+            user-select: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+            background: var(--portal-green);
+            color: #000;
+            box-shadow: 0 0 20px var(--portal-green);
+            border-color: #fff;
+        }
+
+        .btn-icon {
+            font-size: 1.8rem;
+        }
+
+        .btn-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .btn-fire {
+            border-color: var(--portal-green);
+            background: linear-gradient(180deg, rgba(20, 70, 30, 0.9) 0%, rgba(10, 45, 18, 0.95) 100%);
+        }
+
+        .btn-quote {
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-torch {
+            border-color: #fff;
+        }
+
+        .btn-close {
+            border-color: #ff4757;
+        }
+
+        .btn-party {
+            border-color: #ff00ff;
+            background: linear-gradient(180deg, rgba(80, 20, 70, 0.9) 0%, rgba(45, 10, 40, 0.95) 100%);
+        }
+
+        /* Dimension Sender */
+        .dim-card {
+            background: var(--portal-card);
+            border: 1px solid var(--portal-border);
+            border-radius: 14px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .dim-title {
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #8edaa0;
+        }
+
+        .dim-input-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dim-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--portal-border);
+            border-radius: 8px;
+            color: var(--portal-green);
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 8px 12px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .dim-input:focus {
+            outline: none;
+            border-color: var(--portal-green);
+            box-shadow: 0 0 10px var(--portal-green-glow);
+        }
+
+        .dim-btn {
+            background: var(--portal-green);
+            color: #051408;
+            border: none;
+            border-radius: 8px;
+            font-weight: 800;
+            padding: 0 16px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .dim-btn:active {
+            transform: scale(0.95);
+            background: #fff;
+        }
+
+        .quick-dims {
+            display: flex;
+            gap: 6px;
+            justify-content: space-between;
+        }
+
+        .chip {
+            flex: 1;
+            background: rgba(20, 45, 25, 0.6);
+            border: 1px solid rgba(57, 255, 20, 0.25);
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #bbfac8;
+            padding: 6px 0;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .chip:active {
+            background: var(--portal-green);
+            color: #000;
+        }
+
+        /* Toast Feedback */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            background: rgba(10, 20, 12, 0.95);
+            border: 1px solid var(--portal-green);
+            color: var(--portal-green);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px var(--portal-green-glow);
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            transform: translateY(10px);
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header-card">
+            <div class="header-title">⚡ Portal Gun C-137 ⚡</div>
+            <div class="header-sub">Central Finite Curve Travel Tool</div>
+        </header>
+
+        <!-- Media Display Area (Rick Dancing GIF) -->
+        <div class="media-card">
+            <img id="portal-media" src="site_assets/rick-dance.gif" alt="Rick Dancing" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 200 200\'><circle cx=\'100\' cy=\'100\' r=\'85\' fill=\'%23051408\' stroke=\'%2339ff14\' stroke-width=\'6\'/><circle cx=\'100\' cy=\'100\' r=\'65\' fill=\'%230a2810\' stroke=\'%2357ff38\' stroke-width=\'4\' stroke-dasharray=\'8 6\'/><circle cx=\'100\' cy=\'100\' r=\'45\' fill=\'%23144a1e\' stroke=\'%2300ff88\' stroke-width=\'3\'/><text x=\'100\' y=\'108\' fill=\'%2339ff14\' font-family=\'monospace\' font-size=\'16\' font-weight=\'bold\' text-anchor=\'middle\'>C-137</text></svg>';">
+        </div>
+
+        <!-- Gun Live Status -->
+        <div class="status-box">
+            <div class="status-left">
+                <div class="pulse-dot"></div>
+                <span id="status-label" class="status-text">GUN CONNECTED</span>
+            </div>
+            <div id="dim-badge" class="status-target">DIMENSION: C-137</div>
+        </div>
+
+        <!-- 2-Way Hardware Control Buttons -->
+        <div class="controls-grid">
+            <button class="btn btn-fire" onclick="sendCommand('/api/fire', 'PORTAL FIRED!')">
+                <span class="btn-icon">🌀</span>
+                <span class="btn-label">Fire Portal</span>
+            </button>
+
+            <button class="btn btn-quote" onclick="sendCommand('/api/quote', 'RICK QUOTE PLAYED!')">
+                <span class="btn-icon">🎙️</span>
+                <span class="btn-label">Rick Quote</span>
+            </button>
+
+            <button class="btn btn-torch" onclick="sendCommand('/api/torch', 'TORCH BEAM TOGGLED!')">
+                <span class="btn-icon">🔦</span>
+                <span class="btn-label">Torch Mode</span>
+            </button>
+
+            <button class="btn btn-party" onclick="sendCommand('/api/party', 'GET SCHWIFTY ACTIVATED!')">
+                <span class="btn-icon">🎉</span>
+                <span class="btn-label">Party Mode</span>
+            </button>
+        </div>
+
+        <!-- Dimension Override Form -->
+        <div class="dim-card">
+            <div class="dim-title">Override Target Dimension</div>
+            <div class="dim-input-row">
+                <input type="text" id="dim-input" class="dim-input" maxlength="4" value="C137" placeholder="C137">
+                <button class="dim-btn" onclick="submitDimension()">Set</button>
+            </div>
+            <div class="quick-dims" style="flex-wrap: wrap; gap: 6px;">
+                <div class="chip" onclick="setQuickDim('C137')">C-137</div>
+                <div class="chip" onclick="setQuickDim('D001')">D-001 (Dino)</div>
+                <div class="chip" onclick="setQuickDim('E001')">E-001 (Morty)</div>
+                <div class="chip" onclick="setQuickDim('P001')">P-001 (Snake)</div>
+                <div class="chip" onclick="setQuickDim('G001')">G-001 (Roulette)</div>
+                <div class="chip" onclick="setQuickDim('R042')">R-042 (Quote)</div>
+                <div class="chip" onclick="setQuickDim('B001')">B-001 (Radar)</div>
+            </div>
+        </div>
+
+        <!-- Interdimensional Beam Color Tuner -->
+        <div class="dim-card">
+            <div class="dim-title">🌈 Beam Color Tuning</div>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <input type="range" id="hue-slider" min="0" max="360" value="120" style="flex: 1; accent-color: var(--portal-green); height: 10px; border-radius: 5px; background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); cursor: pointer;" oninput="handleHueChange(this.value)">
+                <div id="color-preview" style="width: 32px; height: 32px; min-width: 32px; border-radius: 50%; border: 2px solid #fff; background: #39ff14; box-shadow: 0 0 10px #39ff14; transition: background 0.1s ease;"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                <!-- Top Row: Jerry (Green), Morty (Yellow), Unity (Blue) -->
+                <div class="chip" style="border-color: #39ff14;" onclick="setColor(57, 255, 20, '#39ff14')">🟢 Jerry</div>
+                <div class="chip" style="border-color: #ffea00;" onclick="setColor(255, 234, 0, '#ffea00')">🟡 Morty</div>
+                <div class="chip" style="border-color: #00bfff;" onclick="setColor(0, 191, 255, '#00bfff')">🔵 Unity</div>
+                <!-- Bottom Row: Summer (Pink), Beth (Red), Rick (White) -->
+                <div class="chip" style="border-color: #ff66cc;" onclick="setColor(255, 102, 204, '#ff66cc')">🌸 Summer</div>
+                <div class="chip" style="border-color: #ff2222;" onclick="setColor(235, 30, 30, '#ff2222')">🔴 Beth</div>
+                <div class="chip" style="border-color: #ffffff;" onclick="setColor(255, 255, 255, '#ffffff')">⚪ Rick</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Toast -->
+    <div id="toast" class="toast">COMMAND TRANSMITTED</div>
+
+    <script>
+        function showToast(text) {
+            const t = document.getElementById('toast');
+            t.innerText = text;
+            t.classList.add('show');
+            if (navigator.vibrate) navigator.vibrate(40);
+            setTimeout(() => { t.classList.remove('show'); }, 2000);
+        }
+
+        function sendCommand(endpoint, successMsg) {
+            showToast("TRANSMITTING...");
+            fetch(endpoint)
+                .then(r => r.json())
+                .then(data => {
+                    showToast(data.message || successMsg);
+                    if (data.dimension) {
+                        document.getElementById('dim-badge').innerText = "DIMENSION: " + data.dimension;
+                    }
+                })
+                .catch(() => {
+                    // Offline acknowledge
+                    showToast(successMsg);
+                });
+        }
+
+        function submitDimension() {
+            const val = document.getElementById('dim-input').value.trim().toUpperCase();
+            if (val.length < 2) {
+                showToast("INVALID DIMENSION");
+                return;
+            }
+            document.getElementById('dim-badge').innerText = "DIMENSION: " + val;
+            sendCommand('/api/dimension?d=' + encodeURIComponent(val), 'DIMENSION: ' + val);
+        }
+
+        function setQuickDim(dim) {
+            document.getElementById('dim-input').value = dim;
+            submitDimension();
+        }
+
+        let colorDebounce = null;
+        function handleHueChange(h) {
+            const rgb = hslToRgb(h / 360, 1.0, 0.5);
+            const hex = rgbToHex(rgb[0], rgb[1], rgb[2]);
+            const prev = document.getElementById('color-preview');
+            prev.style.background = hex;
+            prev.style.boxShadow = '0 0 10px ' + hex;
+            
+            clearTimeout(colorDebounce);
+            colorDebounce = setTimeout(() => {
+                sendColor(rgb[0], rgb[1], rgb[2]);
+            }, 60);
+        }
+
+        function setColor(r, g, b, hex) {
+            const prev = document.getElementById('color-preview');
+            prev.style.background = hex;
+            prev.style.boxShadow = '0 0 10px ' + hex;
+            sendColor(r, g, b);
+        }
+
+        function sendColor(r, g, b) {
+            fetch(`/api/color?r=${r}&g=${g}&b=${b}`)
+                .then(res => res.json())
+                .then(() => showToast(`COLOR TUNED: RGB(${r},${g},${b})`))
+                .catch(() => showToast(`COLOR SENT`));
+        }
+
+        function hslToRgb(h, s, l) {
+            let r, g, b;
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+        }
+
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+        }
+    </script>
+</body>
+</html>
+

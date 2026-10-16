@@ -25,12 +25,19 @@ void InputSystem::begin() {
     state.pressed = false;
     state.justPressed = false;
     state.justReleased = false;
+    state.clicked = false;
+    state.doubleClicked = false;
+    state.held3s = false;
+    state.justHeld3s = false;
+    pressStartTime = 0;
+    holdReported = false;
     state.powerPressed = false;
     state.powerJustPressed = false;
 
     lastButtonState = digitalRead(Pins::JoystickSw) == LOW;
     if (lastButtonState) {
         state.pressed = true;
+        pressStartTime = millis();
     }
 
     lastPowerButtonState = digitalRead(Pins::PowerButton) == LOW;
@@ -71,7 +78,9 @@ void InputSystem::update() {
     
     state.justPressed = false;
     state.justReleased = false;
+    state.clicked = false;
     state.doubleClicked = false;
+    state.justHeld3s = false;
 
     if (reading != lastButtonState) {
         lastDebounceTime = millis();
@@ -82,6 +91,8 @@ void InputSystem::update() {
             state.pressed = reading;
             if (state.pressed) {
                 state.justPressed = true;
+                pressStartTime = millis();
+                holdReported = false;
                 
                 // Double click detection (guard against early boot millis() overflow/zero)
                 if (lastClickTime > 0 && (millis() - lastClickTime < doubleClickDelay)) {
@@ -92,8 +103,24 @@ void InputSystem::update() {
                 }
             } else {
                 state.justReleased = true;
+                if (!holdReported) {
+                    state.clicked = true;
+                }
+                state.held3s = false;
+                holdReported = false;
             }
         }
+    }
+
+    // 3-second continuous hold detection
+    if (state.pressed) {
+        if (!holdReported && (millis() - pressStartTime >= 3000)) {
+            state.held3s = true;
+            state.justHeld3s = true;
+            holdReported = true;
+        }
+    } else {
+        state.held3s = false;
     }
 
     lastButtonState = reading;

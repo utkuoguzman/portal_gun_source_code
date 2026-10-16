@@ -11,9 +11,17 @@ public:
     void flashGreen(int channel, float brightness, uint32_t duration);
 
     void setPortalColor(int index, uint8_t r, uint8_t g, uint8_t b);
+    void setAllPortalColor(uint8_t r, uint8_t g, uint8_t b);
+    void setTopColor(uint8_t r, uint8_t g, uint8_t b);
+    void setCustomPortalColor(uint8_t r, uint8_t g, uint8_t b);
+    void getCustomColor(uint8_t &r, uint8_t &g, uint8_t &b) const;
+    bool hasCustomPortalColor() const { return hasCustomColor; }
     void setPortalBrightness(float brightness); // 0.0-1.0
     void showPortal();
     void clearPortal();
+
+    void setTorchMode(bool enable);
+    void setRadarSweep(int headPixel, bool alert);
     
 private:
     // Animation state for green LEDs
@@ -31,6 +39,10 @@ private:
     float currentGreen[3] = {0.0f, 0.0f, 0.0f};
     
     float globalPortalBrightness = 0.0f;
+    uint8_t customR = 0;
+    uint8_t customG = 255;
+    uint8_t customB = 0;
+    bool hasCustomColor = false;
 };
 
 extern LedSystem leds;

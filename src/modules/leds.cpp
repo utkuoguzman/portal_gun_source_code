@@ -6,7 +6,7 @@
 
 LedSystem leds;
 
-static Adafruit_NeoPixel strip(Config::PORTAL_LED_COUNT, Pins::PortalData, NEO_GRBW + NEO_KHZ800);
+static Adafruit_NeoPixel strip(Config::PORTAL_LED_COUNT, Pins::PortalData, NEO_GRB + NEO_KHZ800);
 static Adafruit_NeoPixel topStrip(Config::TOP_LED_COUNT, Pins::TopData, NEO_GRB + NEO_KHZ800);
 
 void LedSystem::begin() {
@@ -49,15 +49,19 @@ void LedSystem::update() {
                 greenFades[i].active = false;
             } else {
                 float progress = (float)elapsed / (float)greenFades[i].duration;
-                float current = greenFades[i].start_brightness + (greenFades[i].end_brightness - greenFades[i].start_brightness) * progress;
+                if (progress > 1.0f) progress = 1.0f;
+                // SmoothStep S-curve easing for natural acceleration and deceleration
+                float smoothProgress = progress * progress * (3.0f - 2.0f * progress);
+                float current = greenFades[i].start_brightness + (greenFades[i].end_brightness - greenFades[i].start_brightness) * smoothProgress;
                 setGreen(i, current);
             }
         }
     }
     
-    // Top Strip follows the average of the 3 front green LEDs
+    // Top Strip follows the average of the 3 front green LEDs with matching perceptual gamma
     float avgGreen = (currentGreen[0] + currentGreen[1] + currentGreen[2]) / 3.0f;
-    uint8_t topG = (uint8_t)(avgGreen * 255.0f);
+    float gammaTop = (avgGreen > 0.0f) ? powf(avgGreen, 2.2f) : 0.0f;
+    uint8_t topG = (uint8_t)(gammaTop * 255.0f + 0.5f);
     for(int i = 0; i < Config::TOP_LED_COUNT; i++) {
         topStrip.setPixelColor(i, topStrip.Color(0, topG, 0));
     }
@@ -72,8 +76,11 @@ void LedSystem::setGreen(int channel, float brightness) {
     
     currentGreen[channel] = brightness;
     
-    // 8-bit resolution = 0-255
-    uint32_t duty = (uint32_t)(brightness * 255.0f);
+    // Perceptual Gamma 2.2 curve (CIE 1931 approximation)
+    // Matches the non-linear logarithmic sensitivity of the human eye
+    float gammaDuty = (brightness > 0.0f) ? powf(brightness, 2.2f) : 0.0f;
+    uint32_t duty = (uint32_t)(gammaDuty * 255.0f + 0.5f);
+    if (duty > 255) duty = 255;
     ledcWrite(channel, duty);
 }
 

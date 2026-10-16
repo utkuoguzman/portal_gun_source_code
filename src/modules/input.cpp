@@ -9,6 +9,10 @@ void InputSystem::begin() {
     pinMode(Pins::JoystickSw, INPUT_PULLUP);
     pinMode(Pins::PowerButton, INPUT_PULLUP);
     
+    // Explicitly enforce 12-bit ADC resolution (0-4095) across all boards
+    analogReadResolution(12);
+    lastClickTime = 0;
+    
     // Initial read to set states
     state.rawX = analogRead(Pins::JoystickX);
     state.rawY = analogRead(Pins::JoystickY);
@@ -51,8 +55,8 @@ void InputSystem::update() {
     if (ny < -1.0f) ny = -1.0f;
 
     // Apply deadzone
-    if (abs(nx) < Config::JOYSTICK_DEADZONE) nx = 0.0f;
-    if (abs(ny) < Config::JOYSTICK_DEADZONE) ny = 0.0f;
+    if (fabsf(nx) < Config::JOYSTICK_DEADZONE) nx = 0.0f;
+    if (fabsf(ny) < Config::JOYSTICK_DEADZONE) ny = 0.0f;
 
     state.x = nx;
     state.y = ny;
@@ -79,8 +83,8 @@ void InputSystem::update() {
             if (state.pressed) {
                 state.justPressed = true;
                 
-                // Double click detection
-                if (millis() - lastClickTime < doubleClickDelay) {
+                // Double click detection (guard against early boot millis() overflow/zero)
+                if (lastClickTime > 0 && (millis() - lastClickTime < doubleClickDelay)) {
                     state.doubleClicked = true;
                     lastClickTime = 0; // reset
                 } else {

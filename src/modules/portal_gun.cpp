@@ -16,6 +16,7 @@ static int dimNumber = 137;
 static unsigned long portalOpenTime = 0;
 static bool portalIsOpen = false;
 static bool portalJustClosed = false;
+static float frontLedSmooth[3] = {0.0f, 0.0f, 0.0f};
 
 void PortalGun::begin() {
     // Start at DeepSleep or PowerUp based on wakeup cause
@@ -190,7 +191,8 @@ void PortalGun::handleDimensionSelection() {
                 leds.setPortalColor(i, 0, 255, 0);
             }
             leds.showPortal();
-            for(int i=0; i<3; i++) leds.setGreen(i, 1.0f);
+            float frontPulse = 0.75f + 0.25f * pulse;
+            for(int i=0; i<3; i++) leds.setGreen(i, frontPulse);
         }
     } else {
         // Update dimension letter (Up/Down)
@@ -247,6 +249,9 @@ void PortalGun::handleParty() {
         stateInit = false;
         currentLyricIndex = 0;
         isLyricScrolling = false;
+        frontLedSmooth[0] = 0.0f;
+        frontLedSmooth[1] = 0.0f;
+        frontLedSmooth[2] = 0.0f;
         audio.playRaw(snd_getschwifty, snd_getschwifty_size);
     }
     
@@ -264,43 +269,83 @@ void PortalGun::handleParty() {
     // Party visuals based on 3-band envelope
     uint32_t posMs = audio.getPositionMs();
     
-    uint8_t low_vol = 0;
-    uint8_t mid_vol = 0;
-    uint8_t high_vol = 0;
+    float low_val = 0.0f;
+    float mid_val = 0.0f;
+    float high_val = 0.0f;
     
     if (env_getschwifty_low_size > 0 && env_getschwifty_mid_size > 0 && env_getschwifty_high_size > 0) {
         size_t envIdx = posMs / 100; // 10 samples per second
-        if (envIdx < env_getschwifty_low_size) low_vol = env_getschwifty_low[envIdx];
-        if (envIdx < env_getschwifty_mid_size) mid_vol = env_getschwifty_mid[envIdx];
-        if (envIdx < env_getschwifty_high_size) high_vol = env_getschwifty_high[envIdx];
+        float frac = (posMs % 100) / 100.0f;
+        
+        auto interp = [](const uint8_t* arr, size_t sz, size_t idx, float f) -> float {
+            if (idx >= sz) return 0.0f;
+            float v1 = arr[idx];
+            float v2 = (idx + 1 < sz) ? arr[idx + 1] : v1;
+            return v1 + (v2 - v1) * f;
+        };
+
+        low_val  = interp(env_getschwifty_low, env_getschwifty_low_size, envIdx, frac);
+        mid_val  = interp(env_getschwifty_mid, env_getschwifty_mid_size, envIdx, frac);
+        high_val = interp(env_getschwifty_high, env_getschwifty_high_size, envIdx, frac);
     } else {
         // Fake envelope if no script output yet
-        uint8_t dummy = 127 + (sin(posMs / 150.0f) * 127.0f);
-        low_vol = dummy; mid_vol = dummy; high_vol = dummy;
+        float dummy = 127.0f + (sinf(posMs / 150.0f) * 127.0f);
+        low_val = dummy; mid_val = dummy; high_val = dummy;
     }
     
-    // Multiply by 4 to make the visualizer much brighter, since the extracted envelopes are relatively quiet
-    float l_val = (low_vol > 5) ? (low_vol * 4.0f / 255.0f) : 0.0f;
-    float m_val = (mid_vol > 5) ? (mid_vol * 4.0f / 255.0f) : 0.0f;
-    float h_val = (high_vol > 5) ? (high_vol * 4.0f / 255.0f) : 0.0f;
+    // Scale visualizer to full dynamic range (0.0 to 1.0)
+    float l_val = (low_val > 5.0f) ? (low_val * 4.0f / 255.0f) : 0.0f;
+    float m_val = (mid_val > 5.0f) ? (mid_val * 4.0f / 255.0f) : 0.0f;
+    float h_val = (high_val > 5.0f) ? (high_val * 4.0f / 255.0f) : 0.0f;
     
     if (l_val > 1.0f) l_val = 1.0f;
     if (m_val > 1.0f) m_val = 1.0f;
     if (h_val > 1.0f) h_val = 1.0f;
 
-    // LEDs react as a 3-bar spectrogram
-    leds.setGreen(0, l_val);
-    leds.setGreen(1, m_val);
-    leds.setGreen(2, h_val);
+    // Dynamic contrast curves (makes beats punch while keeping quiet passages subtle)
+    float targets[3] = {
+        powf(l_val, 1.3f), // Low/Bass
+        powf(m_val, 1.3f), // Mid/Vocals
+        powf(h_val, 1.3f)  // High/Treble
+    };
+
+    // Analog VU-meter ballistics: fast attack on drum/vocal hits, smooth exponential decay
+    for (int k = 0; k < 3; k++) {
+        if (targets[k] > frontLedSmooth[k]) {
+            // Fast attack: jump up to catch transient peaks
+            frontLedSmooth[k] += (targets[k] - frontLedSmooth[k]) * 0.85f;
+        } else {
+            // Smooth exponential decay: gradual, organic falloff
+            frontLedSmooth[k] += (targets[k] - frontLedSmooth[k]) * 0.18f;
+        }
+        leds.setGreen(k, frontLedSmooth[k]);
+    }
     
-    // Portal ring pulses mainly to bass
-    leds.setPortalBrightness(l_val);
+    // Portal ring operates at upper brightness values (85% to 100% of max brightness)
+    float total_energy = (l_val + m_val + h_val) / 3.0f;
+    float party_brightness = Config::PORTAL_MAX_BRIGHTNESS * (0.85f + 0.15f * total_energy);
+    leds.setPortalBrightness(party_brightness);
+
+    // Color/Hue changes according to frequencies: Low = Blue, Mid = Green, High = Red
+    float r_weight = powf(h_val, 1.8f); // High -> Red
+    float g_weight = powf(m_val, 1.8f); // Mid  -> Green
+    float b_weight = powf(l_val, 1.8f); // Low  -> Blue
+
+    float max_weight = fmaxf(r_weight, fmaxf(g_weight, b_weight));
+    uint8_t pr = 0, pg = 0, pb = 0;
+
+    if (max_weight > 0.0001f) {
+        // Normalize so dominant frequency is fully saturated at upper brightness
+        pr = (uint8_t)((r_weight / max_weight) * 255.0f);
+        pg = (uint8_t)((g_weight / max_weight) * 255.0f);
+        pb = (uint8_t)((b_weight / max_weight) * 255.0f);
+    } else {
+        // Fallback default if quiet (portal green)
+        pr = 0; pg = 255; pb = 0;
+    }
+
     for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
-        int hue = (i * 255 / Config::PORTAL_LED_COUNT + millis() / 10) % 255;
-        // simplified spectrum
-        if (hue < 85) leds.setPortalColor(i, hue * 3, 255 - hue * 3, 0);
-        else if (hue < 170) leds.setPortalColor(i, 255 - (hue-85) * 3, 0, (hue-85) * 3);
-        else leds.setPortalColor(i, 0, (hue-170) * 3, 255 - (hue-170) * 3);
+        leds.setPortalColor(i, pr, pg, pb);
     }
     leds.showPortal();
     
@@ -388,6 +433,6 @@ void PortalGun::handleDeepSleep() {
     
     Serial.println("Entering Deep Sleep...");
     
-    esp_sleep_enable_ext0_wakeup((gpio_num_t)Pins::PowerButton, 0); 
+    esp_sleep_enable_ext0_wakeup((gpio_num_t)digitalPinToGPIONumber(Pins::PowerButton), 0); 
     esp_deep_sleep_start();
 }

@@ -27,10 +27,12 @@ void InputSystem::begin() {
     state.justReleased = false;
     state.clicked = false;
     state.doubleClicked = false;
+    state.tripleClicked = false;
     state.held3s = false;
     state.justHeld3s = false;
     pressStartTime = 0;
     holdReported = false;
+    clickCount = 0;
     state.powerPressed = false;
     state.powerJustPressed = false;
 
@@ -80,6 +82,7 @@ void InputSystem::update() {
     state.justReleased = false;
     state.clicked = false;
     state.doubleClicked = false;
+    state.tripleClicked = false;
     state.justHeld3s = false;
 
     if (reading != lastButtonState) {
@@ -94,12 +97,21 @@ void InputSystem::update() {
                 pressStartTime = millis();
                 holdReported = false;
                 
-                // Double click detection (guard against early boot millis() overflow/zero)
-                if (lastClickTime > 0 && (millis() - lastClickTime < doubleClickDelay)) {
-                    state.doubleClicked = true;
-                    lastClickTime = 0; // reset
+                // Multi-click detection (double / triple click)
+                unsigned long now = millis();
+                if (lastClickTime > 0 && (now - lastClickTime < multiClickDelay)) {
+                    clickCount++;
                 } else {
-                    lastClickTime = millis();
+                    clickCount = 1;
+                }
+                lastClickTime = now;
+
+                if (clickCount == 2) {
+                    state.doubleClicked = true;
+                } else if (clickCount >= 3) {
+                    state.tripleClicked = true;
+                    clickCount = 0;
+                    lastClickTime = 0;
                 }
             } else {
                 state.justReleased = true;

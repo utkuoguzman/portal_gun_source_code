@@ -33,6 +33,7 @@ private:
     void handleSnakeGame();
     void handleRoulette();
     void handleDinoGame();
+    void handleRickQuote();
     void handlePowerDown();
     void handleDeepSleep();
 

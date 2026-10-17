@@ -12,6 +12,7 @@ enum class PortalState {
     SnakeGame,
     Roulette,
     DinoGame,
+    RickQuote,
     PowerDown,
     DeepSleep
 };

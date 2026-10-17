@@ -1,4 +1,5 @@
 #pragma once
+#include <stdint.h>
 
 struct JoystickState {
     int rawX;
@@ -17,6 +18,7 @@ struct JoystickState {
     bool justReleased;
     bool clicked;
     bool doubleClicked;
+    bool tripleClicked;
     bool held3s;
     bool justHeld3s;
 
@@ -37,10 +39,11 @@ private:
     unsigned long lastDebounceTime = 0;
     unsigned long lastPowerDebounceTime = 0;
     unsigned long lastClickTime = 0;
+    uint8_t clickCount = 0;
     unsigned long pressStartTime = 0;
     bool holdReported = false;
     const unsigned long debounceDelay = 50;
-    const unsigned long doubleClickDelay = 400; // ms window for double click
+    const unsigned long multiClickDelay = 450; // ms window for multi-clicks (double/triple)
 };
 
 extern InputSystem input;

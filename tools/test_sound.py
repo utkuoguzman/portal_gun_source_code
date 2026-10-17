@@ -21,15 +21,15 @@ FEATURED_SOUNDS = {
     "8": ("Roulette: Live Boom (Boom)", os.path.join(ROULETTE_DIR, "Boom.m4a"), []),
     "9": ("Roulette: Gloat - Wrecked Son (Isolated)", os.path.join(ROULETTE_DIR, "Wrecked_Son.m4a"), []),
     
-    # Evil Morty & Golden Portal
-    "10": ("Evil Morty: Theme Song (0:32 - 1:53)", os.path.join(EVIL_MORTY_DIR, "Evil Morty Final Theme.mp3"), ["-ss", "00:00:32", "-t", "81"]),
+    "10": ("Snake Game: Snake Jazz Track", ("soundbites/snake_jazz/snake_jazz.mp3" if os.path.exists("soundbites/snake_jazz/snake_jazz.mp3") else "soundbites/snake_jazz/snake_jazz_synth.wav"), []),
+    "11": ("Evil Morty: Theme Song (0:32 - 1:53)", os.path.join(EVIL_MORTY_DIR, "Evil Morty Final Theme.mp3"), ["-ss", "00:00:32", "-t", "81"]),
     
     # Rick Sanchez Soundboard Classics
-    "11": ("Rick Voice: Pickle Rick!", os.path.join(RICK_DIR, "Voicy_Pickle Rick!!!.mp3"), []),
-    "12": ("Rick Voice: Wubba Lubba Dub Dub!", os.path.join(RICK_DIR, "Voicy_Wubba Lubba Dub Dub (rick and morty).mp3"), []),
-    "13": ("Rick Voice: Ricky Tiffy Taffy Bitch!", os.path.join(RICK_DIR, "Voicy_Ricky Tiffy Taffy Bitch.mp3"), []),
-    "14": ("Rick Voice: What is my purpose? (Butter)", os.path.join(RICK_DIR, "Voicy_Rick Sanchez Butter.mp3"), []),
-    "15": ("Rick Voice: What's up Bitch?", os.path.join(RICK_DIR, "Voicy_Rick Sanchez Btch.mp3"), []),
+    "12": ("Rick Voice: Pickle Rick!", os.path.join(RICK_DIR, "Voicy_Pickle Rick!!!.mp3"), []),
+    "13": ("Rick Voice: Wubba Lubba Dub Dub!", os.path.join(RICK_DIR, "Voicy_Wubba Lubba Dub Dub (rick and morty).mp3"), []),
+    "14": ("Rick Voice: Ricky Tiffy Taffy Bitch!", os.path.join(RICK_DIR, "Voicy_Ricky Tiffy Taffy Bitch.mp3"), []),
+    "15": ("Rick Voice: What is my purpose? (Butter)", os.path.join(RICK_DIR, "Voicy_Rick Sanchez Butter.mp3"), []),
+    "16": ("Rick Voice: What's up Bitch?", os.path.join(RICK_DIR, "Voicy_Rick Sanchez Btch.mp3"), []),
 }
 
 def play_file(title, path, extra=None):
@@ -135,10 +135,10 @@ def main():
     for k in ["1", "2", "3", "4", "5"]:
         print(f"  [{k:2s}] {FEATURED_SOUNDS[k][0]}")
     print("\n  --- Mini-Games & Special Dimensions ---")
-    for k in ["6", "7", "8", "9", "10"]:
+    for k in ["6", "7", "8", "9", "10", "11"]:
         print(f"  [{k:2s}] {FEATURED_SOUNDS[k][0]}")
     print("\n  --- Rick Sanchez Soundboard ('R' Dimensions) ---")
-    for k in ["11", "12", "13", "14", "15"]:
+    for k in ["12", "13", "14", "15", "16"]:
         print(f"  [{k:2s}] {FEATURED_SOUNDS[k][0]}")
     print("=" * 65)
     print("  [v ] Verify all files on disk")
@@ -147,7 +147,7 @@ def main():
     print("=" * 65)
 
     while True:
-        choice = input("\nSelect a sound to test (1-15, v, l, q): ").strip().lower()
+        choice = input("\nSelect a sound to test (1-16, v, l, q): ").strip().lower()
         if choice == 'q':
             break
         elif choice == 'v':

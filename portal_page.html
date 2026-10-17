@@ -275,9 +275,53 @@
         }
 
         .quick-dims {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
             gap: 6px;
-            justify-content: space-between;
+        }
+
+        .dim-chip {
+            background: rgba(20, 45, 25, 0.6);
+            border: 1px solid rgba(57, 255, 20, 0.25);
+            border-radius: 6px;
+            font-family: monospace;
+            color: #bbfac8;
+            padding: 6px 2px;
+            text-align: center;
+            cursor: pointer;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            line-height: 1.2;
+            transition: all 0.15s ease;
+            user-select: none;
+            min-height: 48px;
+        }
+
+        .dim-code {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--portal-green);
+        }
+
+        .dim-label {
+            font-size: 0.58rem;
+            color: #a0d8b0;
+            margin-top: 2px;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        .dim-chip:active {
+            background: var(--portal-green);
+            transform: scale(0.96);
+        }
+
+        .dim-chip:active .dim-code,
+        .dim-chip:active .dim-label {
+            color: #000;
         }
 
         .chip {
@@ -288,9 +332,10 @@
             font-family: monospace;
             font-size: 0.8rem;
             color: #bbfac8;
-            padding: 6px 0;
+            padding: 8px 0;
             text-align: center;
             cursor: pointer;
+            box-sizing: border-box;
         }
 
         .chip:active {
@@ -376,14 +421,50 @@
                 <input type="text" id="dim-input" class="dim-input" maxlength="4" value="C137" placeholder="C137">
                 <button class="dim-btn" onclick="submitDimension()">Set</button>
             </div>
-            <div class="quick-dims" style="flex-wrap: wrap; gap: 6px;">
-                <div class="chip" onclick="setQuickDim('C137')">C-137</div>
-                <div class="chip" onclick="setQuickDim('D001')">D-001 (Dino)</div>
-                <div class="chip" onclick="setQuickDim('E001')">E-001 (Morty)</div>
-                <div class="chip" onclick="setQuickDim('P001')">P-001 (Snake)</div>
-                <div class="chip" onclick="setQuickDim('G001')">G-001 (Roulette)</div>
-                <div class="chip" onclick="setQuickDim('R042')">R-042 (Quote)</div>
-                <div class="chip" onclick="setQuickDim('B001')">B-001 (Radar)</div>
+            <div class="quick-dims">
+                <!-- Row 1 (5 items) -->
+                <div class="dim-chip" onclick="setQuickDim('C137')">
+                    <span class="dim-code">C-137</span>
+                    <span class="dim-label">Home</span>
+                </div>
+                <div class="dim-chip" onclick="setQuickDim('D003')">
+                    <span class="dim-code">D-003</span>
+                    <span class="dim-label">Dino Game</span>
+                </div>
+                <div class="dim-chip" onclick="setQuickDim('E001')">
+                    <span class="dim-code">E-001</span>
+                    <span class="dim-label">Evil Morty</span>
+                </div>
+                <div class="dim-chip" onclick="setQuickDim('S003')">
+                    <span class="dim-code">S-003</span>
+                    <span class="dim-label">Snake Game</span>
+                </div>
+                <div class="dim-chip" onclick="setQuickDim('P001')">
+                    <span class="dim-code">P-001</span>
+                    <span class="dim-label">Party Mode</span>
+                </div>
+
+                <!-- Row 2 (5 items) -->
+                <div class="dim-chip" onclick="setQuickDim('U001')">
+                    <span class="dim-code">U-001</span>
+                    <span class="dim-label">URL</span>
+                </div>
+                <div class="dim-chip" onclick="setQuickDim('R006')">
+                    <span class="dim-code">R-006</span>
+                    <span class="dim-label">Roullette</span>
+                </div>
+                <div class="dim-chip" onclick="setQuickDim('Q044')">
+                    <span class="dim-code">Q-044</span>
+                    <span class="dim-label">Quotes of Rick</span>
+                </div>
+                <div class="dim-chip" onclick="setQuickDim('B001')">
+                    <span class="dim-code">B-001</span>
+                    <span class="dim-label">BT-Radar</span>
+                </div>
+                <div class="dim-chip" onclick="setQuickDim('L001')">
+                    <span class="dim-code">L-001</span>
+                    <span class="dim-label">Light</span>
+                </div>
             </div>
         </div>
 
@@ -396,13 +477,13 @@
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
                 <!-- Top Row: Jerry (Green), Morty (Yellow), Unity (Blue) -->
-                <div class="chip" style="border-color: #39ff14;" onclick="setColor(57, 255, 20, '#39ff14')">🟢 Jerry</div>
-                <div class="chip" style="border-color: #ffea00;" onclick="setColor(255, 234, 0, '#ffea00')">🟡 Morty</div>
-                <div class="chip" style="border-color: #00bfff;" onclick="setColor(0, 191, 255, '#00bfff')">🔵 Unity</div>
+                <div class="chip" style="border-color: #39ff14;" onclick="setColor(57, 255, 20, '#39ff14')">🍃 Jerry</div>
+                <div class="chip" style="border-color: #ffea00;" onclick="setColor(255, 234, 0, '#ffea00')">⚡ Morty</div>
+                <div class="chip" style="border-color: #00bfff;" onclick="setColor(0, 191, 255, '#00bfff')">🌌 Unity</div>
                 <!-- Bottom Row: Summer (Pink), Beth (Red), Rick (White) -->
                 <div class="chip" style="border-color: #ff66cc;" onclick="setColor(255, 102, 204, '#ff66cc')">🌸 Summer</div>
-                <div class="chip" style="border-color: #ff2222;" onclick="setColor(235, 30, 30, '#ff2222')">🔴 Beth</div>
-                <div class="chip" style="border-color: #ffffff;" onclick="setColor(255, 255, 255, '#ffffff')">⚪ Rick</div>
+                <div class="chip" style="border-color: #ff2222;" onclick="setColor(235, 30, 30, '#ff2222')">🍷 Beth</div>
+                <div class="chip" style="border-color: #ffffff;" onclick="setColor(255, 255, 255, '#ffffff')">🧪 Rick</div>
             </div>
         </div>
     </div>

@@ -132,23 +132,29 @@ void AudioSystem::update() {
 #endif
         
         if (currentPos >= currentSize) {
-            playing = false;
-            currentData = nullptr;
+            if (isLooping) {
+                currentPos = 0;
+                playStartTime = millis();
+            } else {
+                playing = false;
+                currentData = nullptr;
 #ifdef WOKWI_SIM
-            noTone(25);
-            currentToneFreq = 0;
+                noTone(25);
+                currentToneFreq = 0;
 #endif
+            }
         }
     }
 }
 
-void AudioSystem::playRaw(const uint8_t* data, size_t size) {
+void AudioSystem::playRaw(const uint8_t* data, size_t size, bool loop) {
     if (data == nullptr || size == 0) return;
     currentData = data;
     currentSize = size;
     currentPos = 0;
     playStartTime = millis();
     playing = true;
+    isLooping = loop;
     Serial.println("Audio: Playing raw PCM");
 #ifndef WOKWI_SIM
     i2s_zero_dma_buffer(I2S_PORT);
@@ -157,6 +163,7 @@ void AudioSystem::playRaw(const uint8_t* data, size_t size) {
 
 void AudioSystem::stop() {
     playing = false;
+    isLooping = false;
     currentData = nullptr;
 #ifdef WOKWI_SIM
     noTone(25);

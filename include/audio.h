@@ -7,8 +7,8 @@ public:
     void begin();
     void update();
 
-    // Play a raw 8-bit unsigned PCM array at 22050 Hz
-    void playRaw(const uint8_t* data, size_t size);
+    // Play a raw 8-bit unsigned PCM array at 11025 Hz (optional looping)
+    void playRaw(const uint8_t* data, size_t size, bool loop = false);
     void stop();
     bool isPlaying() const;
     void setVolume(float volume);
@@ -21,6 +21,7 @@ private:
     size_t currentSize = 0;
     size_t currentPos = 0;
     bool playing = false;
+    bool isLooping = false;
     float currentVolume = 1.0f;
     unsigned long playStartTime = 0;
 };

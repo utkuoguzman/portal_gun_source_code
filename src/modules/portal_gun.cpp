@@ -40,6 +40,48 @@ void PortalGun::update() {
     // Global Power Button override (if not already powering down/sleeping)
     if (joy.powerJustPressed && currentState != PortalState::PowerDown && currentState != PortalState::DeepSleep) {
         changeState(PortalState::PowerDown);
+        return;
+    }
+
+    // Universal 3-click escape: Return to Dimension Selection from ANY mode, game, torch, party, or firing portal!
+    if (joy.tripleClicked) {
+        if (currentState != PortalState::DimensionSelection &&
+            currentState != PortalState::PowerUp &&
+            currentState != PortalState::PowerUpFinalize &&
+            currentState != PortalState::PowerDown &&
+            currentState != PortalState::DeepSleep) {
+
+            if (currentState == PortalState::WifiPortal) {
+                wifiPortal.stopPortal();
+            }
+            if (currentState == PortalState::RadarScan) {
+                radar.stopScan();
+            }
+            if (currentState == PortalState::Torch) {
+                leds.setTorchMode(false);
+            }
+            audio.stop();
+            audio.playRaw(snd_portal_close1, snd_portal_close1_size);
+            leds.clearPortal();
+            for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
+            portalIsOpen = false;
+            portalJustClosed = false;
+            isQuoteActive = false;
+            quoteAudioStarted = false;
+            changeState(PortalState::DimensionSelection);
+            return;
+        } else if (currentState == PortalState::DimensionSelection && (portalIsOpen || isQuoteActive)) {
+            // Portal firing state or Rick quote: 3 clicks immediately closes the portal beam
+            audio.stop();
+            audio.playRaw(snd_portal_close1, snd_portal_close1_size);
+            leds.clearPortal();
+            for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
+            portalIsOpen = false;
+            portalJustClosed = true;
+            isQuoteActive = false;
+            quoteAudioStarted = false;
+            return;
+        }
     }
 
     switch (currentState) {
@@ -76,6 +118,9 @@ void PortalGun::update() {
         case PortalState::DinoGame:
             handleDinoGame();
             break;
+        case PortalState::RickQuote:
+            handleRickQuote();
+            break;
         case PortalState::PowerDown:
             handlePowerDown();
             break;
@@ -105,6 +150,7 @@ void PortalGun::changeState(PortalState newState) {
         case PortalState::SnakeGame: Serial.println("SnakeGame"); break;
         case PortalState::Roulette: Serial.println("Roulette"); break;
         case PortalState::DinoGame: Serial.println("DinoGame"); break;
+        case PortalState::RickQuote: Serial.println("RickQuote"); break;
         case PortalState::PowerDown: Serial.println("PowerDown"); break;
         case PortalState::DeepSleep: Serial.println("DeepSleep"); break;
     }
@@ -196,18 +242,6 @@ void PortalGun::handleDimensionSelection() {
         leds.clearPortal();
     }
     
-    // Torch Mode transition: hold joystick button for 3 seconds
-    if (joy.justHeld3s) {
-        changeState(PortalState::Torch);
-        return;
-    }
-
-    // Party transition
-    if (joy.doubleClicked) {
-        changeState(PortalState::Party);
-        return;
-    }
-
     if (portalIsOpen) {
         if (isQuoteActive) {
             // Feature 2: Rick Soundboard playback
@@ -294,41 +328,41 @@ void PortalGun::handleDimensionSelection() {
         if (joy.clicked) {
             if (!portalJustClosed) {
                 if (dimLetter == 'B') {
-                    // 'B' dimension activates 60s Citadel/Federation Proximity Radar
+                    // 'B' dimension activates 60s Citadel/Federation Proximity Radar (BT-Radar)
                     changeState(PortalState::RadarScan);
                     return;
-                } else if (dimLetter == 'S') {
-                    // 'S' dimension activates 120s Wi-Fi Captive Portal Hotspot
+                } else if (dimLetter == 'U') {
+                    // 'U' dimension activates 120s Wi-Fi Captive Portal Hotspot (U for URL)
                     changeState(PortalState::WifiPortal);
+                    return;
+                } else if (dimLetter == 'P') {
+                    // 'P' dimension activates Party Mode (Get Schwifty!)
+                    changeState(PortalState::Party);
                     return;
                 } else if (dimLetter == 'E') {
                     // 'E' dimension activates Evil Morty Theme & Amber Golden Portal
                     changeState(PortalState::EvilMorty);
                     return;
-                } else if (dimLetter == 'P') {
-                    // 'P' dimension activates 7-Segment Snake Game
+                } else if (dimLetter == 'S') {
+                    // 'S' dimension activates 7-Segment Snake Game
                     changeState(PortalState::SnakeGame);
                     return;
-                } else if (dimLetter == 'G') {
-                    // 'G' dimension activates Interdimensional Chamber Roulette
+                } else if (dimLetter == 'R' || dimLetter == 'G') {
+                    // 'R' dimension activates Interdimensional Chamber Roulette (G retained as alias)
                     changeState(PortalState::Roulette);
                     return;
                 } else if (dimLetter == 'D') {
                     // 'D' dimension activates Google Chrome Dinosaur Runner
                     changeState(PortalState::DinoGame);
                     return;
-                } else if (dimLetter == 'R') {
-                    // 'R' dimension activates Rick soundboard
-                    portalIsOpen = true;
-                    portalOpenTime = millis();
-                    isQuoteActive = true;
-                    quoteAudioStarted = false;
-                    currentQuoteIdx = (rick_soundboard_count > 0) ? random(rick_soundboard_count) : 0;
-                    if (millis() % 2 == 0) {
-                        audio.playRaw(snd_portal_open1, snd_portal_open1_size);
-                    } else {
-                        audio.playRaw(snd_portal_open2, snd_portal_open2_size);
-                    }
+                } else if (dimLetter == 'Q') {
+                    // 'Q' dimension activates Rick Quotes soundboard browser
+                    changeState(PortalState::RickQuote);
+                    return;
+                } else if (dimLetter == 'L') {
+                    // 'L' dimension activates High-Power Torch / Light (LItE)
+                    changeState(PortalState::Torch);
+                    return;
                 } else {
                     // Standard portal open
                     portalIsOpen = true;
@@ -348,6 +382,7 @@ void PortalGun::handleDimensionSelection() {
         
         static unsigned long lastMove = 0;
         if (millis() - lastMove > 200) {
+            char prevLetter = dimLetter;
             if (joy.up) {
                 dimLetter++;
                 if (dimLetter > 'Z') dimLetter = 'A';
@@ -356,6 +391,14 @@ void PortalGun::handleDimensionSelection() {
                 dimLetter--;
                 if (dimLetter < 'A') dimLetter = 'Z';
                 lastMove = millis();
+            }
+            if (prevLetter != dimLetter) {
+                if (dimLetter == 'D') dimNumber = 3;
+                else if (dimLetter == 'S') dimNumber = 3;
+                else if (dimLetter == 'R') dimNumber = 6;
+                else if (dimLetter == 'Q') dimNumber = 44;
+                else if (dimLetter == 'C') dimNumber = 137;
+                else if (dimLetter == 'E' || dimLetter == 'P' || dimLetter == 'U' || dimLetter == 'B' || dimLetter == 'L') dimNumber = 1;
             }
             
             if (joy.right) {
@@ -390,8 +433,11 @@ void PortalGun::handleParty() {
         audio.playRaw(snd_getschwifty, snd_getschwifty_size);
     }
     
-    if (joy.doubleClicked) {
+    // Exit party mode on click or 3-click emergency exit
+    if (joy.clicked || joy.doubleClicked || joy.tripleClicked) {
         audio.stop();
+        leds.clearPortal();
+        for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
         changeState(PortalState::DimensionSelection);
         return;
     }
@@ -520,12 +566,17 @@ void PortalGun::handleTorch() {
     if (stateInit) {
         stateInit = false;
         leds.setTorchMode(true);
+        for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
+            leds.setPortalColor(i, 255, 255, 255);
+        }
+        leds.showPortal();
         display.showText("LItE");
     }
 
-    // Exit Torch mode if held for 3 seconds or clicked
-    if (joy.justHeld3s || joy.clicked) {
+    // Exit Torch mode if clicked (or 3-click emergency exit)
+    if (joy.clicked || joy.doubleClicked || joy.tripleClicked) {
         leds.setTorchMode(false);
+        leds.clearPortal();
         changeState(PortalState::DimensionSelection);
         return;
     }
@@ -589,12 +640,12 @@ void PortalGun::handleWifiPortal() {
         return;
     }
 
-    // Display: countdown S120 down to S000 (S displays cleanly on 7-seg)
+    // Display: countdown U120 down to U000 (U for URL, displays cleanly as 0x3E)
     char buf[5];
     if (remSec > 99) {
-        snprintf(buf, sizeof(buf), "S%03d", remSec);
+        snprintf(buf, sizeof(buf), "U%03d", remSec);
     } else {
-        snprintf(buf, sizeof(buf), "S-%02d", remSec);
+        snprintf(buf, sizeof(buf), "U-%02d", remSec);
     }
     display.showText(buf);
 
@@ -714,8 +765,92 @@ void PortalGun::handleEvilMorty() {
 }
 
 // -------------------------------------------------------------
-// FEATURE 2: 7-Segment Snake Game with Toroidal Wrap ('P' Dimension)
+// FEATURE 5: Rick Quotes Soundboard Browser ('R' Dimension)
 // -------------------------------------------------------------
+void PortalGun::handleRickQuote() {
+    const auto& joy = input.getState();
+    uint32_t now = millis();
+    static uint32_t lastSampleTime = 0;
+    static bool wasDirPressed = false;
+
+    if (stateInit) {
+        stateInit = false;
+        lastSampleTime = now;
+        wasDirPressed = false;
+        quoteAudioStarted = false;
+        
+        // Opening portal blast + pick initial quote (dimNumber selects quote index if 1..44)
+        if (dimNumber >= 1 && dimNumber <= (int)rick_soundboard_count) {
+            currentQuoteIdx = dimNumber - 1;
+        } else {
+            currentQuoteIdx = (rick_soundboard_count > 0) ? random(rick_soundboard_count) : 0;
+        }
+        audio.playRaw(snd_portal_open1, snd_portal_open1_size);
+    }
+
+    // Wait for the short portal opening blast before speaking
+    if (!quoteAudioStarted) {
+        if (!audio.isPlaying() || (now - stateStartTime >= 350)) {
+            quoteAudioStarted = true;
+            if (rick_soundboard_count > 0) {
+                audio.playRaw(rick_soundboard[currentQuoteIdx].pcmData, rick_soundboard[currentQuoteIdx].size);
+                display.showText(rick_soundboard[currentQuoteIdx].label);
+            }
+        }
+    }
+
+    // Pushing the joystick UP, DOWN, LEFT, or RIGHT samples another quote randomly!
+    bool isDirPressed = (joy.up || joy.down || joy.left || joy.right);
+    if (isDirPressed && (!wasDirPressed || (now - lastSampleTime > 320))) {
+        lastSampleTime = now;
+        if (rick_soundboard_count > 0) {
+            int nextQuote = random(rick_soundboard_count);
+            if (rick_soundboard_count > 1 && nextQuote == currentQuoteIdx) {
+                nextQuote = (nextQuote + 1) % rick_soundboard_count;
+            }
+            currentQuoteIdx = nextQuote;
+            audio.stop();
+            audio.playRaw(rick_soundboard[currentQuoteIdx].pcmData, rick_soundboard[currentQuoteIdx].size);
+            display.showText(rick_soundboard[currentQuoteIdx].label);
+        }
+    }
+    wasDirPressed = isDirPressed;
+
+    // Display subtitle code
+    if (quoteAudioStarted && rick_soundboard_count > 0) {
+        display.showText(rick_soundboard[currentQuoteIdx].label);
+    }
+
+    // Visuals: Animated talking portal
+    if (audio.isPlaying()) {
+        float pulse = (sinf(now / 110.0f) + 1.0f) * 0.5f;
+        leds.setPortalBrightness(0.25f + 0.12f * pulse);
+        for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
+            leds.setPortalColor(i, 0, 255, 0);
+        }
+        leds.showPortal();
+        for (int i = 0; i < 3; i++) {
+            leds.setGreen(i, 0.4f + 0.6f * pulse);
+        }
+    } else {
+        // Idle open portal waiting for next quote sample
+        float pulse = (sinf(now / 200.0f) + 1.0f) * 0.5f;
+        leds.setPortalBrightness(0.20f + 0.05f * pulse);
+        for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
+            leds.setPortalColor(i, 0, 220, 20);
+        }
+        leds.showPortal();
+        for (int i = 0; i < 3; i++) {
+            leds.setGreen(i, 0.3f + 0.3f * pulse);
+        }
+    }
+}
+
+enum class SnakePhase { ShowLives, Playing, LostLife, Dead };
+static SnakePhase snakePhase = SnakePhase::ShowLives;
+static uint32_t snakePhaseStart = 0;
+static int snakeLives = 3;
+
 struct SnakeSegment {
     int8_t digit; // 0..3
     int8_t seg;   // 0..6 (a=0, b=1, c=2, d=3, e=4, f=5, g=6)
@@ -728,7 +863,6 @@ static int8_t snakeTargetJunc = 1; // 0:TL, 1:TR, 2:ML, 3:MR, 4:BL, 5:BR
 static int8_t snakeMomentum = 3;   // 0:UP, 1:DOWN, 2:LEFT, 3:RIGHT
 static uint32_t lastSnakeMove = 0;
 static uint32_t snakeSpeed = 220;
-static bool snakeDead = false;
 static uint32_t snakeDeadTime = 0;
 static int snakeScore = 0;
 
@@ -778,20 +912,137 @@ void PortalGun::handleSnakeGame() {
     
     if (stateInit) {
         stateInit = false;
+        snakeLives = (dimNumber > 0) ? min(dimNumber, 99) : 3;
+        snakeScore = 0;
+        snakePhase = SnakePhase::ShowLives;
+        snakePhaseStart = now;
+        
         snakeLen = 3;
         snakeMomentum = 3; // RIGHT
         snakeTargetJunc = 1; // TR
         snakeBody[0] = {2, 0}; // Head at Digit 2 a
         snakeBody[1] = {1, 0}; // Neck at Digit 1 a
         snakeBody[2] = {0, 0}; // Tail at Digit 0 a
-        snakeDead = false;
-        snakeScore = 0;
         snakeSpeed = 220;
         lastSnakeMove = now;
         spawnSnakeFood();
-        audio.playRaw(snd_portal_open1, snd_portal_open1_size);
+        audio.playRaw(snd_snake_jazz, snd_snake_jazz_size, true); // Loop Snake Jazz!
     }
     
+    // Exit game manually by double-clicking joystick
+    if (joy.doubleClicked) {
+        audio.stop();
+        leds.clearPortal();
+        for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
+        changeState(PortalState::DimensionSelection);
+        return;
+    }
+
+    // Phase 1: ShowLives ("LV 3" or "L020")
+    if (snakePhase == SnakePhase::ShowLives) {
+        char livesBuf[5];
+        if (snakeLives <= 9) {
+            snprintf(livesBuf, sizeof(livesBuf), "LV %d", snakeLives);
+        } else {
+            snprintf(livesBuf, sizeof(livesBuf), "L%03d", snakeLives);
+        }
+        display.showText(livesBuf);
+
+        // Front 3 green LEDs display current life count HUD
+        for (int i = 0; i < 3; i++) {
+            leds.setGreen(i, (i < snakeLives) ? 1.0f : 0.0f);
+        }
+
+        // Ambient green pulse
+        float pulse = (sinf(now / 150.0f) + 1.0f) * 0.5f;
+        for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
+            leds.setPortalColor(i, 0, (uint8_t)(80 + 120 * pulse), 0);
+        }
+        leds.showPortal();
+
+        if (now - snakePhaseStart >= 1100) {
+            snakePhase = SnakePhase::Playing;
+            lastSnakeMove = now;
+            if (!audio.isPlaying()) {
+                audio.playRaw(snd_snake_jazz, snd_snake_jazz_size, true);
+            }
+        }
+        return;
+    }
+
+    // Phase 2: LostLife (flashes red, shows life loss)
+    if (snakePhase == SnakePhase::LostLife) {
+        uint32_t elapsed = now - snakePhaseStart;
+        bool flash = ((now / 80) % 2 == 0);
+        for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
+            leds.setPortalColor(i, flash ? 255 : 20, 0, 0);
+        }
+        leds.showPortal();
+        for (int i = 0; i < 3; i++) leds.setGreen(i, flash ? 1.0f : 0.0f);
+
+        char livesBuf[5];
+        if (snakeLives <= 9) {
+            snprintf(livesBuf, sizeof(livesBuf), "LV %d", snakeLives);
+        } else {
+            snprintf(livesBuf, sizeof(livesBuf), "L%03d", snakeLives);
+        }
+        display.showText(livesBuf);
+
+        if (elapsed >= 900) {
+            if (snakeLives > 0) {
+                // Respawn snake at starting position, preserve score
+                snakeLen = 3;
+                snakeMomentum = 3; // RIGHT
+                snakeTargetJunc = 1; // TR
+                snakeBody[0] = {2, 0};
+                snakeBody[1] = {1, 0};
+                snakeBody[2] = {0, 0};
+                spawnSnakeFood();
+                snakePhase = SnakePhase::ShowLives;
+                snakePhaseStart = now;
+                audio.playRaw(snd_snake_jazz, snd_snake_jazz_size, true);
+            } else {
+                // Out of lives -> LV 0 then Dead
+                snakePhase = SnakePhase::Dead;
+                snakeDeadTime = now;
+                audio.stop();
+                audio.playRaw(snd_roulette_boom, snd_roulette_boom_size);
+            }
+        }
+        return;
+    }
+
+    // Phase 3: Dead (Game Over)
+    if (snakePhase == SnakePhase::Dead) {
+        uint32_t deadElapsed = now - snakeDeadTime;
+        
+        bool flash = ((now / 120) % 2 == 0);
+        for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
+            leds.setPortalColor(i, flash ? 255 : 30, 0, 0);
+        }
+        leds.showPortal();
+        for (int i = 0; i < 3; i++) leds.setGreen(i, flash ? 1.0f : 0.0f);
+        
+        if (deadElapsed < 2200) {
+            display.showText("dEAd");
+        } else {
+            char scoreBuf[5];
+            snprintf(scoreBuf, sizeof(scoreBuf), "SC%02d", snakeScore % 100);
+            display.showText(scoreBuf);
+        }
+        
+        // Exit on click after 500ms or automatic timeout after 6 seconds
+        if ((deadElapsed > 500 && joy.clicked) || deadElapsed > 6000) {
+            audio.stop();
+            leds.clearPortal();
+            for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
+            changeState(PortalState::DimensionSelection);
+            return;
+        }
+        return;
+    }
+
+    // Phase 4: Active Gameplay
     // Joystick direction request
     int requestedDir = -1;
     if (joy.up) requestedDir = 0;
@@ -805,44 +1056,6 @@ void PortalGun::handleSnakeGame() {
         else if (requestedDir == 1 && snakeMomentum == 0) requestedDir = -1;
         else if (requestedDir == 2 && snakeMomentum == 3) requestedDir = -1;
         else if (requestedDir == 3 && snakeMomentum == 2) requestedDir = -1;
-    }
-    
-    if (snakeDead) {
-        // Game Over handling
-        uint32_t deadElapsed = now - snakeDeadTime;
-        
-        // Red flashing LEDs
-        bool flash = ((now / 120) % 2 == 0);
-        for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
-            leds.setPortalColor(i, flash ? 255 : 30, 0, 0);
-        }
-        leds.showPortal();
-        for (int i = 0; i < 3; i++) leds.setGreen(i, flash ? 1.0f : 0.0f);
-        
-        if (deadElapsed < 2000) {
-            display.showText("dEAd");
-        } else {
-            char scoreBuf[5];
-            snprintf(scoreBuf, sizeof(scoreBuf), "SC%02d", snakeScore % 100);
-            display.showText(scoreBuf);
-        }
-        
-        // Exit on click after 500ms or automatic timeout after 6 seconds
-        if ((deadElapsed > 500 && joy.clicked) || deadElapsed > 6000) {
-            leds.clearPortal();
-            for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
-            changeState(PortalState::DimensionSelection);
-            return;
-        }
-        return;
-    }
-    
-    // Exit game manually by holding joystick button or double clicking
-    if (joy.doubleClicked) {
-        leds.clearPortal();
-        for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
-        changeState(PortalState::DimensionSelection);
-        return;
     }
     
     // Snake movement timer
@@ -869,9 +1082,11 @@ void PortalGun::handleSnakeGame() {
         // Check self collision (head colliding with body)
         for (int i = 0; i < snakeLen - 1; i++) {
             if (snakeBody[i].digit == nextD && snakeBody[i].seg == nextS) {
-                snakeDead = true;
-                snakeDeadTime = now;
-                audio.playRaw(snd_roulette_boom, snd_roulette_boom_size);
+                snakeLives--;
+                audio.stop();
+                audio.playRaw(snd_roulette_clack, snd_roulette_clack_size);
+                snakePhase = SnakePhase::LostLife;
+                snakePhaseStart = now;
                 return;
             }
         }
@@ -912,15 +1127,17 @@ void PortalGun::handleSnakeGame() {
     }
     display.showSegments(dispData);
     
+    // Front 3 LEDs show live life count HUD during gameplay
+    for (int i = 0; i < 3; i++) {
+        leds.setGreen(i, (i < snakeLives) ? 0.9f : 0.0f);
+    }
+
     // Dynamic green ambient lighting following the snake
     int activeDigit = snakeBody[0].digit;
     for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
         leds.setPortalColor(i, 0, (i == activeDigit + 1) ? 220 : 35, 0);
     }
     leds.showPortal();
-    for (int i = 0; i < 3; i++) {
-        leds.setGreen(i, (i == activeDigit) ? 0.9f : 0.2f);
-    }
 }
 
 // -------------------------------------------------------------
@@ -929,7 +1146,9 @@ void PortalGun::handleSnakeGame() {
 enum class RoulettePhase { Spin, Ready, SafeResult, BoomBlast, BoomQuote };
 static RoulettePhase roulettePhase = RoulettePhase::Spin;
 static uint32_t roulettePhaseStart = 0;
-static bool rouletteIsLive = false;
+static int rouletteTotalChambers = 6;
+static int rouletteBulletSlot = 0;   // 0..rouletteTotalChambers-1
+static int rouletteCurrentSlot = 0;  // Current trial (0..rouletteTotalChambers-1)
 
 void PortalGun::handleRoulette() {
     const auto& joy = input.getState();
@@ -940,8 +1159,10 @@ void PortalGun::handleRoulette() {
         stateInit = false;
         roulettePhase = RoulettePhase::Spin;
         roulettePhaseStart = now;
-        // 1 in 6 chance of a live explosive chamber
-        rouletteIsLive = (random(6) == 0);
+        // Bullet randomly hidden in 1 of the chambers based on dimNumber (default 6)
+        rouletteTotalChambers = (dimNumber > 1) ? min(dimNumber, 99) : 6;
+        rouletteBulletSlot = random(rouletteTotalChambers);
+        rouletteCurrentSlot = 0;
         audio.playRaw(snd_roulette_spin, snd_roulette_spin_size);
     }
     
@@ -963,15 +1184,44 @@ void PortalGun::handleRoulette() {
         if (!audio.isPlaying() || elapsed >= 1600) {
             roulettePhase = RoulettePhase::Ready;
             roulettePhaseStart = now;
-            display.showText("PULL");
         }
     } else if (roulettePhase == RoulettePhase::Ready) {
-        display.showText("PULL");
+        // Display alternates between "PULL" and "CH x" showing trial count
+        char chBuf[5];
+        if (rouletteTotalChambers <= 9) {
+            snprintf(chBuf, sizeof(chBuf), "CH %d", rouletteCurrentSlot + 1);
+        } else {
+            snprintf(chBuf, sizeof(chBuf), "C%03d", rouletteCurrentSlot + 1);
+        }
+        display.showText(((now / 900) % 2 == 0) ? "PULL" : chBuf);
         
-        // Tense heartbeat pulse on LEDs
+        // Tense heartbeat pulse on LEDs with live chamber cylinder HUD:
         float pulse = (sinf(now / 150.0f) + 1.0f) * 0.5f;
-        for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
-            leds.setPortalColor(i, (uint8_t)(80.0f * pulse), (uint8_t)(160.0f * (1.0f - pulse)), 0);
+        leds.setPortalColor(0, (uint8_t)(80.0f * pulse), (uint8_t)(160.0f * (1.0f - pulse)), 0);
+        
+        if (rouletteTotalChambers <= 6) {
+            for (int i = 0; i < 6; i++) {
+                if (i < rouletteCurrentSlot) {
+                    leds.setPortalColor(i + 1, 0, 90, 20); // Already safely cleared
+                } else if (i == rouletteCurrentSlot) {
+                    leds.setPortalColor(i + 1, (uint8_t)(255.0f * pulse), (uint8_t)(160.0f * (1.0f - pulse)), 0);
+                } else if (i < rouletteTotalChambers) {
+                    leds.setPortalColor(i + 1, 40, 25, 0); // Unfired
+                } else {
+                    leds.setPortalColor(i + 1, 0, 0, 0); // Unused cylinder slot
+                }
+            }
+        } else {
+            int activeLed = rouletteCurrentSlot % 6;
+            for (int i = 0; i < 6; i++) {
+                if (i == activeLed) {
+                    leds.setPortalColor(i + 1, (uint8_t)(255.0f * pulse), (uint8_t)(160.0f * (1.0f - pulse)), 0);
+                } else if (i < activeLed) {
+                    leds.setPortalColor(i + 1, 0, 90, 20);
+                } else {
+                    leds.setPortalColor(i + 1, 40, 25, 0);
+                }
+            }
         }
         leds.showPortal();
         for (int i = 0; i < 3; i++) {
@@ -981,7 +1231,7 @@ void PortalGun::handleRoulette() {
         // Pull trigger: user clicks joystick
         if (joy.clicked) {
             roulettePhaseStart = now;
-            if (!rouletteIsLive) {
+            if (rouletteCurrentSlot != rouletteBulletSlot) {
                 // Empty chamber dry fire: metallic clack
                 roulettePhase = RoulettePhase::SafeResult;
                 audio.playRaw(snd_roulette_clack, snd_roulette_clack_size);
@@ -1003,10 +1253,18 @@ void PortalGun::handleRoulette() {
         leds.showPortal();
         for (int i = 0; i < 3; i++) leds.setGreen(i, 0.8f);
         
-        if (elapsed > 1800 || (elapsed > 400 && joy.clicked)) {
-            leds.clearPortal();
-            for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
-            changeState(PortalState::DimensionSelection);
+        if (elapsed > 1400 || (elapsed > 350 && joy.clicked)) {
+            // Advance to the next chamber!
+            rouletteCurrentSlot++;
+            if (rouletteCurrentSlot >= rouletteTotalChambers) {
+                // Survived all trials! Disarm and return
+                leds.clearPortal();
+                for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
+                changeState(PortalState::DimensionSelection);
+            } else {
+                roulettePhase = RoulettePhase::Ready;
+                roulettePhaseStart = now;
+            }
         }
     } else if (roulettePhase == RoulettePhase::BoomBlast) {
         display.showText("bOOM");
@@ -1067,11 +1325,16 @@ static const uint32_t DINO_JUMP_APEX_MS  = 460;
 static uint8_t dinoTrack[4] = {0, 0, 0, 0};
 static uint32_t lastDinoStep = 0;
 static uint32_t dinoStepInterval = 330;
-static uint32_t dinoGameStart = 0;
-static bool dinoDead = false;
+static int dinoEmptyCount = 2;
+
+enum class DinoPhase { ShowLives, Playing, LostLife, Dead };
+static DinoPhase dinoPhase = DinoPhase::ShowLives;
+static uint32_t dinoPhaseStart = 0;
+static int dinoLives = 3;
 static uint32_t dinoDeadTime = 0;
 static int dinoAliveSeconds = 0;
-static int dinoEmptyCount = 2;
+static uint32_t dinoTotalPlayMs = 0;
+static uint32_t lastDinoPlayTick = 0;
 
 static uint8_t getDinoObstacleBits(uint8_t obsType) {
     switch (obsType) {
@@ -1089,24 +1352,102 @@ void PortalGun::handleDinoGame() {
     
     if (stateInit) {
         stateInit = false;
+        dinoLives = (dimNumber > 0) ? min(dimNumber, 99) : 3;
+        dinoPhase = DinoPhase::ShowLives;
+        dinoPhaseStart = now;
         dinoJump = DinoJumpState::Ground;
         dinoJumpStart = 0;
         for (int i = 0; i < 4; i++) dinoTrack[i] = 0;
         lastDinoStep = now;
         dinoStepInterval = 330;
-        dinoGameStart = now;
-        dinoDead = false;
         dinoDeadTime = 0;
         dinoAliveSeconds = 0;
+        dinoTotalPlayMs = 0;
+        lastDinoPlayTick = now;
         dinoEmptyCount = 2;
         audio.playRaw(snd_portal_open1, snd_portal_open1_size);
     }
     
-    if (dinoDead) {
-        // Game Over screen
+    // Exit game manually by double-clicking joystick (triple click is handled globally)
+    if (joy.doubleClicked) {
+        audio.stop();
+        leds.clearPortal();
+        for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
+        changeState(PortalState::DimensionSelection);
+        return;
+    }
+
+    // Phase 1: ShowLives ("LV 3" or "L020")
+    if (dinoPhase == DinoPhase::ShowLives) {
+        char livesBuf[5];
+        if (dinoLives <= 9) {
+            snprintf(livesBuf, sizeof(livesBuf), "LV %d", dinoLives);
+        } else {
+            snprintf(livesBuf, sizeof(livesBuf), "L%03d", dinoLives);
+        }
+        display.showText(livesBuf);
+
+        // Front 3 green LEDs display current life count HUD
+        for (int i = 0; i < 3; i++) {
+            leds.setGreen(i, (i < dinoLives) ? 1.0f : 0.0f);
+        }
+
+        // Ambient green pulse
+        float pulse = (sinf(now / 150.0f) + 1.0f) * 0.5f;
+        for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
+            leds.setPortalColor(i, 0, (uint8_t)(80 + 120 * pulse), 0);
+        }
+        leds.showPortal();
+
+        if (now - dinoPhaseStart >= 1100) {
+            dinoPhase = DinoPhase::Playing;
+            lastDinoStep = now;
+            lastDinoPlayTick = now;
+        }
+        return;
+    }
+
+    // Phase 2: LostLife (flashes red, shows life loss)
+    if (dinoPhase == DinoPhase::LostLife) {
+        uint32_t elapsed = now - dinoPhaseStart;
+        bool flash = ((now / 80) % 2 == 0);
+        for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
+            leds.setPortalColor(i, flash ? 255 : 20, 0, 0);
+        }
+        leds.showPortal();
+        for (int i = 0; i < 3; i++) leds.setGreen(i, flash ? 1.0f : 0.0f);
+
+        char livesBuf[5];
+        if (dinoLives <= 9) {
+            snprintf(livesBuf, sizeof(livesBuf), "LV %d", dinoLives);
+        } else {
+            snprintf(livesBuf, sizeof(livesBuf), "L%03d", dinoLives);
+        }
+        display.showText(livesBuf);
+
+        if (elapsed >= 900) {
+            if (dinoLives > 0) {
+                // Clear immediate obstacle track and reset jump so dino doesn't land on obstacle
+                for (int i = 0; i < 4; i++) dinoTrack[i] = 0;
+                dinoJump = DinoJumpState::Ground;
+                dinoEmptyCount = 2;
+                dinoPhase = DinoPhase::ShowLives;
+                dinoPhaseStart = now;
+            } else {
+                // Out of lives -> LV 0 then Dead
+                dinoPhase = DinoPhase::Dead;
+                dinoDeadTime = now;
+                audio.stop();
+                audio.playRaw(snd_roulette_boom, snd_roulette_boom_size);
+            }
+        }
+        return;
+    }
+
+    // Phase 3: Dead (Game Over)
+    if (dinoPhase == DinoPhase::Dead) {
         uint32_t deadElapsed = now - dinoDeadTime;
         
-        // Red flashing LEDs
         bool flash = ((now / 120) % 2 == 0);
         for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
             leds.setPortalColor(i, flash ? 255 : 30, 0, 0);
@@ -1114,7 +1455,7 @@ void PortalGun::handleDinoGame() {
         leds.showPortal();
         for (int i = 0; i < 3; i++) leds.setGreen(i, flash ? 1.0f : 0.0f);
         
-        if (deadElapsed < 2000) {
+        if (deadElapsed < 2200) {
             display.showText("dEAd");
         } else {
             // Display your score: alive seconds!
@@ -1125,6 +1466,7 @@ void PortalGun::handleDinoGame() {
         
         // Exit on joystick click after 500ms or automatic timeout after 8 seconds
         if ((deadElapsed > 500 && joy.clicked) || deadElapsed > 8000) {
+            audio.stop();
             leds.clearPortal();
             for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
             changeState(PortalState::DimensionSelection);
@@ -1132,17 +1474,12 @@ void PortalGun::handleDinoGame() {
         }
         return;
     }
-    
-    // Exit game manually by double-clicking joystick
-    if (joy.doubleClicked) {
-        leds.clearPortal();
-        for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
-        changeState(PortalState::DimensionSelection);
-        return;
-    }
-    
+
+    // Phase 4: Active Gameplay
     // Alive time update
-    dinoAliveSeconds = (now - dinoGameStart) / 1000;
+    dinoTotalPlayMs += (now - lastDinoPlayTick);
+    lastDinoPlayTick = now;
+    dinoAliveSeconds = dinoTotalPlayMs / 1000;
     
     // Dynamic difficulty: speed up as seconds pass (from 330ms down to 160ms)
     uint32_t speedUp = min((uint32_t)170, (uint32_t)((dinoAliveSeconds / 4) * 15));
@@ -1227,10 +1564,12 @@ void PortalGun::handleDinoGame() {
     if (dinoTrack[0] != 0) {
         uint8_t obsBits = getDinoObstacleBits(dinoTrack[0]);
         if ((dinoBits & obsBits) != 0) {
-            // Hit obstacle!
-            dinoDead = true;
-            dinoDeadTime = now;
-            audio.playRaw(snd_roulette_boom, snd_roulette_boom_size);
+            // Hit obstacle! Lose life
+            dinoLives--;
+            audio.stop();
+            audio.playRaw(snd_roulette_clack, snd_roulette_clack_size);
+            dinoPhase = DinoPhase::LostLife;
+            dinoPhaseStart = now;
             return;
         }
     }
@@ -1244,11 +1583,10 @@ void PortalGun::handleDinoGame() {
     dispData[3] = getDinoObstacleBits(dinoTrack[3]);
     display.showSegments(dispData);
     
-    // Visual LED effects:
-    // Front LEDs 1..3 serve as proximity radar for incoming obstacles!
-    leds.setGreen(0, (dinoTrack[1] != 0) ? 1.0f : 0.05f);
-    leds.setGreen(1, (dinoTrack[2] != 0) ? 0.7f : 0.05f);
-    leds.setGreen(2, (dinoTrack[3] != 0) ? 0.4f : 0.05f);
+    // Front 3 LEDs show live life count HUD during gameplay (same as Snake)
+    for (int i = 0; i < 3; i++) {
+        leds.setGreen(i, (i < dinoLives) ? 0.9f : 0.0f);
+    }
     
     // Portal ring: ambient runner pulse, jumps up when player jumps
     if (dinoJump != DinoJumpState::Ground) {

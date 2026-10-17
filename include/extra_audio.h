@@ -20,3 +20,6 @@ extern const size_t snd_roulette_wrecked_size;
 extern const uint8_t snd_snake_jazz[];
 extern const size_t snd_snake_jazz_size;
 
+extern const uint8_t snd_dino_song[];
+extern const size_t snd_dino_song_size;
+

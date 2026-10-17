@@ -9,6 +9,8 @@ SOURCES = [
     ('roulette_wrecked', 'soundbites/roullette/Wrecked_Son.m4a', 'soundbites/raw_temp/roulette_wrecked.raw', [], ['-af', 'volume=2.5'])
 ]
 
+ffmpeg_bin = 'tools/ffmpeg.exe' if os.path.exists('tools/ffmpeg.exe') else 'ffmpeg'
+
 # Check for Snake Jazz in soundbites/snake_jazz
 os.makedirs('soundbites/snake_jazz', exist_ok=True)
 snake_jazz_dir = 'soundbites/snake_jazz'
@@ -27,6 +29,19 @@ if user_snake_files:
 elif os.path.exists('soundbites/snake_jazz/snake_jazz_synth.wav'):
     SOURCES.append(('snake_jazz', 'soundbites/snake_jazz/snake_jazz_synth.wav', 'soundbites/raw_temp/snake_jazz.raw', [], []))
 
+# Check for Dino Song in soundbites/dino_game
+os.makedirs('soundbites/dino_game', exist_ok=True)
+dino_dir = 'soundbites/dino_game'
+user_dino_files = [f for f in os.listdir(dino_dir) if f.lower().endswith(('.mp3', '.m4a', '.wav'))]
+
+if user_dino_files:
+    dino_file = os.path.join(dino_dir, user_dino_files[0])
+    print(f"Found user Dino track: {dino_file}")
+    # Trim first 9 seconds and last 5 seconds (total ~82.29s -> 68.2857s duration)
+    SOURCES.append(('dino_song', dino_file, 'soundbites/raw_temp/dino_song.raw',
+                    ['-ss', '9', '-t', '68.2857'],
+                    []))
+
 os.makedirs('soundbites/raw_temp', exist_ok=True)
 
 # Convert any missing or modified source files using ffmpeg
@@ -35,7 +50,7 @@ for name, src, raw, in_opts, out_opts in SOURCES:
         raise FileNotFoundError(f"Required audio source file missing: {src}")
     if not os.path.exists(raw) or os.path.getmtime(src) > os.path.getmtime(raw) or os.path.getsize(raw) == 0:
         print(f"Converting {src} -> {raw}...")
-        cmd = ['ffmpeg', '-y'] + in_opts + ['-i', src] + out_opts + ['-ac', '1', '-ar', '11025', '-f', 'u8', raw]
+        cmd = [ffmpeg_bin, '-y'] + in_opts + ['-i', src] + out_opts + ['-ac', '1', '-ar', '11025', '-f', 'u8', raw]
         subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 files = [(name, raw) for name, src, raw, in_opts, out_opts in SOURCES]
@@ -54,18 +69,46 @@ with open('src/modules/extra_audio.cpp', 'w') as f:
         with open(p, 'rb') as fp:
             data = fp.read()
         print(f"Packing snd_{name}: {len(data)} bytes...")
-        f.write(f'const size_t snd_{name}_size = {len(data)};\n')
-        f.write(f'const uint8_t snd_{name}[] PROGMEM = {{\n')
-        lines = []
-        for i in range(0, len(data), 16):
-            chunk = data[i:i+16]
-            lines.append('    ' + ', '.join(f'0x{b:02x}' for b in chunk) + ',\n')
-            if len(lines) >= 1000:
-                f.writelines(lines)
-                lines = []
-        if lines:
+        if name == 'dino_song':
+            # Original ESP32 chip (used in Wokwi simulator) has a strict 4MB hardware MMU DROM limit.
+            # Real hardware (Arduino Nano ESP32 / ESP32-S3) has full 16MB flash MMU support without this limit.
+            wokwi_data = data[:11025] # 1.0 second loop for Wokwi simulation
+            f.write('// Wokwi simulation on ESP32 DevKitC has a 4MB hardware MMU DROM limit.\n')
+            f.write('// Real hardware (Arduino Nano ESP32 / ESP32-S3) has 16MB flash and uses the full track.\n')
+            f.write('#ifdef WOKWI_SIM\n')
+            f.write(f'const size_t snd_{name}_size = {len(wokwi_data)};\n')
+            f.write(f'const uint8_t snd_{name}[] PROGMEM = {{\n')
+            lines = []
+            for i in range(0, len(wokwi_data), 16):
+                chunk = wokwi_data[i:i+16]
+                lines.append('    ' + ', '.join(f'0x{b:02x}' for b in chunk) + ',\n')
             f.writelines(lines)
-        f.write('};\n\n')
+            f.write('};\n#else\n')
+            f.write(f'const size_t snd_{name}_size = {len(data)};\n')
+            f.write(f'const uint8_t snd_{name}[] PROGMEM = {{\n')
+            lines = []
+            for i in range(0, len(data), 16):
+                chunk = data[i:i+16]
+                lines.append('    ' + ', '.join(f'0x{b:02x}' for b in chunk) + ',\n')
+                if len(lines) >= 1000:
+                    f.writelines(lines)
+                    lines = []
+            if lines:
+                f.writelines(lines)
+            f.write('};\n#endif\n\n')
+        else:
+            f.write(f'const size_t snd_{name}_size = {len(data)};\n')
+            f.write(f'const uint8_t snd_{name}[] PROGMEM = {{\n')
+            lines = []
+            for i in range(0, len(data), 16):
+                chunk = data[i:i+16]
+                lines.append('    ' + ', '.join(f'0x{b:02x}' for b in chunk) + ',\n')
+                if len(lines) >= 1000:
+                    f.writelines(lines)
+                    lines = []
+            if lines:
+                f.writelines(lines)
+            f.write('};\n\n')
 
 print('Generated extra_audio.h and extra_audio.cpp successfully!')
 

@@ -1041,7 +1041,6 @@ void PortalGun::handleSnakeGame() {
         if (ate) {
             snakeScore++;
             if (snakeLen < 27) snakeLen++;
-            audio.playRaw(snd_roulette_clack, snd_roulette_clack_size);
             spawnSnakeFood();
             if (snakeSpeed > 130) snakeSpeed -= 5;
         }
@@ -1311,7 +1310,7 @@ void PortalGun::handleDinoGame() {
         dinoTotalPlayMs = 0;
         lastDinoPlayTick = now;
         dinoEmptyCount = 2;
-        audio.playRaw(snd_portal_open1, snd_portal_open1_size);
+        audio.playRaw(snd_dino_song, snd_dino_song_size, true); // Loop Dino Song!
     }
     
     // Phase 1: ShowLives ("LV 3" or "L020")
@@ -1340,6 +1339,9 @@ void PortalGun::handleDinoGame() {
             dinoPhase = DinoPhase::Playing;
             lastDinoStep = now;
             lastDinoPlayTick = now;
+            if (!audio.isPlaying()) {
+                audio.playRaw(snd_dino_song, snd_dino_song_size, true);
+            }
         }
         return;
     }
@@ -1370,6 +1372,7 @@ void PortalGun::handleDinoGame() {
                 dinoEmptyCount = 2;
                 dinoPhase = DinoPhase::ShowLives;
                 dinoPhaseStart = now;
+                audio.playRaw(snd_dino_song, snd_dino_song_size, true);
             } else {
                 // Out of lives -> LV 0 then Dead
                 dinoPhase = DinoPhase::Dead;
@@ -1427,7 +1430,6 @@ void PortalGun::handleDinoGame() {
     if (joy.up && dinoJump == DinoJumpState::Ground) {
         dinoJump = DinoJumpState::Rise;
         dinoJumpStart = now;
-        audio.playRaw(snd_roulette_clack, snd_roulette_clack_size); // Crisp jump sound
     }
     
     // Jump physics & air time state

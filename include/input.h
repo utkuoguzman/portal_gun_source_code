@@ -17,6 +17,7 @@ struct JoystickState {
     bool justPressed;
     bool justReleased;
     bool clicked;
+    bool singleClicked;
     bool doubleClicked;
     bool tripleClicked;
     bool held3s;
@@ -31,6 +32,7 @@ public:
     void begin();
     void update();
     const JoystickState& getState() const;
+    void clearClicks();
 
 private:
     JoystickState state;
@@ -38,12 +40,12 @@ private:
     bool lastPowerButtonState = true;
     unsigned long lastDebounceTime = 0;
     unsigned long lastPowerDebounceTime = 0;
-    unsigned long lastClickTime = 0;
-    uint8_t clickCount = 0;
+    unsigned long lastReleaseTime = 0;
+    uint8_t pendingClicks = 0;
     unsigned long pressStartTime = 0;
     bool holdReported = false;
     const unsigned long debounceDelay = 50;
-    const unsigned long multiClickDelay = 450; // ms window for multi-clicks (double/triple)
+    const unsigned long multiClickDelay = 280; // ms window for multi-clicks (single/double/triple)
 };
 
 extern InputSystem input;

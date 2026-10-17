@@ -68,6 +68,7 @@ void PortalGun::update() {
             portalJustClosed = false;
             isQuoteActive = false;
             quoteAudioStarted = false;
+            input.clearClicks();
             changeState(PortalState::DimensionSelection);
             return;
         } else if (currentState == PortalState::DimensionSelection && (portalIsOpen || isQuoteActive)) {
@@ -80,6 +81,7 @@ void PortalGun::update() {
             portalJustClosed = true;
             isQuoteActive = false;
             quoteAudioStarted = false;
+            input.clearClicks();
             return;
         }
     }
@@ -243,61 +245,8 @@ void PortalGun::handleDimensionSelection() {
     }
     
     if (portalIsOpen) {
-        if (isQuoteActive) {
-            // Feature 2: Rick Soundboard playback
-            if (!quoteAudioStarted) {
-                // Wait for portal opening sound to complete before speaking
-                if (!audio.isPlaying()) {
-                    quoteAudioStarted = true;
-                    if (rick_soundboard_count > 0) {
-                        audio.playRaw(rick_soundboard[currentQuoteIdx].pcmData, rick_soundboard[currentQuoteIdx].size);
-                    }
-                }
-            } else {
-                // Quote finished speaking: close portal automatically
-                if (!audio.isPlaying()) {
-                    portalIsOpen = false;
-                    portalJustClosed = true;
-                    isQuoteActive = false;
-                    quoteAudioStarted = false;
-                    audio.playRaw(snd_portal_close1, snd_portal_close1_size);
-                    leds.clearPortal();
-                    for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
-                    return;
-                }
-            }
-
-            // Visuals during Rick speech:
-            if (quoteAudioStarted && rick_soundboard_count > 0) {
-                display.showText(rick_soundboard[currentQuoteIdx].label);
-            }
-            float pulse = (sinf(millis() / 120.0f) + 1.0f) * 0.5f;
-            leds.setPortalBrightness(0.25f + 0.10f * pulse);
-            for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
-                leds.setPortalColor(i, 0, 255, 0);
-            }
-            leds.showPortal();
-            float frontPulse = 0.6f + 0.4f * pulse;
-            for (int i = 0; i < 3; i++) {
-                leds.setGreen(i, frontPulse);
-            }
-
-            // Click early to cancel quote
-            if (joy.clicked) {
-                audio.stop();
-                portalIsOpen = false;
-                portalJustClosed = true;
-                isQuoteActive = false;
-                quoteAudioStarted = false;
-                audio.playRaw(snd_portal_close1, snd_portal_close1_size);
-                leds.clearPortal();
-                for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
-            }
-            return;
-        }
-
-        // Standard portal open logic
-        if (joy.clicked || millis() - portalOpenTime >= 5000) {
+        // Portal beam open: closes automatically after 5000ms timeout (or early via 3 clicks in update())
+        if (millis() - portalOpenTime >= 5000) {
             portalIsOpen = false;
             portalJustClosed = true;
             // Play random close sound
@@ -324,65 +273,72 @@ void PortalGun::handleDimensionSelection() {
             for(int i=0; i<3; i++) leds.setGreen(i, frontPulse);
         }
     } else {
-        // Portal is closed: handle click to activate
-        if (joy.clicked) {
-            if (!portalJustClosed) {
-                if (dimLetter == 'B') {
-                    // 'B' dimension activates 60s Citadel/Federation Proximity Radar (BT-Radar)
-                    changeState(PortalState::RadarScan);
-                    return;
-                } else if (dimLetter == 'U') {
-                    // 'U' dimension activates 120s Wi-Fi Captive Portal Hotspot (U for URL)
-                    changeState(PortalState::WifiPortal);
-                    return;
-                } else if (dimLetter == 'P') {
-                    // 'P' dimension activates Party Mode (Get Schwifty!)
-                    changeState(PortalState::Party);
-                    return;
-                } else if (dimLetter == 'E') {
-                    // 'E' dimension activates Evil Morty Theme & Amber Golden Portal
-                    changeState(PortalState::EvilMorty);
-                    return;
-                } else if (dimLetter == 'S') {
-                    // 'S' dimension activates 7-Segment Snake Game
-                    changeState(PortalState::SnakeGame);
-                    return;
-                } else if (dimLetter == 'R' || dimLetter == 'G') {
-                    // 'R' dimension activates Interdimensional Chamber Roulette (G retained as alias)
-                    changeState(PortalState::Roulette);
-                    return;
-                } else if (dimLetter == 'D') {
-                    // 'D' dimension activates Google Chrome Dinosaur Runner
-                    changeState(PortalState::DinoGame);
-                    return;
-                } else if (dimLetter == 'Q') {
-                    // 'Q' dimension activates Rick Quotes soundboard browser
-                    changeState(PortalState::RickQuote);
-                    return;
-                } else if (dimLetter == 'L') {
-                    // 'L' dimension activates High-Power Torch / Light (LItE)
-                    changeState(PortalState::Torch);
-                    return;
-                } else {
-                    // Standard portal open
-                    portalIsOpen = true;
-                    portalOpenTime = millis();
-                    isQuoteActive = false;
-                    quoteAudioStarted = false;
-                    if (millis() % 2 == 0) {
-                        audio.playRaw(snd_portal_open1, snd_portal_open1_size);
-                    } else {
-                        audio.playRaw(snd_portal_open2, snd_portal_open2_size);
-                    }
-                }
+        // Portal is closed:
+        // 2 Clicks: Enters universe corresponding to dialed dimension
+        if (joy.doubleClicked) {
+            input.clearClicks();
+            if (dimLetter == 'B') {
+                // 'B' dimension activates 60s Citadel/Federation Proximity Radar (BT-Radar)
+                changeState(PortalState::RadarScan);
+                return;
+            } else if (dimLetter == 'U') {
+                // 'U' dimension activates 120s Wi-Fi Captive Portal Hotspot (U for URL)
+                changeState(PortalState::WifiPortal);
+                return;
+            } else if (dimLetter == 'P') {
+                // 'P' dimension activates Party Mode (Get Schwifty!)
+                changeState(PortalState::Party);
+                return;
+            } else if (dimLetter == 'E') {
+                // 'E' dimension activates Evil Morty Theme & Amber Golden Portal
+                changeState(PortalState::EvilMorty);
+                return;
+            } else if (dimLetter == 'S') {
+                // 'S' dimension activates 7-Segment Snake Game
+                changeState(PortalState::SnakeGame);
+                return;
+            } else if (dimLetter == 'R' || dimLetter == 'G') {
+                // 'R' dimension activates Interdimensional Chamber Roulette (G retained as alias)
+                changeState(PortalState::Roulette);
+                return;
+            } else if (dimLetter == 'D') {
+                // 'D' dimension activates Google Chrome Dinosaur Runner
+                changeState(PortalState::DinoGame);
+                return;
+            } else if (dimLetter == 'Q') {
+                // 'Q' dimension activates Rick Quotes soundboard browser
+                changeState(PortalState::RickQuote);
+                return;
+            } else if (dimLetter == 'L') {
+                // 'L' dimension activates High-Power Torch / Light (LItE)
+                changeState(PortalState::Torch);
+                return;
             } else {
-                portalJustClosed = false;
+                // Any other dimension (e.g. C-137 Home), 2 clicks opens portal beam
+                portalIsOpen = true;
+                portalOpenTime = millis();
+                if (millis() % 2 == 0) {
+                    audio.playRaw(snd_portal_open1, snd_portal_open1_size);
+                } else {
+                    audio.playRaw(snd_portal_open2, snd_portal_open2_size);
+                }
+            }
+        } else if (joy.singleClicked) {
+            // 1 Click: "open simply a portal wherever we are"
+            // Regardless of whether dialed to D, S, R, Q, E, P, U, B, L, or C,
+            // 1 click simply opens the portal beam to that dimension!
+            input.clearClicks();
+            portalIsOpen = true;
+            portalOpenTime = millis();
+            if (millis() % 2 == 0) {
+                audio.playRaw(snd_portal_open1, snd_portal_open1_size);
+            } else {
+                audio.playRaw(snd_portal_open2, snd_portal_open2_size);
             }
         }
         
         static unsigned long lastMove = 0;
         if (millis() - lastMove > 200) {
-            char prevLetter = dimLetter;
             if (joy.up) {
                 dimLetter++;
                 if (dimLetter > 'Z') dimLetter = 'A';
@@ -391,14 +347,6 @@ void PortalGun::handleDimensionSelection() {
                 dimLetter--;
                 if (dimLetter < 'A') dimLetter = 'Z';
                 lastMove = millis();
-            }
-            if (prevLetter != dimLetter) {
-                if (dimLetter == 'D') dimNumber = 3;
-                else if (dimLetter == 'S') dimNumber = 3;
-                else if (dimLetter == 'R') dimNumber = 6;
-                else if (dimLetter == 'Q') dimNumber = 44;
-                else if (dimLetter == 'C') dimNumber = 137;
-                else if (dimLetter == 'E' || dimLetter == 'P' || dimLetter == 'U' || dimLetter == 'B' || dimLetter == 'L') dimNumber = 1;
             }
             
             if (joy.right) {
@@ -433,8 +381,9 @@ void PortalGun::handleParty() {
         audio.playRaw(snd_getschwifty, snd_getschwifty_size);
     }
     
-    // Exit party mode on click or 3-click emergency exit
-    if (joy.clicked || joy.doubleClicked || joy.tripleClicked) {
+    // Exit party mode on 3-click emergency exit (or when audio finishes)
+    if (joy.tripleClicked) {
+        input.clearClicks();
         audio.stop();
         leds.clearPortal();
         for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
@@ -573,8 +522,9 @@ void PortalGun::handleTorch() {
         display.showText("LItE");
     }
 
-    // Exit Torch mode if clicked (or 3-click emergency exit)
-    if (joy.clicked || joy.doubleClicked || joy.tripleClicked) {
+    // Exit Torch mode: 3 clicks gets us out
+    if (joy.tripleClicked) {
+        input.clearClicks();
         leds.setTorchMode(false);
         leds.clearPortal();
         changeState(PortalState::DimensionSelection);
@@ -593,8 +543,9 @@ void PortalGun::handleRadarScan() {
         audio.playRaw(snd_portal_open1, snd_portal_open1_size);
     }
 
-    // Finish scan at 60s or if user clicks early
-    if (remSec <= 0 || (elapsed > 1000 && joy.clicked)) {
+    // Finish scan at 60s or if user 3-clicks early
+    if (remSec <= 0 || joy.tripleClicked) {
+        input.clearClicks();
         radar.stopScan();
         audio.playRaw(snd_portal_close1, snd_portal_close1_size);
         leds.clearPortal();
@@ -630,8 +581,9 @@ void PortalGun::handleWifiPortal() {
         audio.playRaw(snd_portal_open1, snd_portal_open1_size);
     }
 
-    // Finish portal at 120s or if user clicks early
-    if (remSec <= 0 || (elapsed > 1000 && joy.clicked)) {
+    // Finish portal at 120s or if user 3-clicks early
+    if (remSec <= 0 || joy.tripleClicked) {
+        input.clearClicks();
         wifiPortal.stopPortal();
         audio.playRaw(snd_portal_close1, snd_portal_close1_size);
         leds.clearPortal();
@@ -729,8 +681,9 @@ void PortalGun::handleEvilMorty() {
         display.startScrolling("EVIL MORTY ", 220);
     }
     
-    // Stop early if clicked or when the song ends
-    if (joy.clicked || !audio.isPlaying()) {
+    // Stop early on 3 clicks or when the song ends
+    if (joy.tripleClicked || !audio.isPlaying()) {
+        input.clearClicks();
         audio.stop();
         audio.playRaw(snd_portal_close1, snd_portal_close1_size);
         leds.clearPortal();
@@ -929,15 +882,6 @@ void PortalGun::handleSnakeGame() {
         audio.playRaw(snd_snake_jazz, snd_snake_jazz_size, true); // Loop Snake Jazz!
     }
     
-    // Exit game manually by double-clicking joystick
-    if (joy.doubleClicked) {
-        audio.stop();
-        leds.clearPortal();
-        for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
-        changeState(PortalState::DimensionSelection);
-        return;
-    }
-
     // Phase 1: ShowLives ("LV 3" or "L020")
     if (snakePhase == SnakePhase::ShowLives) {
         char livesBuf[5];
@@ -1023,7 +967,7 @@ void PortalGun::handleSnakeGame() {
         leds.showPortal();
         for (int i = 0; i < 3; i++) leds.setGreen(i, flash ? 1.0f : 0.0f);
         
-        if (deadElapsed < 2200) {
+        if (deadElapsed < 1800) {
             display.showText("dEAd");
         } else {
             char scoreBuf[5];
@@ -1031,8 +975,9 @@ void PortalGun::handleSnakeGame() {
             display.showText(scoreBuf);
         }
         
-        // Exit on click after 500ms or automatic timeout after 6 seconds
-        if ((deadElapsed > 500 && joy.clicked) || deadElapsed > 6000) {
+        // Directly exits after game-over sequence completes (no click needed)
+        if (deadElapsed >= 3600) {
+            input.clearClicks();
             audio.stop();
             leds.clearPortal();
             for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
@@ -1301,7 +1246,8 @@ void PortalGun::handleRoulette() {
             leds.setGreen(i, 0.5f + 0.5f * pulse);
         }
         
-        if (!audio.isPlaying() || (elapsed > 1000 && joy.clicked)) {
+        if (!audio.isPlaying()) {
+            input.clearClicks();
             audio.stop();
             leds.clearPortal();
             for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
@@ -1368,15 +1314,6 @@ void PortalGun::handleDinoGame() {
         audio.playRaw(snd_portal_open1, snd_portal_open1_size);
     }
     
-    // Exit game manually by double-clicking joystick (triple click is handled globally)
-    if (joy.doubleClicked) {
-        audio.stop();
-        leds.clearPortal();
-        for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
-        changeState(PortalState::DimensionSelection);
-        return;
-    }
-
     // Phase 1: ShowLives ("LV 3" or "L020")
     if (dinoPhase == DinoPhase::ShowLives) {
         char livesBuf[5];
@@ -1455,7 +1392,7 @@ void PortalGun::handleDinoGame() {
         leds.showPortal();
         for (int i = 0; i < 3; i++) leds.setGreen(i, flash ? 1.0f : 0.0f);
         
-        if (deadElapsed < 2200) {
+        if (deadElapsed < 1800) {
             display.showText("dEAd");
         } else {
             // Display your score: alive seconds!
@@ -1464,8 +1401,9 @@ void PortalGun::handleDinoGame() {
             display.showText(scoreBuf);
         }
         
-        // Exit on joystick click after 500ms or automatic timeout after 8 seconds
-        if ((deadElapsed > 500 && joy.clicked) || deadElapsed > 8000) {
+        // Directly exits after game-over sequence completes (no click needed)
+        if (deadElapsed >= 3600) {
+            input.clearClicks();
             audio.stop();
             leds.clearPortal();
             for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
@@ -1485,8 +1423,8 @@ void PortalGun::handleDinoGame() {
     uint32_t speedUp = min((uint32_t)170, (uint32_t)((dinoAliveSeconds / 4) * 15));
     dinoStepInterval = 330 - speedUp;
     
-    // Jump trigger (UP or Click)
-    if ((joy.up || joy.clicked) && dinoJump == DinoJumpState::Ground) {
+    // Jump trigger (UP only)
+    if (joy.up && dinoJump == DinoJumpState::Ground) {
         dinoJump = DinoJumpState::Rise;
         dinoJumpStart = now;
         audio.playRaw(snd_roulette_clack, snd_roulette_clack_size); // Crisp jump sound

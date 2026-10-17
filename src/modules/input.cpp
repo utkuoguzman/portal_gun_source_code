@@ -11,7 +11,8 @@ void InputSystem::begin() {
     
     // Explicitly enforce 12-bit ADC resolution (0-4095) across all boards
     analogReadResolution(12);
-    lastClickTime = 0;
+    lastReleaseTime = 0;
+    pendingClicks = 0;
     
     // Initial read to set states
     state.rawX = analogRead(Pins::JoystickX);
@@ -26,13 +27,13 @@ void InputSystem::begin() {
     state.justPressed = false;
     state.justReleased = false;
     state.clicked = false;
+    state.singleClicked = false;
     state.doubleClicked = false;
     state.tripleClicked = false;
     state.held3s = false;
     state.justHeld3s = false;
     pressStartTime = 0;
     holdReported = false;
-    clickCount = 0;
     state.powerPressed = false;
     state.powerJustPressed = false;
 
@@ -72,8 +73,8 @@ void InputSystem::update() {
 
     state.left = state.x < -0.5f;
     state.right = state.x > 0.5f;
-    state.down = state.y > 0.5f; // Assuming larger values are down/right, adjust as needed
-    state.up = state.y < -0.5f;
+    state.up = state.y > 0.5f;
+    state.down = state.y < -0.5f;
 
     // Debounce button
     bool reading = digitalRead(Pins::JoystickSw) == LOW; // LOW means pressed due to pullup
@@ -81,6 +82,7 @@ void InputSystem::update() {
     state.justPressed = false;
     state.justReleased = false;
     state.clicked = false;
+    state.singleClicked = false;
     state.doubleClicked = false;
     state.tripleClicked = false;
     state.justHeld3s = false;
@@ -97,30 +99,37 @@ void InputSystem::update() {
                 pressStartTime = millis();
                 holdReported = false;
                 
-                // Multi-click detection (double / triple click)
-                unsigned long now = millis();
-                if (lastClickTime > 0 && (now - lastClickTime < multiClickDelay)) {
-                    clickCount++;
-                } else {
-                    clickCount = 1;
-                }
-                lastClickTime = now;
-
-                if (clickCount == 2) {
-                    state.doubleClicked = true;
-                } else if (clickCount >= 3) {
+                // Track click sequence
+                pendingClicks++;
+                if (pendingClicks >= 3) {
                     state.tripleClicked = true;
-                    clickCount = 0;
-                    lastClickTime = 0;
+                    pendingClicks = 0;
+                    lastReleaseTime = 0;
                 }
             } else {
                 state.justReleased = true;
+                lastReleaseTime = millis();
                 if (!holdReported) {
                     state.clicked = true;
+                } else {
+                    pendingClicks = 0;
                 }
                 state.held3s = false;
                 holdReported = false;
             }
+        }
+    }
+
+    // Resolve single or double click after release when no subsequent click occurs
+    if (!state.pressed && pendingClicks > 0 && lastReleaseTime > 0) {
+        if (millis() - lastReleaseTime >= multiClickDelay) {
+            if (pendingClicks == 1) {
+                state.singleClicked = true;
+            } else if (pendingClicks == 2) {
+                state.doubleClicked = true;
+            }
+            pendingClicks = 0;
+            lastReleaseTime = 0;
         }
     }
 
@@ -130,6 +139,7 @@ void InputSystem::update() {
             state.held3s = true;
             state.justHeld3s = true;
             holdReported = true;
+            pendingClicks = 0;
         }
     } else {
         state.held3s = false;
@@ -159,4 +169,13 @@ void InputSystem::update() {
 
 const JoystickState& InputSystem::getState() const {
     return state;
+}
+
+void InputSystem::clearClicks() {
+    pendingClicks = 0;
+    lastReleaseTime = 0;
+    state.clicked = false;
+    state.singleClicked = false;
+    state.doubleClicked = false;
+    state.tripleClicked = false;
 }

@@ -102,37 +102,103 @@ Dial the letter on the TM1637 display and **Double-Click (2 Clicks)** to enter:
 
 ## 🔌 Wiring Diagram & Pinout
 
-### Arduino Nano ESP32 (ESP32-S3 Pinout)
+## 🔌 Complete Wire-by-Wire Assembly Schedule
 
-```
-===================================================================
-COMPONENT            PIN ON MODULE       NANO ESP32 PIN    NOTES
-===================================================================
-Front Green LED 1    Anode (+ 220Ω)      D2                Left HUD LED
-Front Green LED 2    Anode (+ 220Ω)      D3                Center HUD LED
-Front Green LED 3    Anode (+ 220Ω)      D4                Right HUD LED
--------------------------------------------------------------------
-NeoPixel Barrel Ring DIN (Data In)       D5                7x WS2812B
-NeoPixel Top Strip   DIN (Data In)       D6                8x WS2812B
--------------------------------------------------------------------
-TM1637 Display       CLK (Clock)         D7                4-Digit Red
-TM1637 Display       DIO (Data)          D8                4-Digit Red
--------------------------------------------------------------------
-Joystick X-Axis      VRX (Horizontal)    A0                Analog ADC
-Joystick Y-Axis      VRY (Vertical)      A1                Analog ADC
-Joystick Button      SW (Click Switch)   D9                Internal PULLUP
--------------------------------------------------------------------
-Power Switch         Momentary Button    D10               RTC Wake / Sleep
--------------------------------------------------------------------
-MAX98357A I2S DAC    BCLK (Bit Clock)    D11               I2S Clock
-MAX98357A I2S DAC    LRC (Word Select)   D12               I2S Left/Right
-MAX98357A I2S DAC    DIN (Data In)       D13               I2S Audio Data
-MAX98357A I2S DAC    GAIN                100kΩ to GND      Gain = 9dB
-===================================================================
-Power Bus            VCC / VIN           5V / 3.3V         Joystick to 3.3V!
-Ground Bus           GND                 GND               Common Ground
-===================================================================
-```
+> [!CAUTION]
+> **Power the Analog Joystick from 3.3V, NOT 5V!**  
+> The ESP32-S3 ADC inputs are strictly 3.3V-tolerant. Supplying 5V to the joystick potentiometer will permanently damage the microcontroller ADC pins (`A0` & `A1`).
+
+> [!TIP]
+> **Audio Grounding Best Practice**:  
+> Tie all component grounds to a central star ground bus (or perfboard ground strip) to avoid ground loop noise and NeoPixel interference in the speaker audio.
+
+---
+
+### ⚡ 1. Battery, Latching Power Switch & Buck Converter
+
+| Wire # | Origin Component & Pin | Wire Color Suggestion | Destination Component & Pin | Wire Function & Assembly Notes |
+| :-: | :--- | :--- | :--- | :--- |
+| **P-01** | **2S Battery (+)** | 🔴 Red (Thick 20-22 AWG) | **Latching Switch: COM / Terminal 1** | Raw positive battery voltage (7.4V nominal, 8.4V peak). |
+| **P-02** | **Latching Switch: NO / Terminal 2** | 🔴 Red (Thick 20-22 AWG) | **Buck Converter: IN+** | Switched positive power line into the DC-DC buck converter. |
+| **P-03** | **2S Battery (-)** | ⚫ Black (Thick 20-22 AWG) | **Buck Converter: IN-** | Main battery ground return to buck converter. |
+| **P-04** | **2S Battery (-) / Buck IN-** | ⚫ Black (22-24 AWG) | **Latching Button: LED (-)** *(if illuminated)* | **Ground for illuminated latch switch LED ring**. Connects to battery ground. |
+| **P-05** | **Latching Switch: NO / Terminal 2** | 🔴 Red (24 AWG) | **Latching Button: LED (+)** *(if illuminated)* | Bridges power to the switch's internal LED so it lights up when latched ON. |
+| **P-06** | **Buck Converter: OUT+** | 🔴 Red (Thick 20-22 AWG) | **Master +5.0V Power Bus** | Regulated +5.0V output rail (adjusted to 5.0V via trimmer). |
+| **P-07** | **Buck Converter: OUT-** | ⚫ Black (Thick 20-22 AWG) | **Master Common GND Bus** | System common ground star rail for all internal components. |
+
+---
+
+### 🔋 2. Regulated Power Distribution (+5V Bus & +3.3V Dedicated Rail)
+
+| Wire # | Origin Power Rail | Wire Color Suggestion | Destination Component & Pin | Wire Function & Assembly Notes |
+| :-: | :--- | :--- | :--- | :--- |
+| **PWR-01** | **Master +5.0V Bus** | 🔴 Red | **Arduino Nano ESP32: VIN** | Powers the microcontroller (Nano ESP32 onboard regulator accepts 5V–21V). |
+| **PWR-02** | **Master +5.0V Bus** | 🔴 Red | **MAX98357A I2S Amp: VIN** | 5V supply for clean, punchy 3.2W digital audio playback. |
+| **PWR-03** | **Master +5.0V Bus** | 🔴 Red | **TM1637 Display: VCC** | 5V power for 4-digit 7-segment display module. |
+| **PWR-04** | **Master +5.0V Bus** | 🔴 Red | **Barrel NeoPixel Ring: 5V / VDD** | Powers the front 7-pixel WS2812B emitter ring. |
+| **PWR-05** | **Master +5.0V Bus** | 🔴 Red | **Top NeoPixel Strip: 5V / VDD** | Powers the 8-pixel WS2812B top fluid reservoir strip. |
+| **PWR-06** | **Nano ESP32: 3.3V Out Pin** | 🔵 Blue | **Analog Joystick: VCC** | **⚠️ MUST BE 3.3V!** Powers joystick potentiometers safely for ADC inputs. |
+
+---
+
+### ⏚ 3. Master Common Ground Distribution (GND Star Bus)
+
+| Wire # | Origin Component & Pin | Wire Color Suggestion | Destination Ground Point | Wire Function & Assembly Notes |
+| :-: | :--- | :--- | :--- | :--- |
+| **GND-01** | **Arduino Nano ESP32: GND** | ⚫ Black | **Master Common GND Bus** | Microcontroller digital logic ground reference. |
+| **GND-02** | **MAX98357A I2S Amp: GND** | ⚫ Black | **Master Common GND Bus** | Audio amplifier power ground. |
+| **GND-03** | **MAX98357A I2S Amp: GAIN** | ⚫ Black | **Master Common GND Bus** | Connecting GAIN to GND configures the default **9dB gain**. |
+| **GND-04** | **TM1637 Display: GND** | ⚫ Black | **Master Common GND Bus** | 7-segment display logic ground. |
+| **GND-05** | **Barrel NeoPixel Ring: GND** | ⚫ Black | **Master Common GND Bus** | Front emitter ground return. |
+| **GND-06** | **Top NeoPixel Strip: GND** | ⚫ Black | **Master Common GND Bus** | Top fluid chamber strip ground return. |
+| **GND-07** | **3x Front Green LED Cathodes (-)**| ⚫ Black | **Master Common GND Bus** | Common cathode ground for all 3 front green HUD LEDs. |
+| **GND-08** | **Analog Joystick: GND** | ⚫ Black | **Master Common GND Bus** | Joystick potentiometer reference ground. |
+| **GND-09** | **Analog Joystick: SW Ground** | ⚫ Black | **Master Common GND Bus** | Pushbutton return line (internal pull-up on D9). |
+| **GND-10** | **Sleep/Wake Momentary Button: Pin 2**| ⚫ Black | **Master Common GND Bus** | RTC wake push-button ground return line. |
+
+---
+
+### 🔊 4. High-Fidelity I2S Digital Audio System
+
+| Wire # | Origin Component & Pin | Wire Color Suggestion | Destination Component & Pin | Wire Function & Assembly Notes |
+| :-: | :--- | :--- | :--- | :--- |
+| **AUD-01** | **Arduino Nano ESP32: D11** | 🟡 Yellow | **MAX98357A Amp: BCLK** | I2S Bit Clock line (synchronizes raw PCM sample bits). |
+| **AUD-02** | **Arduino Nano ESP32: D12** | 🟣 Purple | **MAX98357A Amp: LRC** | I2S Word Select / Left-Right Clock (frame synchronization). |
+| **AUD-03** | **Arduino Nano ESP32: D13** | ⚪ White | **MAX98357A Amp: DIN** | I2S Serial PCM Audio Data line. |
+| **AUD-04** | **MAX98357A Amp: SPK+** | 🔴 Red (Twisted Pair) | **3W Mini Speaker: Terminal (+)** | Differential Bridge-Tied Load (BTL) speaker output. |
+| **AUD-05** | **MAX98357A Amp: SPK-** | ⚫ Black (Twisted Pair) | **3W Mini Speaker: Terminal (-)** | **⚠️ NEVER connect speaker (-) to GND! It is a differential drive.** |
+
+---
+
+### 📟 5. TM1637 4-Digit Display & WS2812B NeoPixels
+
+| Wire # | Origin Component & Pin | Wire Color Suggestion | Destination Component & Pin | Wire Function & Assembly Notes |
+| :-: | :--- | :--- | :--- | :--- |
+| **DSP-01** | **Arduino Nano ESP32: D7** | 🟣 Purple | **TM1637 Display: CLK** | Serial clock line for 4-digit dimension coordinate display. |
+| **DSP-02** | **Arduino Nano ESP32: D8** | ⚪ White | **TM1637 Display: DIO** | Bi-directional serial data line for coordinate & game rendering. |
+| **LED-01** | **Arduino Nano ESP32: D5** | 🟢 Green | **Barrel NeoPixel Ring: DIN** | Front 7-pixel ring data signal (optional 330Ω series resistor). |
+| **LED-02** | **Arduino Nano ESP32: D6** | 🟢 Green | **Top NeoPixel Strip: DIN** | Top 8-pixel fluid tube data signal (optional 330Ω series resistor). |
+
+---
+
+### 💡 6. Screen-Accurate Front Indicator LEDs (PWM Life HUD)
+
+| Wire # | Origin Component & Pin | Inline Component | Destination Component & Pin | Wire Function & Assembly Notes |
+| :-: | :--- | :--- | :--- | :--- |
+| **HUD-01** | **Arduino Nano ESP32: D2** | **220Ω Resistor R1** | **Green LED 1: Anode (+)** | Left front HUD LED (software PWM breathing & Life 1). |
+| **HUD-02** | **Arduino Nano ESP32: D3** | **220Ω Resistor R2** | **Green LED 2: Anode (+)** | Center front HUD LED (software PWM breathing & Life 2). |
+| **HUD-03** | **Arduino Nano ESP32: D4** | **220Ω Resistor R3** | **Green LED 3: Anode (+)** | Right front HUD LED (software PWM breathing & Life 3). |
+
+---
+
+### 🕹️ 7. Navigation Controls & Power Sleep/Wake Buttons
+
+| Wire # | Origin Component & Pin | Wire Color Suggestion | Destination Component & Pin | Wire Function & Assembly Notes |
+| :-: | :--- | :--- | :--- | :--- |
+| **INP-01** | **Analog Joystick: VRX** | 🟠 Orange | **Arduino Nano ESP32: A0** | Horizontal axis potentiometer voltage (0V to 3.3V analog input). |
+| **INP-02** | **Analog Joystick: VRY** | 🟡 Yellow | **Arduino Nano ESP32: A1** | Vertical axis potentiometer voltage (0V to 3.3V analog input). |
+| **INP-03** | **Analog Joystick: SW** | 🟤 Brown | **Arduino Nano ESP32: D9** | Center click pushbutton (active LOW with ESP32 internal pull-up). |
+| **INP-04** | **Sleep/Wake Button: Pin 1**| 🟠 Orange | **Arduino Nano ESP32: D10** | Momentary soft power button (RTC-capable wake pin from deep sleep). |
 
 ---
 

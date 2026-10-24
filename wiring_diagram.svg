@@ -1,0 +1,649 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 1450" width="2400" height="1450" style="background-color: #121316; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;">
+  <defs>
+    <!-- Grid Pattern -->
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" fill="#202228" />
+    </pattern>
+
+    <!-- Component Drop Shadow -->
+    <filter id="shadow" x="-5%" y="-5%" width="115%" height="115%">
+      <feDropShadow dx="3" dy="5" stdDeviation="6" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+    <filter id="wire-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.7"/>
+    </filter>
+
+    <!-- Gradients -->
+    <linearGradient id="battery-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="pcb-blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <linearGradient id="pcb-darkblue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#172554"/>
+    </linearGradient>
+    <linearGradient id="pcb-red" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#dc2626"/>
+      <stop offset="100%" stop-color="#991b1b"/>
+    </linearGradient>
+    <linearGradient id="pcb-purple" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#5b21b6"/>
+    </linearGradient>
+    <linearGradient id="pcb-green" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#15803d"/>
+      <stop offset="100%" stop-color="#166534"/>
+    </linearGradient>
+    <linearGradient id="esp-shield" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="50%" stop-color="#cbd5e1"/>
+      <stop offset="100%" stop-color="#64748b"/>
+    </linearGradient>
+    <linearGradient id="speaker-cone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="cap-body" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="60%" stop-color="#334155"/>
+      <stop offset="85%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background Grid -->
+  <rect width="2400" height="1450" fill="url(#grid)" />
+
+  <!-- Title Header Bar -->
+  <g transform="translate(40, 25)">
+    <rect width="2320" height="65" rx="10" fill="#181a20" stroke="#2d3139" stroke-width="2"/>
+    <text x="30" y="42" fill="#38bdf8" font-size="25" font-weight="bold" letter-spacing="1">RICK &amp; MORTY PORTAL GUN — PHYSICAL WIRING DIAGRAM (ARDUINO NANO ESP32)</text>
+    <text x="1450" y="42" fill="#94a3b8" font-size="16">Wokwi High-Fidelity Hardware Map | 2S LiPo 850mAh | I2S Audio | WS2812B | TM1637</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- COMPONENT 1: 2S LiPo Battery Pack (7.4V - 8.4V) -->
+  <!-- ===================================================================== -->
+  <g id="battery" transform="translate(60, 120)" filter="url(#shadow)">
+    <rect width="220" height="150" rx="10" fill="url(#battery-grad)" stroke="#475569" stroke-width="2"/>
+    <rect x="15" y="15" width="190" height="120" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    <text x="110" y="45" fill="#38bdf8" font-size="16" font-weight="bold" text-anchor="middle">2S LiPo / Li-Ion</text>
+    <text x="110" y="70" fill="#e2e8f0" font-size="14" text-anchor="middle">7.4V Nom / 8.4V Peak</text>
+    <text x="110" y="95" fill="#94a3b8" font-size="14" text-anchor="middle">850 mAh (High-C)</text>
+    <rect x="25" y="108" width="170" height="20" rx="4" fill="#0f172a"/>
+    <text x="110" y="122" fill="#10b981" font-size="11" font-weight="bold" text-anchor="middle">PORTAL CORE POWER</text>
+    <!-- Terminals -->
+    <circle id="bat_pos" cx="210" cy="55" r="7" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
+    <text x="195" y="50" fill="#ef4444" font-size="13" font-weight="bold">(+)</text>
+    <circle id="bat_neg" cx="210" cy="115" r="7" fill="#1e293b" stroke="#ffffff" stroke-width="2"/>
+    <text x="195" y="120" fill="#94a3b8" font-size="13" font-weight="bold">(-)</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- COMPONENT 2: 3A Mini Blade Fuse Holder -->
+  <!-- ===================================================================== -->
+  <g id="fuse" transform="translate(330, 130)" filter="url(#shadow)">
+    <rect width="80" height="85" rx="8" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+    <rect x="20" y="15" width="40" height="42" rx="4" fill="#8b5cf6" stroke="#c4b5fd" stroke-width="2"/>
+    <text x="40" y="42" fill="#ffffff" font-size="18" font-weight="bold" text-anchor="middle">3A</text>
+    <text x="40" y="72" fill="#cbd5e1" font-size="11" font-weight="bold" text-anchor="middle">FUSE</text>
+    <!-- Terminals -->
+    <circle id="fuse_in" cx="0" cy="45" r="6" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
+    <circle id="fuse_out" cx="80" cy="45" r="6" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- COMPONENT 3: 16mm Latching Power Switch -->
+  <!-- ===================================================================== -->
+  <g id="switch" transform="translate(460, 115)" filter="url(#shadow)">
+    <rect width="130" height="155" rx="12" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+    <circle cx="65" cy="55" r="35" fill="#334155" stroke="#94a3b8" stroke-width="3"/>
+    <circle cx="65" cy="55" r="26" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <text x="65" y="60" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle">LED RING</text>
+    <text x="65" y="105" fill="#e2e8f0" font-size="12" font-weight="bold" text-anchor="middle">LATCH SWITCH</text>
+    <text x="65" y="122" fill="#94a3b8" font-size="10" text-anchor="middle">Master Power ON/OFF</text>
+    <!-- Switch Pin Contacts -->
+    <circle id="sw_com" cx="0" cy="60" r="6" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
+    <text x="12" y="65" fill="#e2e8f0" font-size="11">COM</text>
+    <circle id="sw_no" cx="130" cy="60" r="6" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
+    <text x="115" y="65" fill="#e2e8f0" font-size="11" text-anchor="end">NO</text>
+    <circle id="sw_led_pos" cx="45" cy="140" r="5" fill="#38bdf8" stroke="#ffffff" stroke-width="1.5"/>
+    <text x="45" y="132" fill="#38bdf8" font-size="9" text-anchor="middle">LED (+)</text>
+    <circle id="sw_led_neg" cx="85" cy="140" r="5" fill="#1e293b" stroke="#ffffff" stroke-width="1.5"/>
+    <text x="85" y="132" fill="#94a3b8" font-size="9" text-anchor="middle">LED (-)</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- COMPONENT 4: Mini360 DC-DC Buck Step-Down Converter -->
+  <!-- ===================================================================== -->
+  <g id="buck" transform="translate(640, 120)" filter="url(#shadow)">
+    <rect width="150" height="150" rx="8" fill="url(#pcb-blue)" stroke="#38bdf8" stroke-width="1.5"/>
+    <rect x="20" y="25" width="45" height="45" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
+    <text x="42" y="52" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">MP2307</text>
+    <rect x="75" y="25" width="45" height="45" rx="6" fill="#1e293b" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="97" y="52" fill="#facc15" font-size="15" font-weight="bold" text-anchor="middle">100</text>
+    <!-- Trimmer Potentiometer -->
+    <rect x="35" y="85" width="80" height="28" rx="4" fill="#0284c7" stroke="#bae6fd" stroke-width="1"/>
+    <circle cx="75" cy="99" r="8" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
+    <line x1="69" y1="99" x2="81" y2="99" stroke="#713f12" stroke-width="2"/>
+    <text x="75" y="132" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">Mini360 (+5.0V)</text>
+    <!-- Buck Pads -->
+    <circle id="buck_inp" cx="10" cy="40" r="6" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
+    <text x="20" y="44" fill="#ffffff" font-size="10" font-weight="bold">IN+</text>
+    <circle id="buck_inn" cx="10" cy="115" r="6" fill="#1e293b" stroke="#ffffff" stroke-width="2"/>
+    <text x="20" y="119" fill="#ffffff" font-size="10" font-weight="bold">IN-</text>
+    <circle id="buck_outp" cx="140" cy="40" r="6" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
+    <text x="130" y="44" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="end">OUT+</text>
+    <circle id="buck_outn" cx="140" cy="115" r="6" fill="#1e293b" stroke="#ffffff" stroke-width="2"/>
+    <text x="130" y="119" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="end">OUT-</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- COMPONENT 5: 1000uF 10V Bulk Electrolytic Capacitor -->
+  <!-- ===================================================================== -->
+  <g id="capacitor" transform="translate(840, 135)" filter="url(#shadow)">
+    <rect width="55" height="115" rx="27" fill="url(#cap-body)" stroke="#475569" stroke-width="2"/>
+    <!-- Negative stripe -->
+    <path d="M 36 5 Q 48 58 36 110" stroke="#ffffff" stroke-width="10" fill="none"/>
+    <text x="36" y="45" fill="#0f172a" font-size="14" font-weight="bold" text-anchor="middle">-</text>
+    <text x="36" y="75" fill="#0f172a" font-size="14" font-weight="bold" text-anchor="middle">-</text>
+    <!-- Label -->
+    <text x="20" y="58" fill="#f8fafc" font-size="10" font-weight="bold" transform="rotate(-90 20 58)" text-anchor="middle">1000 µF 10V</text>
+    <circle id="cap_pos" cx="15" cy="125" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.5"/>
+    <text x="15" y="140" fill="#ef4444" font-size="10" font-weight="bold" text-anchor="middle">(+)</text>
+    <circle id="cap_neg" cx="40" cy="125" r="5" fill="#1e293b" stroke="#ffffff" stroke-width="1.5"/>
+    <text x="40" y="140" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">(-)</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- POWER & GROUND DISTRIBUTION BUSES -->
+  <!-- ===================================================================== -->
+  <g id="buses" transform="translate(950, 140)">
+    <!-- 5V Power Bus -->
+    <rect x="0" y="0" width="370" height="35" rx="6" fill="#991b1b" stroke="#ef4444" stroke-width="2"/>
+    <text x="20" y="23" fill="#fee2e2" font-size="14" font-weight="bold">🔴 MASTER +5.0V POWER BUS</text>
+    <circle cx="280" cy="17" r="5" fill="#ffffff"/>
+    <circle cx="310" cy="17" r="5" fill="#ffffff"/>
+    <circle cx="340" cy="17" r="5" fill="#ffffff"/>
+
+    <!-- Common Ground Bus -->
+    <rect x="0" y="60" width="370" height="35" rx="6" fill="#0f172a" stroke="#64748b" stroke-width="2"/>
+    <text x="20" y="83" fill="#94a3b8" font-size="14" font-weight="bold">⚫ MASTER COMMON GROUND STAR BUS</text>
+    <circle cx="280" cy="77" r="5" fill="#ffffff"/>
+    <circle cx="310" cy="77" r="5" fill="#ffffff"/>
+    <circle cx="340" cy="77" r="5" fill="#ffffff"/>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- COMPONENT 6: Arduino Nano ESP32 (Center Hub) -->
+  <!-- ===================================================================== -->
+  <g id="nano" transform="translate(1040, 360)" filter="url(#shadow)">
+    <!-- Board PCB -->
+    <rect width="240" height="510" rx="14" fill="url(#pcb-darkblue)" stroke="#38bdf8" stroke-width="2"/>
+
+    <!-- USB-C Connector -->
+    <rect x="75" y="-12" width="90" height="28" rx="6" fill="#64748b" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="90" y="-5" width="60" height="14" rx="3" fill="#0f172a"/>
+
+    <!-- ESP32-S3 Metal RF Shield -->
+    <rect x="35" y="35" width="170" height="150" rx="8" fill="url(#esp-shield)" stroke="#475569" stroke-width="2"/>
+    <text x="120" y="105" fill="#0f172a" font-size="20" font-weight="bold" text-anchor="middle">ESP32-S3</text>
+    <text x="120" y="130" fill="#1e293b" font-size="13" text-anchor="middle">NANO ESP32</text>
+
+    <!-- RGB Status LED & Button -->
+    <rect x="105" y="200" width="30" height="30" rx="4" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
+    <circle cx="120" cy="215" r="7" fill="#10b981"/>
+    <circle cx="120" cy="255" r="10" fill="#64748b" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="120" y="280" fill="#94a3b8" font-size="10" text-anchor="middle">RST</text>
+
+    <!-- Pin headers background -->
+    <rect x="6" y="105" width="26" height="385" rx="4" fill="#0f172a"/>
+    <rect x="208" y="105" width="26" height="385" rx="4" fill="#0f172a"/>
+  </g>
+
+  <!-- Nano Pin Labels and Sockets -->
+  <!-- Left Header (x=1059) -->
+  <g id="nano_left_pins" font-size="10" font-weight="bold" fill="#ffffff">
+    <!-- D12 -->
+    <circle id="pin_d12" cx="1059" cy="480" r="5" fill="#a855f7" stroke="#ffffff" stroke-width="1.5"/><text x="1075" y="484" fill="#c084fc">D12 (LRC)</text>
+    <!-- D11 -->
+    <circle id="pin_d11" cx="1059" cy="505" r="5" fill="#eab308" stroke="#ffffff" stroke-width="1.5"/><text x="1075" y="509" fill="#fde047">D11 (BCLK)</text>
+    <!-- D10 -->
+    <circle id="pin_d10" cx="1059" cy="530" r="5" fill="#f97316" stroke="#ffffff" stroke-width="1.5"/><text x="1075" y="534" fill="#fdba74">D10 (Wake)</text>
+    <!-- D9 -->
+    <circle id="pin_d9" cx="1059" cy="555" r="5" fill="#a16207" stroke="#ffffff" stroke-width="1.5"/><text x="1075" y="559" fill="#fef08a">D9 (Joy SW)</text>
+    <!-- D8 -->
+    <circle id="pin_d8" cx="1059" cy="580" r="5" fill="#f8fafc" stroke="#334155" stroke-width="1.5"/><text x="1075" y="584" fill="#f8fafc">D8 (DIO)</text>
+    <!-- D7 -->
+    <circle id="pin_d7" cx="1059" cy="605" r="5" fill="#c084fc" stroke="#ffffff" stroke-width="1.5"/><text x="1075" y="609" fill="#e9d5ff">D7 (CLK)</text>
+    <!-- D6 -->
+    <circle id="pin_d6" cx="1059" cy="630" r="5" fill="#22c55e" stroke="#ffffff" stroke-width="1.5"/><text x="1075" y="634" fill="#86efac">D6 (Top)</text>
+    <!-- D5 -->
+    <circle id="pin_d5" cx="1059" cy="655" r="5" fill="#22c55e" stroke="#ffffff" stroke-width="1.5"/><text x="1075" y="659" fill="#86efac">D5 (Ring)</text>
+    <!-- D4 -->
+    <circle id="pin_d4" cx="1059" cy="680" r="5" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/><text x="1075" y="684" fill="#6ee7b7">D4 (HUD3)</text>
+    <!-- D3 -->
+    <circle id="pin_d3" cx="1059" cy="705" r="5" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/><text x="1075" y="709" fill="#6ee7b7">D3 (HUD2)</text>
+    <!-- D2 -->
+    <circle id="pin_d2" cx="1059" cy="730" r="5" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/><text x="1075" y="734" fill="#6ee7b7">D2 (HUD1)</text>
+    <!-- GND -->
+    <circle id="pin_gnd1" cx="1059" cy="755" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="1.5"/><text x="1075" y="759" fill="#94a3b8">GND</text>
+    <!-- RST, RX, TX -->
+    <circle cx="1059" cy="780" r="4" fill="#475569"/><text x="1075" y="784" fill="#64748b">RST</text>
+    <circle cx="1059" cy="805" r="4" fill="#475569"/><text x="1075" y="809" fill="#64748b">RX</text>
+    <circle cx="1059" cy="830" r="4" fill="#475569"/><text x="1075" y="834" fill="#64748b">TX</text>
+  </g>
+
+  <!-- Right Header (x=1261) -->
+  <g id="nano_right_pins" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="end">
+    <!-- D13 -->
+    <circle id="pin_d13" cx="1261" cy="480" r="5" fill="#f8fafc" stroke="#334155" stroke-width="1.5"/><text x="1245" y="484" fill="#ffffff">D13 (DIN)</text>
+    <!-- 3V3 -->
+    <circle id="pin_3v3" cx="1261" cy="505" r="5" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/><text x="1245" y="509" fill="#38bdf8">3.3V (Joy)</text>
+    <!-- REF -->
+    <circle cx="1261" cy="530" r="4" fill="#475569"/><text x="1245" y="534" fill="#64748b">REF</text>
+    <!-- A0 -->
+    <circle id="pin_a0" cx="1261" cy="555" r="5" fill="#f97316" stroke="#ffffff" stroke-width="1.5"/><text x="1245" y="559" fill="#fdba74">A0 (VRX)</text>
+    <!-- A1 -->
+    <circle id="pin_a1" cx="1261" cy="580" r="5" fill="#eab308" stroke="#ffffff" stroke-width="1.5"/><text x="1245" y="584" fill="#fde047">A1 (VRY)</text>
+    <!-- A2-A7 -->
+    <circle cx="1261" cy="605" r="4" fill="#475569"/><text x="1245" y="609" fill="#64748b">A2</text>
+    <circle cx="1261" cy="630" r="4" fill="#475569"/><text x="1245" y="634" fill="#64748b">A3</text>
+    <circle cx="1261" cy="655" r="4" fill="#475569"/><text x="1245" y="659" fill="#64748b">A4</text>
+    <circle cx="1261" cy="680" r="4" fill="#475569"/><text x="1245" y="684" fill="#64748b">A5</text>
+    <circle cx="1261" cy="705" r="4" fill="#475569"/><text x="1245" y="709" fill="#64748b">A6</text>
+    <circle cx="1261" cy="730" r="4" fill="#475569"/><text x="1245" y="734" fill="#64748b">A7</text>
+    <!-- VBUS, RST -->
+    <circle cx="1261" cy="755" r="4" fill="#475569"/><text x="1245" y="759" fill="#64748b">VBUS</text>
+    <circle cx="1261" cy="780" r="4" fill="#475569"/><text x="1245" y="784" fill="#64748b">RST</text>
+    <!-- GND -->
+    <circle id="pin_gnd2" cx="1261" cy="805" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="1.5"/><text x="1245" y="809" fill="#94a3b8">GND</text>
+    <!-- VIN -->
+    <circle id="pin_vin" cx="1261" cy="830" r="6" fill="#ef4444" stroke="#ffffff" stroke-width="2"/><text x="1245" y="834" fill="#f87171">VIN (6V-21V)</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- COMPONENT 7: MAX98357A I2S 3.2W DAC / Amplifier -->
+  <!-- ===================================================================== -->
+  <g id="i2s_amp" transform="translate(540, 420)" filter="url(#shadow)">
+    <rect width="180" height="230" rx="10" fill="url(#pcb-purple)" stroke="#c084fc" stroke-width="2"/>
+    <text x="90" y="28" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle">MAX98357A</text>
+    <text x="90" y="45" fill="#e9d5ff" font-size="10" text-anchor="middle">3.2W I2S DAC Mono Amp</text>
+    <!-- Speaker Screw Terminal Block -->
+    <rect x="40" y="60" width="100" height="40" rx="4" fill="#15803d" stroke="#86efac" stroke-width="1.5"/>
+    <circle id="amp_spkp" cx="65" cy="80" r="7" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
+    <text x="65" y="115" fill="#f87171" font-size="10" font-weight="bold" text-anchor="middle">SPK +</text>
+    <circle id="amp_spkn" cx="115" cy="80" r="7" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
+    <text x="115" y="115" fill="#cbd5e1" font-size="10" font-weight="bold" text-anchor="middle">SPK -</text>
+    <!-- Logic Pin Header at Bottom -->
+    <g transform="translate(15, 140)" font-size="9" font-weight="bold" fill="#ffffff">
+      <circle id="amp_lrc" cx="10" cy="70" r="5" fill="#a855f7" stroke="#ffffff" stroke-width="1.5"/><text x="10" y="55" text-anchor="middle">LRC</text>
+      <circle id="amp_bclk" cx="35" cy="70" r="5" fill="#eab308" stroke="#ffffff" stroke-width="1.5"/><text x="35" y="55" text-anchor="middle">BCLK</text>
+      <circle id="amp_din" cx="60" cy="70" r="5" fill="#f8fafc" stroke="#334155" stroke-width="1.5"/><text x="60" y="55" text-anchor="middle">DIN</text>
+      <circle id="amp_gain" cx="85" cy="70" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="1.5"/><text x="85" y="55" text-anchor="middle">GAIN</text>
+      <circle cx="110" cy="70" r="4" fill="#64748b"/><text x="110" y="55" text-anchor="middle">SD</text>
+      <circle id="amp_gnd" cx="130" cy="70" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="1.5"/><text x="130" y="55" text-anchor="middle">GND</text>
+      <circle id="amp_vin" cx="150" cy="70" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.5"/><text x="150" y="55" text-anchor="middle">VIN</text>
+    </g>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- COMPONENT 8: 3W Speaker -->
+  <!-- ===================================================================== -->
+  <g id="speaker" transform="translate(160, 430)" filter="url(#shadow)">
+    <circle cx="110" cy="110" r="95" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
+    <circle cx="110" cy="110" r="75" fill="url(#speaker-cone)" stroke="#334155" stroke-width="2"/>
+    <circle cx="110" cy="110" r="40" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>
+    <circle cx="110" cy="110" r="20" fill="#334155"/>
+    <text x="110" y="225" fill="#94a3b8" font-size="13" font-weight="bold" text-anchor="middle">3W 4Ω / 8Ω MINI SPEAKER</text>
+    <!-- Solder Lugs -->
+    <rect x="200" y="80" width="18" height="14" rx="3" fill="#cbd5e1" stroke="#475569"/>
+    <circle id="spk_pos" cx="209" cy="87" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.5"/>
+    <text x="190" y="92" fill="#ef4444" font-size="11" font-weight="bold">(+)</text>
+    <rect x="200" y="125" width="18" height="14" rx="3" fill="#cbd5e1" stroke="#475569"/>
+    <circle id="spk_neg" cx="209" cy="132" r="5" fill="#1e293b" stroke="#ffffff" stroke-width="1.5"/>
+    <text x="190" y="137" fill="#cbd5e1" font-size="11" font-weight="bold">(-)</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- COMPONENT 9: TM1637 4-Digit Display -->
+  <!-- ===================================================================== -->
+  <g id="display" transform="translate(1420, 390)" filter="url(#shadow)">
+    <rect width="320" height="165" rx="10" fill="url(#pcb-blue)" stroke="#38bdf8" stroke-width="2"/>
+    <!-- LED 7-Segment Screen Housing -->
+    <rect x="20" y="22" width="230" height="120" rx="6" fill="#0f172a" stroke="#475569" stroke-width="2"/>
+    <text x="45" y="102" fill="#ef4444" font-family="'Courier New', monospace" font-size="65" font-weight="bold">C</text>
+    <text x="95" y="102" fill="#ef4444" font-family="'Courier New', monospace" font-size="65" font-weight="bold">-</text>
+    <text x="140" y="102" fill="#ef4444" font-family="'Courier New', monospace" font-size="65" font-weight="bold">1</text>
+    <text x="185" y="102" fill="#ef4444" font-family="'Courier New', monospace" font-size="65" font-weight="bold">3</text>
+    <circle cx="130" cy="62" r="4" fill="#ef4444"/>
+    <circle cx="130" cy="92" r="4" fill="#ef4444"/>
+    <text x="135" y="155" fill="#e0f2fe" font-size="12" font-weight="bold" text-anchor="middle">TM1637 4-DIGIT DISPLAY</text>
+    <!-- Right side 4-pin header (x=280) -->
+    <g transform="translate(265, 30)" font-size="11" font-weight="bold" fill="#ffffff">
+      <circle id="tm_clk" cx="35" cy="15" r="5" fill="#c084fc" stroke="#ffffff" stroke-width="1.5"/><text x="25" y="19" text-anchor="end">CLK</text>
+      <circle id="tm_dio" cx="35" cy="45" r="5" fill="#f8fafc" stroke="#334155" stroke-width="1.5"/><text x="25" y="49" text-anchor="end">DIO</text>
+      <circle id="tm_vcc" cx="35" cy="75" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.5"/><text x="25" y="79" text-anchor="end">VCC</text>
+      <circle id="tm_gnd" cx="35" cy="105" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="1.5"/><text x="25" y="109" text-anchor="end">GND</text>
+    </g>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- COMPONENT 10: Front 7-Pixel WS2812B NeoPixel Ring -->
+  <!-- ===================================================================== -->
+  <g id="ring" transform="translate(1380, 130)" filter="url(#shadow)">
+    <circle cx="70" cy="70" r="65" fill="url(#pcb-green)" stroke="#22c55e" stroke-width="2"/>
+    <circle cx="70" cy="70" r="35" fill="#121316"/>
+    <!-- 7 pixels arranged in circle -->
+    <rect x="105" y="59" width="20" height="20" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <rect x="88" y="98" width="20" height="20" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <rect x="46" y="109" width="20" height="20" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <rect x="15" y="81" width="20" height="20" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <rect x="15" y="37" width="20" height="20" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <rect x="46" y="9" width="20" height="20" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <rect x="88" y="20" width="20" height="20" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="70" y="74" fill="#86efac" font-size="10" font-weight="bold" text-anchor="middle">7-RING</text>
+    <!-- Solder Pads at Bottom -->
+    <circle id="ring_din" cx="45" cy="145" r="5" fill="#22c55e" stroke="#ffffff" stroke-width="1.5"/><text x="45" y="160" fill="#86efac" font-size="9" text-anchor="middle">DIN</text>
+    <circle id="ring_5v" cx="70" cy="145" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.5"/><text x="70" y="160" fill="#ef4444" font-size="9" text-anchor="middle">5V</text>
+    <circle id="ring_gnd" cx="95" cy="145" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="1.5"/><text x="95" y="160" fill="#94a3b8" font-size="9" text-anchor="middle">GND</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- COMPONENT 11: Top 8-Pixel WS2812B NeoPixel Strip -->
+  <!-- ===================================================================== -->
+  <g id="strip" transform="translate(1580, 130)" filter="url(#shadow)">
+    <rect width="450" height="65" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+    <!-- 8 LEDs -->
+    <g transform="translate(75, 15)">
+      <rect x="0" y="0" width="32" height="32" rx="3" fill="#ffffff" stroke="#94a3b8"/><circle cx="16" cy="16" r="9" fill="#10b981"/>
+      <rect x="45" y="0" width="32" height="32" rx="3" fill="#ffffff" stroke="#94a3b8"/><circle cx="61" cy="16" r="9" fill="#10b981"/>
+      <rect x="90" y="0" width="32" height="32" rx="3" fill="#ffffff" stroke="#94a3b8"/><circle cx="106" cy="16" r="9" fill="#10b981"/>
+      <rect x="135" y="0" width="32" height="32" rx="3" fill="#ffffff" stroke="#94a3b8"/><circle cx="151" cy="16" r="9" fill="#10b981"/>
+      <rect x="180" y="0" width="32" height="32" rx="3" fill="#ffffff" stroke="#94a3b8"/><circle cx="196" cy="16" r="9" fill="#10b981"/>
+      <rect x="225" y="0" width="32" height="32" rx="3" fill="#ffffff" stroke="#94a3b8"/><circle cx="241" cy="16" r="9" fill="#10b981"/>
+      <rect x="270" y="0" width="32" height="32" rx="3" fill="#ffffff" stroke="#94a3b8"/><circle cx="286" cy="16" r="9" fill="#10b981"/>
+      <rect x="315" y="0" width="32" height="32" rx="3" fill="#ffffff" stroke="#94a3b8"/><circle cx="331" cy="16" r="9" fill="#10b981"/>
+    </g>
+    <!-- Pads on Left -->
+    <circle id="strip_5v" cx="25" cy="18" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.5"/><text x="38" y="22" fill="#ef4444" font-size="10" font-weight="bold">+5V</text>
+    <circle id="strip_din" cx="25" cy="33" r="5" fill="#22c55e" stroke="#ffffff" stroke-width="1.5"/><text x="38" y="37" fill="#86efac" font-size="10" font-weight="bold">DIN</text>
+    <circle id="strip_gnd" cx="25" cy="48" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="1.5"/><text x="38" y="52" fill="#94a3b8" font-size="10" font-weight="bold">GND</text>
+    <text x="300" y="58" fill="#e2e8f0" font-size="11" font-weight="bold">TOP 8-PIXEL FLUID RESERVOIR STRIP</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- COMPONENT 12: 3x Green Screen-Accurate Indicator LEDs + 220 Ohm Resistors -->
+  <!-- ===================================================================== -->
+  <g id="hud_leds" transform="translate(2060, 120)" filter="url(#shadow)">
+    <rect width="280" height="175" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+    <text x="140" y="25" fill="#6ee7b7" font-size="12" font-weight="bold" text-anchor="middle">3x FRONT HUD LEDS</text>
+
+    <!-- LED 1 -->
+    <g transform="translate(25, 45)">
+      <circle cx="20" cy="20" r="15" fill="#10b981" stroke="#34d399" stroke-width="2"/>
+      <text x="20" y="24" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">L1</text>
+      <!-- 220 ohm Resistor -->
+      <rect x="0" y="48" width="40" height="12" rx="3" fill="#d97706" stroke="#fde68a" stroke-width="1"/>
+      <circle id="hud1_in" cx="20" cy="75" r="5" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/>
+      <text x="20" y="92" fill="#86efac" font-size="9" text-anchor="middle">D2 (220Ω)</text>
+    </g>
+
+    <!-- LED 2 -->
+    <g transform="translate(100, 45)">
+      <circle cx="20" cy="20" r="15" fill="#10b981" stroke="#34d399" stroke-width="2"/>
+      <text x="20" y="24" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">L2</text>
+      <rect x="0" y="48" width="40" height="12" rx="3" fill="#d97706" stroke="#fde68a" stroke-width="1"/>
+      <circle id="hud2_in" cx="20" cy="75" r="5" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/>
+      <text x="20" y="92" fill="#86efac" font-size="9" text-anchor="middle">D3 (220Ω)</text>
+    </g>
+
+    <!-- LED 3 -->
+    <g transform="translate(175, 45)">
+      <circle cx="20" cy="20" r="15" fill="#10b981" stroke="#34d399" stroke-width="2"/>
+      <text x="20" y="24" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">L3</text>
+      <rect x="0" y="48" width="40" height="12" rx="3" fill="#d97706" stroke="#fde68a" stroke-width="1"/>
+      <circle id="hud3_in" cx="20" cy="75" r="5" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/>
+      <text x="20" y="92" fill="#86efac" font-size="9" text-anchor="middle">D4 (220Ω)</text>
+    </g>
+
+    <!-- Common Cathode Ground Contact -->
+    <circle id="hud_gnd" cx="245" cy="150" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="1.5"/>
+    <text x="235" y="154" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">Cathodes (-) GND</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- COMPONENT 13: Analog Thumb Joystick (KY-023 / ARD-358) -->
+  <!-- ===================================================================== -->
+  <g id="joystick" transform="translate(500, 930)" filter="url(#shadow)">
+    <rect width="210" height="240" rx="14" fill="url(#pcb-red)" stroke="#f87171" stroke-width="2"/>
+    <!-- Outer Gimbal ring -->
+    <circle cx="105" cy="100" r="75" fill="#0f172a" stroke="#475569" stroke-width="3"/>
+    <circle cx="105" cy="100" r="58" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <circle cx="105" cy="100" r="42" fill="#020617" stroke="#64748b" stroke-width="3"/>
+    <circle cx="105" cy="100" r="32" fill="#1e293b"/>
+    <text x="105" y="105" fill="#64748b" font-size="12" font-weight="bold" text-anchor="middle">CLICK</text>
+    <text x="105" y="195" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle">ANALOG JOYSTICK</text>
+    <text x="105" y="212" fill="#fecaca" font-size="11" text-anchor="middle">KY-023 / ARD-358</text>
+    <!-- 5-Pin Header on Right -->
+    <g transform="translate(185, 30)" font-size="11" font-weight="bold" fill="#ffffff">
+      <circle id="joy_gnd" cx="15" cy="15" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="1.5"/><text x="5" y="19" text-anchor="end">GND</text>
+      <circle id="joy_vcc" cx="15" cy="45" r="5" fill="#0284c7" stroke="#ffffff" stroke-width="1.5"/><text x="5" y="49" text-anchor="end">+5V (3.3V!)</text>
+      <circle id="joy_vrx" cx="15" cy="75" r="5" fill="#f97316" stroke="#ffffff" stroke-width="1.5"/><text x="5" y="79" text-anchor="end">VRX</text>
+      <circle id="joy_vry" cx="15" cy="105" r="5" fill="#eab308" stroke="#ffffff" stroke-width="1.5"/><text x="5" y="109" text-anchor="end">VRY</text>
+      <circle id="joy_sw" cx="15" cy="135" r="5" fill="#a16207" stroke="#ffffff" stroke-width="1.5"/><text x="5" y="139" text-anchor="end">SW</text>
+    </g>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- COMPONENT 14: Momentary Sleep/Wake Button -->
+  <!-- ===================================================================== -->
+  <g id="wake_btn" transform="translate(200, 960)" filter="url(#shadow)">
+    <rect width="140" height="150" rx="10" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+    <circle cx="70" cy="65" r="38" fill="#334155" stroke="#94a3b8" stroke-width="2"/>
+    <circle cx="70" cy="65" r="28" fill="#10b981" stroke="#34d399" stroke-width="2"/>
+    <text x="70" y="70" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">PUSH</text>
+    <text x="70" y="122" fill="#e2e8f0" font-size="12" font-weight="bold" text-anchor="middle">SLEEP / WAKE</text>
+    <text x="70" y="137" fill="#94a3b8" font-size="10" text-anchor="middle">Momentary (D10)</text>
+    <circle id="btn_pin1" cx="45" cy="95" r="5" fill="#f97316" stroke="#ffffff" stroke-width="1.5"/>
+    <circle id="btn_pin2" cx="95" cy="95" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="1.5"/>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- LEGEND & ASSEMBLY INSTRUCTIONS CARD (Bottom Right, Clean Layout) -->
+  <!-- ===================================================================== -->
+  <g transform="translate(1380, 620)" filter="url(#shadow)">
+    <rect width="960" height="550" rx="12" fill="#181a20" stroke="#334155" stroke-width="2"/>
+    <rect x="20" y="15" width="920" height="38" rx="6" fill="#1e293b"/>
+    <text x="35" y="40" fill="#38bdf8" font-size="17" font-weight="bold">⚡ COMPLETE WIRING LEGEND &amp; SAFETY HIGHLIGHTS</text>
+
+    <g transform="translate(30, 80)" font-size="13" fill="#cbd5e1">
+      <!-- Section 1 -->
+      <text x="0" y="0" fill="#f87171" font-weight="bold" font-size="15">1. POWER &amp; BATTERY ISOLATION (P-01 to P-10):</text>
+      <text x="15" y="24">• 3A Inline Fuse placed immediately off Battery (+) prevents short-circuit fires.</text>
+      <text x="15" y="46">• Switched 7.4V-8.4V feeds Nano ESP32 VIN directly: isolates MCU from 5V audio/LED dips!</text>
+      <text x="15" y="68">• Mini360 Buck Converter trims 7.4V down to exactly +5.0V for the NeoPixels &amp; I2S Amp.</text>
+      <text x="15" y="90">• 1000 µF 10V capacitor across +5V and GND absorbs heavy LED inrush spikes.</text>
+
+      <!-- Section 2 -->
+      <text x="0" y="132" fill="#38bdf8" font-weight="bold" font-size="15">2. SAFE 3.3V ADC ANALOG RAIL (PWR-05):</text>
+      <text x="15" y="156" fill="#fde047" font-weight="bold">⚠️ DANGER: Connect Joystick VCC strictly to Nano ESP32 3.3V Out, NEVER 5V!</text>
+      <text x="15" y="178">• ESP32-S3 ADC inputs (A0, A1) are strictly 3.3V-tolerant. 5V will permanently burn the ADC.</text>
+
+      <!-- Section 3 -->
+      <text x="0" y="220" fill="#c084fc" font-weight="bold" font-size="15">3. HIGH-FIDELITY I2S AUDIO (AUD-01 to AUD-05):</text>
+      <text x="15" y="244">• D11 ➔ BCLK (Bit Clock), D12 ➔ LRC (Word Select), D13 ➔ DIN (Serial PCM Data).</text>
+      <text x="15" y="266" fill="#fca5a5" font-weight="bold">⚠️ Speaker SPK- is a differential Bridge-Tied Load (BTL): NEVER CONNECT SPK- TO GND!</text>
+
+      <!-- Section 4 -->
+      <text x="0" y="308" fill="#86efac" font-weight="bold" font-size="15">4. WS2812B NEOPIXELS &amp; DISPLAY (LED-01, LED-02, DSP-01, DSP-02):</text>
+      <text x="15" y="332">• D5 ➔ 330Ω ➔ Barrel Ring DIN (7 LEDs), D6 ➔ 330Ω ➔ Top Fluid Strip DIN (8 LEDs).</text>
+      <text x="15" y="354">• D7 ➔ TM1637 CLK, D8 ➔ TM1637 DIO (4-Digit Red Display).</text>
+
+      <!-- Section 5 -->
+      <text x="0" y="396" fill="#fdba74" font-weight="bold" font-size="15">5. CONTROLS &amp; DEEP SLEEP WAKE (INP-01 to INP-04):</text>
+      <text x="15" y="420">• VRX ➔ A0, VRY ➔ A1, Joystick SW ➔ D9 (Uses ESP32 internal INPUT_PULLUP).</text>
+      <text x="15" y="442">• Sleep/Wake Button ➔ D10 (ESP32-S3 RTC_GPIO21 EXT0 wake source).</text>
+    </g>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- PHYSICAL WIRES (DRAWN OVER COMPONENTS WITH ORTHOGONAL ROUTING) -->
+  <!-- ===================================================================== -->
+  <g id="wires" filter="url(#wire-shadow)" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- P-01: Bat(+) to Fuse In (Red) -->
+    <path d="M 270 175 L 330 175" fill="none" stroke="#ef4444" stroke-width="4"/>
+    <rect x="280" y="158" width="35" height="16" rx="3" fill="#ef4444"/><text x="297" y="170" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">P-01</text>
+
+    <!-- P-02: Fuse Out to Switch COM (Red) -->
+    <path d="M 410 175 L 460 175" fill="none" stroke="#ef4444" stroke-width="4"/>
+    <rect x="420" y="158" width="35" height="16" rx="3" fill="#ef4444"/><text x="437" y="170" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">P-02</text>
+
+    <!-- P-03 / P-04: Switched Raw (+) from Switch NO to Buck IN+ -->
+    <path d="M 590 175 L 615 175 L 615 160 L 650 160" fill="none" stroke="#ef4444" stroke-width="4"/>
+    <rect x="600" y="142" width="35" height="16" rx="3" fill="#ef4444"/><text x="617" y="154" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">P-04</text>
+
+    <!-- P-05: Switched Raw (+) to Nano VIN (Isolated Battery Rail) -->
+    <path d="M 615 175 L 615 320 L 1320 320 L 1320 830 L 1267 830" fill="none" stroke="#dc2626" stroke-width="3.5" stroke-dasharray="8 3"/>
+    <rect x="1280" y="550" width="38" height="16" rx="3" fill="#dc2626"/><text x="1299" y="562" fill="#ffffff" font-size="9" font-weight="bold" text-anchor="middle">P-05(VIN)</text>
+
+    <!-- P-06: Bat(-) to Buck IN- (Black/Slate) -->
+    <path d="M 270 235 L 300 235 L 300 280 L 630 280 L 630 235 L 650 235" fill="none" stroke="#334155" stroke-width="5"/>
+    <path d="M 270 235 L 300 235 L 300 280 L 630 280 L 630 235 L 650 235" fill="none" stroke="#0f172a" stroke-width="3"/>
+    <rect x="310" y="270" width="35" height="16" rx="3" fill="#334155"/><text x="327" y="282" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">P-06</text>
+
+    <!-- P-07: Buck OUT+ to 5V Bus (Red) -->
+    <path d="M 780 160 L 950 160" fill="none" stroke="#ef4444" stroke-width="5"/>
+    <rect x="800" y="145" width="45" height="16" rx="3" fill="#ef4444"/><text x="822" y="157" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">P-07(+5V)</text>
+
+    <!-- P-08: Buck OUT- to Common GND Bus (Black/Slate) -->
+    <path d="M 780 235 L 950 235" fill="none" stroke="#334155" stroke-width="5"/>
+    <path d="M 780 235 L 950 235" fill="none" stroke="#0f172a" stroke-width="3"/>
+    <rect x="800" y="222" width="45" height="16" rx="3" fill="#334155"/><text x="822" y="234" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">P-08(GND)</text>
+
+    <!-- CAP-01 & CAP-02: 1000uF Cap to 5V and GND -->
+    <path d="M 855 260 L 855 170 L 950 170" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+    <path d="M 880 260 L 880 220 L 950 220" fill="none" stroke="#475569" stroke-width="2.5"/>
+
+    <!-- P-09 & P-10: Switch LED (+) from 5V Bus and LED (-) to GND -->
+    <path d="M 505 255 L 505 290 L 930 290 L 930 165 L 950 165" fill="none" stroke="#38bdf8" stroke-width="2"/>
+    <path d="M 545 255 L 545 300 L 940 300 L 940 225 L 950 225" fill="none" stroke="#64748b" stroke-width="2"/>
+
+    <!-- PWR-01: 5V Bus to MAX98357A VIN -->
+    <path d="M 970 175 L 970 435 L 690 435 L 690 620" fill="none" stroke="#ef4444" stroke-width="3"/>
+    <rect x="700" y="440" width="50" height="16" rx="3" fill="#ef4444"/><text x="725" y="452" fill="#ffffff" font-size="9" font-weight="bold" text-anchor="middle">PWR-01(5V)</text>
+
+    <!-- PWR-02: 5V Bus to TM1637 VCC -->
+    <path d="M 1320 155 L 1750 155 L 1750 465 L 1700 465" fill="none" stroke="#ef4444" stroke-width="3"/>
+
+    <!-- PWR-03: 5V Bus to Barrel Ring 5V -->
+    <path d="M 1320 150 L 1450 150 L 1450 275" fill="none" stroke="#ef4444" stroke-width="3"/>
+
+    <!-- PWR-04: 5V Bus to Top Strip +5V -->
+    <path d="M 1320 145 L 1605 145 L 1605 148" fill="none" stroke="#ef4444" stroke-width="3"/>
+
+    <!-- PWR-05: Nano 3.3V Out strictly to Joystick VCC (Blue) -->
+    <path d="M 1261 505 L 1290 505 L 1290 900 L 730 900 L 730 975 L 705 975" fill="none" stroke="#007aff" stroke-width="3.5"/>
+    <rect x="940" y="890" width="105" height="18" rx="3" fill="#007aff"/><text x="992" y="903" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">PWR-05 (3.3V TO JOY VCC)</text>
+
+    <!-- GND-01 to GND-09: Common Ground Network -->
+    <!-- Nano GND to Bus -->
+    <path d="M 1059 755 L 1020 755 L 1020 235 L 980 235" fill="none" stroke="#334155" stroke-width="3"/>
+    <!-- MAX98357A GND and GAIN to Bus -->
+    <path d="M 670 620 L 670 425 L 980 425 L 980 240" fill="none" stroke="#334155" stroke-width="3"/>
+    <path d="M 625 620 L 625 425" fill="none" stroke="#334155" stroke-width="2.5"/> <!-- GAIN to GND -->
+    <!-- TM1637 GND to Bus -->
+    <path d="M 1700 495 L 1760 495 L 1760 215 L 1320 215" fill="none" stroke="#334155" stroke-width="3"/>
+    <!-- Barrel Ring GND to Bus -->
+    <path d="M 1475 275 L 1475 220 L 1320 220" fill="none" stroke="#334155" stroke-width="3"/>
+    <!-- Top Strip GND to Bus -->
+    <path d="M 1605 178 L 1605 225 L 1320 225" fill="none" stroke="#334155" stroke-width="3"/>
+    <!-- HUD LEDs Cathodes GND to Bus -->
+    <path d="M 2305 270 L 2360 270 L 2360 215 L 1320 215" fill="none" stroke="#334155" stroke-width="3"/>
+    <!-- Joystick GND to Bus -->
+    <path d="M 705 945 L 750 945 L 750 755 L 1020 755" fill="none" stroke="#334155" stroke-width="3"/>
+    <!-- Sleep/Wake Button Pin 2 to Bus -->
+    <path d="M 295 1055 L 295 1110 L 760 1110 L 760 755" fill="none" stroke="#334155" stroke-width="3"/>
+
+    <!-- ========================================================== -->
+    <!-- I2S AUDIO SIGNALS (AUD-01, AUD-02, AUD-03) -->
+    <!-- ========================================================== -->
+    <!-- AUD-01: D11 to Amp BCLK (Yellow) -->
+    <path d="M 1059 505 L 960 505 L 960 560 L 575 560 L 575 620" fill="none" stroke="#eab308" stroke-width="3"/>
+    <rect x="810" y="550" width="68" height="16" rx="3" fill="#eab308"/><text x="844" y="562" fill="#000000" font-size="9" font-weight="bold" text-anchor="middle">AUD-01 (BCLK)</text>
+
+    <!-- AUD-02: D12 to Amp LRC (Purple) -->
+    <path d="M 1059 480 L 970 480 L 970 545 L 550 545 L 550 620" fill="none" stroke="#a855f7" stroke-width="3"/>
+    <rect x="810" y="535" width="68" height="16" rx="3" fill="#a855f7"/><text x="844" y="547" fill="#ffffff" font-size="9" font-weight="bold" text-anchor="middle">AUD-02 (LRC)</text>
+
+    <!-- AUD-03: D13 to Amp DIN (White) -->
+    <path d="M 1261 480 L 1280 480 L 1280 370 L 600 370 L 600 620" fill="none" stroke="#f8fafc" stroke-width="3"/>
+    <rect x="810" y="360" width="68" height="16" rx="3" fill="#ffffff"/><text x="844" y="372" fill="#000000" font-size="9" font-weight="bold" text-anchor="middle">AUD-03 (DIN)</text>
+
+    <!-- AUD-04 & AUD-05: Amp SPK+ and SPK- to Speaker (Differential Twisted Pair) -->
+    <path d="M 605 500 L 605 517 L 378 517" fill="none" stroke="#ef4444" stroke-width="3.5"/>
+    <path d="M 655 500 L 655 562 L 378 562" fill="none" stroke="#0f172a" stroke-width="3.5"/>
+    <rect x="420" y="507" width="80" height="16" rx="3" fill="#ef4444"/><text x="460" y="519" fill="#ffffff" font-size="9" font-weight="bold" text-anchor="middle">AUD-04 (SPK+)</text>
+    <rect x="420" y="552" width="80" height="16" rx="3" fill="#334155"/><text x="460" y="564" fill="#ffffff" font-size="9" font-weight="bold" text-anchor="middle">AUD-05 (SPK-)</text>
+
+    <!-- ========================================================== -->
+    <!-- DISPLAY & NEOPIXELS (DSP-01, DSP-02, LED-01, LED-02) -->
+    <!-- ========================================================== -->
+    <!-- DSP-01: D7 to TM1637 CLK (Purple) -->
+    <path d="M 1059 605 L 1010 605 L 1010 615 L 1360 615 L 1360 405 L 1700 405" fill="none" stroke="#c084fc" stroke-width="3"/>
+    <rect x="1330" y="570" width="68" height="16" rx="3" fill="#c084fc"/><text x="1364" y="582" fill="#ffffff" font-size="9" font-weight="bold" text-anchor="middle">DSP-01(CLK)</text>
+
+    <!-- DSP-02: D8 to TM1637 DIO (White) -->
+    <path d="M 1059 580 L 1000 580 L 1000 590 L 1375 590 L 1375 435 L 1700 435" fill="none" stroke="#f8fafc" stroke-width="3"/>
+    <rect x="1330" y="545" width="68" height="16" rx="3" fill="#ffffff"/><text x="1364" y="557" fill="#000000" font-size="9" font-weight="bold" text-anchor="middle">DSP-02(DIO)</text>
+
+    <!-- LED-01: D5 to Barrel Ring DIN (Green + 330 ohm inline) -->
+    <path d="M 1059 655 L 990 655 L 990 310 L 1425 310 L 1425 275" fill="none" stroke="#22c55e" stroke-width="3"/>
+    <rect x="1320" y="300" width="98" height="18" rx="3" fill="#22c55e"/><text x="1369" y="313" fill="#000000" font-size="10" font-weight="bold" text-anchor="middle">LED-01 (D5+330Ω)</text>
+
+    <!-- LED-02: D6 to Top Strip DIN (Green + 330 ohm inline) -->
+    <path d="M 1059 630 L 980 630 L 980 260 L 1570 260 L 1570 163 L 1605 163" fill="none" stroke="#22c55e" stroke-width="3"/>
+    <rect x="1500" y="250" width="98" height="18" rx="3" fill="#22c55e"/><text x="1549" y="263" fill="#000000" font-size="10" font-weight="bold" text-anchor="middle">LED-02 (D6+330Ω)</text>
+
+    <!-- ========================================================== -->
+    <!-- HUD INDICATOR LEDS (HUD-01, HUD-02, HUD-03) -->
+    <!-- ========================================================== -->
+    <!-- Routed safely along top corridor (y=340), never touching Legend card -->
+    <!-- HUD-01: D2 to LED 1 Anode via 220 ohm (Green) -->
+    <path d="M 1059 730 L 970 730 L 970 340 L 2080 340 L 2080 240" fill="none" stroke="#10b981" stroke-width="2.5"/>
+    <rect x="1800" y="330" width="75" height="16" rx="3" fill="#10b981"/><text x="1837" y="342" fill="#ffffff" font-size="9" font-weight="bold" text-anchor="middle">HUD-01 (D2)</text>
+
+    <!-- HUD-02: D3 to LED 2 Anode via 220 ohm (Green) -->
+    <path d="M 1059 705 L 960 705 L 960 355 L 2160 355 L 2160 240" fill="none" stroke="#10b981" stroke-width="2.5"/>
+    <rect x="1890" y="345" width="75" height="16" rx="3" fill="#10b981"/><text x="1927" y="357" fill="#ffffff" font-size="9" font-weight="bold" text-anchor="middle">HUD-02 (D3)</text>
+
+    <!-- HUD-03: D4 to LED 3 Anode via 220 ohm (Green) -->
+    <path d="M 1059 680 L 950 680 L 950 370 L 2235 370 L 2235 240" fill="none" stroke="#10b981" stroke-width="2.5"/>
+    <rect x="1980" y="360" width="75" height="16" rx="3" fill="#10b981"/><text x="2017" y="372" fill="#ffffff" font-size="9" font-weight="bold" text-anchor="middle">HUD-03 (D4)</text>
+
+    <!-- ========================================================== -->
+    <!-- JOYSTICK & SLEEP/WAKE BUTTONS (INP-01 to INP-04) -->
+    <!-- ========================================================== -->
+    <!-- INP-01: VRX to A0 (Orange) -->
+    <path d="M 705 1005 L 830 1005 L 830 555 L 1261 555" fill="none" stroke="#f97316" stroke-width="3"/>
+    <rect x="840" y="660" width="78" height="16" rx="3" fill="#f97316"/><text x="879" y="672" fill="#ffffff" font-size="9" font-weight="bold" text-anchor="middle">INP-01 (VRX➔A0)</text>
+
+    <!-- INP-02: VRY to A1 (Yellow) -->
+    <path d="M 705 1035 L 850 1035 L 850 580 L 1261 580" fill="none" stroke="#eab308" stroke-width="3"/>
+    <rect x="840" y="685" width="78" height="16" rx="3" fill="#eab308"/><text x="879" y="697" fill="#000000" font-size="9" font-weight="bold" text-anchor="middle">INP-02 (VRY➔A1)</text>
+
+    <!-- INP-03: SW to D9 (Brown) -->
+    <path d="M 705 1065 L 870 1065 L 870 555 L 1059 555" fill="none" stroke="#a16207" stroke-width="3"/>
+    <rect x="840" y="710" width="78" height="16" rx="3" fill="#a16207"/><text x="879" y="722" fill="#ffffff" font-size="9" font-weight="bold" text-anchor="middle">INP-03 (SW➔D9)</text>
+
+    <!-- INP-04: Sleep/Wake Button Pin 1 to D10 (Orange) -->
+    <path d="M 245 1055 L 245 1150 L 910 1150 L 910 530 L 1059 530" fill="none" stroke="#f97316" stroke-width="3"/>
+    <rect x="480" y="1140" width="115" height="18" rx="3" fill="#f97316"/><text x="537" y="1153" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">INP-04 (WAKE➔D10)</text>
+
+  </g>
+</svg>

@@ -24,7 +24,7 @@ An ultra screen-accurate, fully interactive **Rick and Morty Portal Gun** firmwa
 ## ✨ Feature Highlights
 
 * **🎛️ Physical Universe Dialing**: Dial from Universe `A-001` through `Z-999` using the analog joystick. Defaults to Rick Sanchez's home universe: **`C-137`**.
-* **⚡ Firing Portal Beam**: Pressing the joystick button triggers an authentic portal blast (`snd_portal_open1`), illuminating the 7-LED front barrel ring and top fluid cylinder with pulsing interdimensional plasma.
+* **⚡ Firing Portal Beam**: Pressing the joystick button triggers an authentic portal blast (`snd_portal_open1`), illuminating the 7-LED top fluid bulb ring with pulsing interdimensional plasma.
 * **🦖 Playable Chrome T-Rex Dino Runner**: Play the iconic offline dinosaur jumping game across the 4 digits of the TM1637 display, complete with the looping official soundtrack *"Jesus Was a Dinosaur"*!
 * **🐍 Playable 7-Segment Snake Game**: Full snake game moving across 7-segment display segments with 4-way steering, food spawning, and the official looping **Snake Jazz** track.
 * **🎲 Interdimensional Chamber Roulette**: A Russian Roulette gambling minigame with cylinder ratcheting sounds, tense heartbeat LEDs, and an explosive blast followed by Rick gloating: *"Riggity Riggity Wrecked Son!"*.
@@ -32,8 +32,8 @@ An ultra screen-accurate, fully interactive **Rick and Morty Portal Gun** firmwa
 * **🎵 Evil Morty Theme & The Golden Portal**: Dedicated mode that plays the orchestral *Evil Morty Theme* (For the Damaged Coda) with atmospheric amber breathing pulses.
 * **🎉 Party Mode (Get Schwifty)**: Plays *Get Schwifty* with 3-band audio reactive equalizer lighting and synchronized scrolling karaoke lyrics.
 * **🌐 Phone Web App & Live Color Tuning**: Spawns an internal Wi-Fi Access Point (`Portal-Gun-C137`) with a captive portal web page. Features a live 360° rainbow hue slider to tune your portal beam color in real-time, plus one-tap character presets (Jerry Green, Morty Yellow, Unity Blue, Summer Pink, Beth Red, Rick White).
-* **📡 Citadel & Federation Proximity Radar**: Sweeps the outer barrel LEDs in a rotating sonar beam and uses Bluetooth LE to scan for nearby phones, alerting you to Federation spies (`FDED`) and Rival Ricks (`R1CK`).
-* **🔦 High-Power Torch**: Double-click on `'L'` to drive all barrel NeoPixels at 100% pure white (`255, 255, 255`) for a bright cosplay flashlight.
+* **📡 Citadel & Federation Proximity Radar**: Sweeps the outer 6 top bulb LEDs in a rotating sonar beam and uses Bluetooth LE to scan for nearby phones, alerting you to Federation spies (`FDED`) and Rival Ricks (`R1CK`).
+* **🔦 High-Power Torch**: Double-click on `'L'` to drive the top 7-pixel NeoPixel ring at 100% pure white (`255, 255, 255`) for a bright cosplay flashlight.
 * **🔋 Power Management**: Push-button power switch with deep sleep (sub-milliamp battery preservation) and smooth power-down/power-up sequences.
 
 ---
@@ -55,7 +55,7 @@ An ultra screen-accurate, fully interactive **Rick and Morty Portal Gun** firmwa
 ### 1. Dimension Selection (Idle Screen)
 * **UP / DOWN**: Steps through universe dimension letters (`A` through `Z`). *Preserves your dialed number.*
 * **RIGHT / LEFT**: Increments or decrements the dimension number (`001` through `999`).
-* **1 CLICK**: Fires the portal beam! Barrel NeoPixels and top fluid bulb ignite with pulsing green plasma while the blast sound plays.
+* **1 CLICK**: Fires the portal beam! The top fluid bulb ring ignites with pulsing green plasma while the blast sound plays.
 * **2 CLICKS (Double-Click)**: Opens the **Special Dimension Mode** corresponding to the selected letter (e.g., `'D'` for Dino Runner, `'S'` for Snake Game, `'U'` for Wi-Fi tuning).
 * **3 CLICKS (Triple-Click)**: **Universal Escape Hatch** — Instantly closes any active portal beam, stops any playing music or quote, and returns to Dimension Selection from anywhere!
 
@@ -87,9 +87,8 @@ Dial the letter on the TM1637 display and **Double-Click (2 Clicks)** to enter:
 | **Audio DAC & Amp** | **MAX98357A I2S DAC Amplifier** | Clear, loud 3W digital audio without PWM noise or buzzing. |
 | **Speaker** | **4Ω or 8Ω 3W Mini Speaker** (28mm – 40mm) | Mounted in the gun body or handle base for rich sound. |
 | **Display** | **TM1637 4-Digit 7-Segment Display** (Red, 0.36") | Displays dimension coordinates, mini-games, and HUD. |
-| **Barrel LEDs** | **WS2812B 7-Pixel LED Ring** | Mounted in the front emitter nozzle. |
-| **Top Bulb LEDs** | **WS2812B 8-Pixel LED Strip** | Placed inside the top transparent fluid reservoir tube. |
-| **Front LEDs** | **3x 3mm or 5mm Green LEDs** + 220Ω Resistors | Screen-accurate front indicator LEDs and physical Life Count HUD. |
+| **Top Bulb LEDs** | **WS2812B 7-Pixel LED Ring** | Placed inside top transparent fluid bulb. (The ONLY NeoPixel ring in the gun). |
+| **Front LEDs** | **3x 3mm or 5mm Green LEDs** + 220Ω Resistors | Screen-accurate front indicator LEDs and physical Life Count HUD (no NeoPixels at nozzle). |
 | **Joystick** | **Analog Thumb Joystick (KY-023 / ARD-358)** | Dual-axis analog stick with center push-button switch. |
 | **Power Button** | **Momentary Push Button** | Connected to `D10` (RTC GPIO) for waking and sleeping. |
 | **Battery & Power** | **2S LiPo / Li-Ion (7.4V, 850mAh)** + 5V Buck Regulator (or direct VIN) | Compact 2S pack powering the 5V bus (LEDs/Amp) and Nano ESP32 VIN (6V–21V tolerant). |
@@ -100,61 +99,74 @@ Dial the letter on the TM1637 display and **Double-Click (2 Clicks)** to enter:
 
 ---
 
-## 🔌 Wiring Diagram & Pinout
+## 🔌 Complete Wiring Diagrams & Assembly Schedule
 
-## 🔌 Complete Wire-by-Wire Assembly Schedule
+### Standard Engineering Schematic (EasyEDA / KiCad Net-Standard)
+Clean, professional schematic organized into modular functional blocks with zero crossing wire clutter using industry-standard net labels:
+![Rick & Morty Portal Gun EasyEDA Schematic Diagram](./easyeda_schematic_diagram.png)
+* *EasyEDA Project File*: [`portal_gun_easyeda.json`](./portal_gun_easyeda.json) (import into [EasyEDA Editor](https://easyeda.com/editor) via `File > Open > EasyEDA...`)
+* *Vector SVG*: [`easyeda_schematic_diagram.svg`](./easyeda_schematic_diagram.svg)
 
-> [!CAUTION]
-> **Power the Analog Joystick from 3.3V, NOT 5V!**  
-> The ESP32-S3 ADC inputs are strictly 3.3V-tolerant. Supplying 5V to the joystick potentiometer will permanently damage the microcontroller ADC pins (`A0` & `A1`).
+### Physical Breadboard & Module Diagram (Fritzing)
+Direct pin-to-pin physical wiring view showing actual component appearances:
+![Rick & Morty Portal Gun Fritzing Breadboard Diagram](./fritzing_breadboard_diagram.png)
+* *Native Fritzing Sketch*: [`portal_gun.fzz`](./portal_gun.fzz)
 
-> [!TIP]
-> **Audio Grounding Best Practice**:  
-> Tie all component grounds to a central star ground bus (or perfboard ground strip) to avoid ground loop noise and NeoPixel interference in the speaker audio.
+> [!IMPORTANT]
+> **Key Electrical & Assembly Highlights**:
+> * **3A Inline Fuse**: Install a 3A mini blade or PPTC resettable fuse right next to the 2S battery positive lead to protect against accidental chassis shorts.
+> * **Brownout-Proof MCU Powering**: Powering the Arduino Nano ESP32 `VIN` pin directly from the switched 2S battery (7.4V–8.4V) utilizes its onboard MP2322 switching step-down converter (rated 6V–21V). This completely isolates the MCU from 5V voltage drops when the 3.2W amplifier or NeoPixels hit peak load.
+> * **Step-Down Converter Ground Architecture (`IN-` vs `OUT-`)**:
+>   - **`IN-` is the BATTERY GROUND**: Solder the negative lead of the 2S battery pack directly to the buck converter's **`IN-`** pad. This completes the primary 7.4V–8.4V high-current battery circuit.
+>   - **`OUT-` is the SYSTEM GROUND**: Connect your central **Master Common GND Bus** to **`OUT-`**. All downstream electronics (Nano ESP32 GND, MAX98357A GND, NeoPixel GND, TM1637 GND, Joystick GND, front LEDs cathode GND, and Sleep button GND) tie to this bus.
+>   - **Shared Ground Plane**: On standard non-isolated buck converters (like Mini360 or MP1584), `IN-` and `OUT-` share the module's continuous internal copper ground plane. Soldering battery negative to `IN-` and the system ground bus to `OUT-` enforces a clean star-ground topology with zero ground loops and zero audio buzz.
+> * **Power the Analog Joystick from 3.3V, NOT 5V!** The ESP32-S3 ADC inputs are strictly 3.3V-tolerant. Supplying 5V to the joystick potentiometer will permanently damage ADC pins `A0` & `A1`.
+> * **Audio Grounding**: Tie all component grounds to a central star ground bus or strip to eliminate audio hum and NeoPixel noise.
 
 ---
 
-### ⚡ 1. Battery, Latching Power Switch & Buck Converter
+### ⚡ 1. Battery, Fuse, Latching Power Switch & Buck Converter
 
-| Wire # | Origin Component & Pin | Wire Color Suggestion | Destination Component & Pin | Wire Function & Assembly Notes |
+| Wire # | Origin Component & Pin | Wire Spec | Destination Component & Pin | Wire Function & Assembly Notes |
 | :-: | :--- | :--- | :--- | :--- |
-| **P-01** | **2S Battery (+)** | 🔴 Red (Thick 20-22 AWG) | **Latching Switch: COM / Terminal 1** | Raw positive battery voltage (7.4V nominal, 8.4V peak). |
-| **P-02** | **Latching Switch: NO / Terminal 2** | 🔴 Red (Thick 20-22 AWG) | **Buck Converter: IN+** | Switched positive power line into the DC-DC buck converter. |
-| **P-03** | **2S Battery (-)** | ⚫ Black (Thick 20-22 AWG) | **Buck Converter: IN-** | Main battery ground return to buck converter. |
-| **P-04** | **2S Battery (-) / Buck IN-** | ⚫ Black (22-24 AWG) | **Latching Button: LED (-)** *(if illuminated)* | **Ground for illuminated latch switch LED ring**. Connects to battery ground. |
-| **P-05** | **Latching Switch: NO / Terminal 2** | 🔴 Red (24 AWG) | **Latching Button: LED (+)** *(if illuminated)* | Bridges power to the switch's internal LED so it lights up when latched ON. |
-| **P-06** | **Buck Converter: OUT+** | 🔴 Red (Thick 20-22 AWG) | **Master +5.0V Power Bus** | Regulated +5.0V output rail (adjusted to 5.0V via trimmer). |
-| **P-07** | **Buck Converter: OUT-** | ⚫ Black (Thick 20-22 AWG) | **Master Common GND Bus** | System common ground star rail for all internal components. |
+| **P-01** | **2S Battery (+)** | 🔴 Red, 20–22 AWG | **3A Inline Fuse: In** | Raw positive battery voltage (7.4V nominal, 8.4V peak). Place fuse close to battery. |
+| **P-02** | **3A Inline Fuse: Out** | 🔴 Red, 20–22 AWG | **Latching Switch: COM / Pin 1** | Fused positive supply into master latching power switch. |
+| **P-03** | **Latching Switch: NO / Pin 2** | 🔴 Red, 20–22 AWG | **Switched Raw (+) Node** | Switched battery positive rail (live only when latching switch is ON). |
+| **P-04** | **Switched Raw (+) Node** | 🔴 Red, 20–22 AWG | **Buck Converter: IN+** | Supplies switched 7.4V–8.4V power into the Mini360 step-down converter. |
+| **P-05** | **Switched Raw (+) Node** | 🔴 Red, 22–24 AWG | **Arduino Nano ESP32: VIN** | **Powers MCU via onboard MP2322 regulator (6V–21V rated). Completely decouples MCU from 5V audio noise!** |
+| **P-06** | **2S Battery (-)** | ⚫ Black, 20–22 AWG | **Buck Converter: IN- (BAT -)** | **Primary Battery Ground Return**: Solder the negative wire of the 2S battery pack directly to `IN-`. This is the battery ground. |
+| **P-07** | **Buck Converter: OUT+** | 🔴 Red, 20–22 AWG | **Master +5.0V Power Bus** | Regulated +5.0V output rail (adjust trimmer to exactly 5.0V with a multimeter before connecting load). |
+| **P-08** | **Buck Converter: OUT- (SYS GND)** | ⚫ Black, 20–22 AWG | **Master Common GND Bus** | **Master Peripheral Ground Star Point**: Provides the 0V reference for all internal electronics. *(IN- and OUT- share the internal GND plane).* |
+| **P-09** | **Master +5.0V Bus** | 🔴 Red, 24 AWG | **Latching Switch: LED (+)** | Powers switch internal LED from regulated 5V (if using an illuminated push button). |
+| **P-10** | **Master Common GND Bus** | ⚫ Black, 24 AWG | **Latching Switch: LED (-)** | Ground return for the switch's internal illuminated LED ring. |
 
 ---
 
 ### 🔋 2. Regulated Power Distribution (+5V Bus & +3.3V Dedicated Rail)
 
-| Wire # | Origin Power Rail | Wire Color Suggestion | Destination Component & Pin | Wire Function & Assembly Notes |
+| Wire # | Origin Power Rail | Wire Spec | Destination Component & Pin | Wire Function & Assembly Notes |
 | :-: | :--- | :--- | :--- | :--- |
-| **PWR-01** | **Master +5.0V Bus** | 🔴 Red | **Arduino Nano ESP32: VIN** | Powers the microcontroller (Nano ESP32 onboard regulator accepts 5V–21V). |
-| **PWR-02** | **Master +5.0V Bus** | 🔴 Red | **MAX98357A I2S Amp: VIN** | 5V supply for clean, punchy 3.2W digital audio playback. |
-| **PWR-03** | **Master +5.0V Bus** | 🔴 Red | **TM1637 Display: VCC** | 5V power for 4-digit 7-segment display module. |
-| **PWR-04** | **Master +5.0V Bus** | 🔴 Red | **Barrel NeoPixel Ring: 5V / VDD** | Powers the front 7-pixel WS2812B emitter ring. |
-| **PWR-05** | **Master +5.0V Bus** | 🔴 Red | **Top NeoPixel Strip: 5V / VDD** | Powers the 8-pixel WS2812B top fluid reservoir strip. |
-| **PWR-06** | **Nano ESP32: 3.3V Out Pin** | 🔵 Blue | **Analog Joystick: VCC** | **⚠️ MUST BE 3.3V!** Powers joystick potentiometers safely for ADC inputs. |
+| **PWR-01** | **Master +5.0V Bus** | 🔴 Red, 22 AWG | **MAX98357A I2S Amp: VIN** | Clean 5V supply for punchy 3.2W digital audio playback. |
+| **PWR-02** | **Master +5.0V Bus** | 🔴 Red, 24 AWG | **TM1637 Display: VCC** | 5V power for 4-digit 7-segment display module. |
+| **PWR-03** | **Master +5.0V Bus** | 🔴 Red, 22 AWG | **Top NeoPixel Ring: 5V / VDD** | Powers the sole 7-pixel WS2812B fluid bulb ring. |
+| **PWR-04** | **Nano ESP32: 3.3V Out Pin** | 🔵 Blue, 24 AWG | **Analog Joystick: VCC** | **⚠️ MUST BE 3.3V!** Powers joystick potentiometers safely for ADC inputs (`A0` & `A1`). |
+| **CAP-01** | **Master +5.0V Bus** | 🔴 Red | **470µF–1000µF 10V Cap (+)** | Across +5V and GND near LED power rail to absorb switch-on inrush current spikes. |
+| **CAP-02** | **Master Common GND Bus** | ⚫ Black | **470µF–1000µF 10V Cap (-)** | Observe negative stripe polarity! |
 
 ---
 
 ### ⏚ 3. Master Common Ground Distribution (GND Star Bus)
 
-| Wire # | Origin Component & Pin | Wire Color Suggestion | Destination Ground Point | Wire Function & Assembly Notes |
+| Wire # | Origin Component & Pin | Wire Spec | Destination Ground Point | Wire Function & Assembly Notes |
 | :-: | :--- | :--- | :--- | :--- |
-| **GND-01** | **Arduino Nano ESP32: GND** | ⚫ Black | **Master Common GND Bus** | Microcontroller digital logic ground reference. |
-| **GND-02** | **MAX98357A I2S Amp: GND** | ⚫ Black | **Master Common GND Bus** | Audio amplifier power ground. |
-| **GND-03** | **MAX98357A I2S Amp: GAIN** | ⚫ Black | **Master Common GND Bus** | Connecting GAIN to GND configures the default **9dB gain**. |
-| **GND-04** | **TM1637 Display: GND** | ⚫ Black | **Master Common GND Bus** | 7-segment display logic ground. |
-| **GND-05** | **Barrel NeoPixel Ring: GND** | ⚫ Black | **Master Common GND Bus** | Front emitter ground return. |
-| **GND-06** | **Top NeoPixel Strip: GND** | ⚫ Black | **Master Common GND Bus** | Top fluid chamber strip ground return. |
-| **GND-07** | **3x Front Green LED Cathodes (-)**| ⚫ Black | **Master Common GND Bus** | Common cathode ground for all 3 front green HUD LEDs. |
-| **GND-08** | **Analog Joystick: GND** | ⚫ Black | **Master Common GND Bus** | Joystick potentiometer reference ground. |
-| **GND-09** | **Analog Joystick: SW Ground** | ⚫ Black | **Master Common GND Bus** | Pushbutton return line (internal pull-up on D9). |
-| **GND-10** | **Sleep/Wake Momentary Button: Pin 2**| ⚫ Black | **Master Common GND Bus** | RTC wake push-button ground return line. |
+| **GND-01** | **Arduino Nano ESP32: GND** | ⚫ Black, 22 AWG | **Master Common GND Bus** | Microcontroller digital logic ground reference. |
+| **GND-02** | **MAX98357A I2S Amp: GND** | ⚫ Black, 22 AWG | **Master Common GND Bus** | Audio amplifier power ground. |
+| **GND-03** | **MAX98357A Amp: GAIN** *(Optional)* | ⚫ Black, 24 AWG | **Master Common GND Bus** (or local GND) | **Gain Boost (+12dB)**: Connect to GND for +12dB (loud convention volume). **Alternatively, leave pin UNCONNECTED (floating) for default +9dB** (cleanest audio, saves 1 wire!). |
+| **GND-04** | **TM1637 Display: GND** | ⚫ Black, 24 AWG | **Master Common GND Bus** | 7-segment display logic ground. |
+| **GND-05** | **Top NeoPixel Ring: GND** | ⚫ Black, 22 AWG | **Master Common GND Bus** | Top fluid chamber ring ground return. |
+| **GND-06** | **3x Green LED Cathodes (-)** | ⚫ Black, 24 AWG | **Master Common GND Bus** | Common cathode ground for all 3 front green HUD LEDs. |
+| **GND-07** | **Analog Joystick: GND** | ⚫ Black, 24 AWG | **Master Common GND Bus** | **Single common ground for both X/Y potentiometers and the push-button switch.** |
+| **GND-08** | **Sleep/Wake Button: Pin 2** | ⚫ Black, 24 AWG | **Master Common GND Bus** | RTC wake push-button ground return line. |
 
 ---
 
@@ -176,8 +188,7 @@ Dial the letter on the TM1637 display and **Double-Click (2 Clicks)** to enter:
 | :-: | :--- | :--- | :--- | :--- |
 | **DSP-01** | **Arduino Nano ESP32: D7** | 🟣 Purple | **TM1637 Display: CLK** | Serial clock line for 4-digit dimension coordinate display. |
 | **DSP-02** | **Arduino Nano ESP32: D8** | ⚪ White | **TM1637 Display: DIO** | Bi-directional serial data line for coordinate & game rendering. |
-| **LED-01** | **Arduino Nano ESP32: D5** | 🟢 Green | **Barrel NeoPixel Ring: DIN** | Front 7-pixel ring data signal (optional 330Ω series resistor). |
-| **LED-02** | **Arduino Nano ESP32: D6** | 🟢 Green | **Top NeoPixel Strip: DIN** | Top 8-pixel fluid tube data signal (optional 330Ω series resistor). |
+| **LED-01** | **Arduino Nano ESP32: D5** | 🟢 Green | **330Ω Resistor ➔ Top Ring: DIN** | Top 7-pixel fluid bulb ring data signal (sole NeoPixel ring; 330Ω resistor near DIN). |
 
 ---
 
@@ -185,9 +196,9 @@ Dial the letter on the TM1637 display and **Double-Click (2 Clicks)** to enter:
 
 | Wire # | Origin Component & Pin | Inline Component | Destination Component & Pin | Wire Function & Assembly Notes |
 | :-: | :--- | :--- | :--- | :--- |
-| **HUD-01** | **Arduino Nano ESP32: D2** | **220Ω Resistor R1** | **Green LED 1: Anode (+)** | Left front HUD LED (software PWM breathing & Life 1). |
-| **HUD-02** | **Arduino Nano ESP32: D3** | **220Ω Resistor R2** | **Green LED 2: Anode (+)** | Center front HUD LED (software PWM breathing & Life 2). |
-| **HUD-03** | **Arduino Nano ESP32: D4** | **220Ω Resistor R3** | **Green LED 3: Anode (+)** | Right front HUD LED (software PWM breathing & Life 3). |
+| **HUD-01** | **Arduino Nano ESP32: D2** | **220Ω Resistor R1** | **Green LED 1: Anode (+)** | Left front HUD LED (software PWM breathing & Life 1; ~5.5mA safe direct GPIO drive). |
+| **HUD-02** | **Arduino Nano ESP32: D3** | **220Ω Resistor R2** | **Green LED 2: Anode (+)** | Center front HUD LED (software PWM breathing & Life 2; ~5.5mA safe direct GPIO drive). |
+| **HUD-03** | **Arduino Nano ESP32: D4** | **220Ω Resistor R3** | **Green LED 3: Anode (+)** | Right front HUD LED (software PWM breathing & Life 3; ~5.5mA safe direct GPIO drive). |
 
 ---
 
@@ -197,8 +208,8 @@ Dial the letter on the TM1637 display and **Double-Click (2 Clicks)** to enter:
 | :-: | :--- | :--- | :--- | :--- |
 | **INP-01** | **Analog Joystick: VRX** | 🟠 Orange | **Arduino Nano ESP32: A0** | Horizontal axis potentiometer voltage (0V to 3.3V analog input). |
 | **INP-02** | **Analog Joystick: VRY** | 🟡 Yellow | **Arduino Nano ESP32: A1** | Vertical axis potentiometer voltage (0V to 3.3V analog input). |
-| **INP-03** | **Analog Joystick: SW** | 🟤 Brown | **Arduino Nano ESP32: D9** | Center click pushbutton (active LOW with ESP32 internal pull-up). |
-| **INP-04** | **Sleep/Wake Button: Pin 1**| 🟠 Orange | **Arduino Nano ESP32: D10** | Momentary soft power button (RTC-capable wake pin from deep sleep). |
+| **INP-03** | **Analog Joystick: SW** | 🟤 Brown | **Arduino Nano ESP32: D9** | Center click pushbutton (active LOW with ESP32 internal `INPUT_PULLUP`). |
+| **INP-04** | **Sleep/Wake Button: Pin 1**| 🟠 Orange | **Arduino Nano ESP32: D10** | Momentary soft power button (mapped to ESP32-S3 `RTC_GPIO21` for `EXT0` deep-sleep wake). |
 
 ---
 
@@ -206,8 +217,8 @@ Dial the letter on the TM1637 display and **Double-Click (2 Clicks)** to enter:
 
 The 3D printable CAD models for the portal gun chassis are organized in the project folder:
 * **`Chassis / Main Shell`**: Left & Right clamshell body with battery compartment and internal PCB mounts.
-* **`Front Barrel Nozzle`**: Holds the 7-LED NeoPixel ring and front acrylic diffuser.
-* **`Top Fluid Cylinder`**: Houses the 8-LED WS2812B strip under a frosted green cylinder tube.
+* **`Front Barrel Nozzle`**: Front emitter cone and acrylic diffuser lens (no internal electronics).
+* **`Top Fluid Cylinder`**: Houses the single 7-LED WS2812B NeoPixel ring under a frosted green cylinder/dome.
 * **`Display Bezel`**: Snug front snap-fit bezel for the 0.36" TM1637 4-digit display module.
 * **`Electronics Sled`**: Slide-in mounting tray securing the Arduino Nano ESP32, MAX98357A amplifier, and 2S 850mAh battery compartment.
 

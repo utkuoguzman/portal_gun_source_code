@@ -1,0 +1,152 @@
+{
+  "head": {
+    "docType": "1",
+    "editorVersion": "6.5.22",
+    "c_para": {
+      "package": "",
+      "BOM_Manufacturer": "",
+      "BOM_Supplier": "",
+      "Contributor": "Antigravity",
+      "link": ""
+    }
+  },
+  "title": "Rick and Morty Portal Gun - Main System Schematic",
+  "description": "Schematic with single 7-pixel top NeoPixel ring, MAX98357A I2S DAC, TM1637, 3x Front Life HUD LEDs, Joystick, and explicit Battery Ground on Step-Down IN-",
+  "nets": [
+    {
+      "name": "BAT_SW",
+      "pins": [
+        "U1.IN+",
+        "SW1.NO",
+        "U2.VIN"
+      ]
+    },
+    {
+      "name": "+5V",
+      "pins": [
+        "U1.OUT+",
+        "C1.1",
+        "U3.VIN",
+        "DISP1.VCC",
+        "RING1.5V"
+      ]
+    },
+    {
+      "name": "GND",
+      "pins": [
+        "BT1.-",
+        "U1.IN-",
+        "U1.OUT-",
+        "C1.2",
+        "U2.GND",
+        "U3.GND",
+        "U3.GAIN",
+        "DISP1.GND",
+        "RING1.GND",
+        "JOY1.GND",
+        "SW2.2",
+        "D1.C",
+        "D2.C",
+        "D3.C"
+      ]
+    },
+    {
+      "name": "+3V3_JOY",
+      "pins": [
+        "U2.3V3",
+        "JOY1.VCC"
+      ]
+    },
+    {
+      "name": "I2S_BCLK",
+      "pins": [
+        "U2.D11",
+        "U3.BCLK"
+      ]
+    },
+    {
+      "name": "I2S_LRC",
+      "pins": [
+        "U2.D12",
+        "U3.LRC"
+      ]
+    },
+    {
+      "name": "I2S_DIN",
+      "pins": [
+        "U2.D13",
+        "U3.DIN"
+      ]
+    },
+    {
+      "name": "DISP_CLK",
+      "pins": [
+        "U2.D7",
+        "DISP1.CLK"
+      ]
+    },
+    {
+      "name": "DISP_DIO",
+      "pins": [
+        "U2.D8",
+        "DISP1.DIO"
+      ]
+    },
+    {
+      "name": "NEO_RING_DIN",
+      "pins": [
+        "U2.D5",
+        "R4.1"
+      ]
+    },
+    {
+      "name": "LED_HUD1",
+      "pins": [
+        "U2.D2",
+        "R1.1"
+      ]
+    },
+    {
+      "name": "LED_HUD2",
+      "pins": [
+        "U2.D3",
+        "R2.1"
+      ]
+    },
+    {
+      "name": "LED_HUD3",
+      "pins": [
+        "U2.D4",
+        "R3.1"
+      ]
+    },
+    {
+      "name": "JOY_VRX",
+      "pins": [
+        "U2.A0",
+        "JOY1.VRX"
+      ]
+    },
+    {
+      "name": "JOY_VRY",
+      "pins": [
+        "U2.A1",
+        "JOY1.VRY"
+      ]
+    },
+    {
+      "name": "JOY_SW",
+      "pins": [
+        "U2.D9",
+        "JOY1.SW"
+      ]
+    },
+    {
+      "name": "BTN_WAKE",
+      "pins": [
+        "U2.D10",
+        "SW2.1"
+      ]
+    }
+  ]
+}

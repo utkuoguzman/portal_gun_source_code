@@ -2,6 +2,7 @@
 #include "web_page.h"
 #include "site_assets.h"
 #include "portal_gun.h"
+#include "naked_test.h"
 #include <WiFi.h>
 #include <WebServer.h>
 #include <DNSServer.h>
@@ -54,26 +55,44 @@ void WifiPortalSystem::setupRoutes() {
     // 2-Way Hardware API Endpoints
     server.on("/api/fire", HTTP_GET, []() {
         portalGun.triggerWebFire();
+#ifdef NAKED_TEST_MODE
+        setOnboardRgb(0, 255, 60);
+        Serial.println("[WEB] 💥 PORTAL BLAST TRIGGERED FROM PHONE!");
+#endif
         server.send(200, "application/json", "{\"success\":true,\"message\":\"PORTAL BLAST ACTIVATED!\"}");
     });
 
     server.on("/api/close", HTTP_GET, []() {
         portalGun.triggerWebClose();
+#ifdef NAKED_TEST_MODE
+        setOnboardRgb(0, 30, 10);
+        Serial.println("[WEB] 🚪 PORTAL CLOSED FROM PHONE!");
+#endif
         server.send(200, "application/json", "{\"success\":true,\"message\":\"PORTAL CLOSED!\"}");
     });
 
     server.on("/api/party", HTTP_GET, []() {
         portalGun.triggerWebParty();
+#ifdef NAKED_TEST_MODE
+        Serial.println("[WEB] 🎉 PARTY MODE (Get Schwifty) TRIGGERED FROM PHONE!");
+#endif
         server.send(200, "application/json", "{\"success\":true,\"message\":\"GET SCHWIFTY ACTIVATED!\"}");
     });
 
     server.on("/api/quote", HTTP_GET, []() {
         portalGun.triggerWebQuote();
+#ifdef NAKED_TEST_MODE
+        Serial.println("[WEB] 🎙️ RICK VOICE QUOTE TRIGGERED FROM PHONE!");
+#endif
         server.send(200, "application/json", "{\"success\":true,\"message\":\"RICK VOICE TRANSMITTED!\"}");
     });
 
     server.on("/api/torch", HTTP_GET, []() {
         portalGun.triggerWebTorch();
+#ifdef NAKED_TEST_MODE
+        setOnboardRgb(255, 255, 255);
+        Serial.println("[WEB] 🔦 TORCH / FLASHLIGHT TRIGGERED FROM PHONE!");
+#endif
         server.send(200, "application/json", "{\"success\":true,\"message\":\"TORCH BEAM TOGGLED!\"}");
     });
 
@@ -88,6 +107,9 @@ void WifiPortalSystem::setupRoutes() {
                 int numStart = (dim.charAt(1) == '-') ? 2 : 1;
                 int n = dim.substring(numStart).toInt();
                 portalGun.setWebDimension(l, n);
+#ifdef NAKED_TEST_MODE
+                Serial.printf("[WEB] 🌌 DIMENSION LOCKED VIA PHONE: %s\n", dim.c_str());
+#endif
                 String res = "{\"success\":true,\"message\":\"DIMENSION LOCKED: " + dim + "\",\"dimension\":\"" + dim + "\"}";
                 server.send(200, "application/json", res);
                 return;
@@ -105,6 +127,10 @@ void WifiPortalSystem::setupRoutes() {
             if (g < 0) g = 0; if (g > 255) g = 255;
             if (b < 0) b = 0; if (b > 255) b = 255;
             portalGun.setWebColor((uint8_t)r, (uint8_t)g, (uint8_t)b);
+#ifdef NAKED_TEST_MODE
+            setOnboardRgb((uint8_t)r, (uint8_t)g, (uint8_t)b);
+            Serial.printf("[WEB] 🎨 Color tuned via phone slider: RGB(%d, %d, %d)\n", r, g, b);
+#endif
             char res[80];
             snprintf(res, sizeof(res), "{\"success\":true,\"message\":\"COLOR TUNED\",\"r\":%d,\"g\":%d,\"b\":%d}", r, g, b);
             server.send(200, "application/json", res);
@@ -127,16 +153,22 @@ void WifiPortalSystem::setupRoutes() {
 void WifiPortalSystem::startPortal() {
     if (active) return;
 
+    WiFi.disconnect(true);
+    delay(100);
     WiFi.mode(WIFI_AP);
+    delay(50);
+
     IPAddress apIP(192, 168, 4, 1);
     WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
-    WiFi.softAP("Portal-Gun-C137");
+    bool apStarted = WiFi.softAP("Portal-Gun-C137", nullptr, 1, 0, 4);
+    delay(100);
+    WiFi.setTxPower(WIFI_POWER_17dBm);
 
     dnsServer.start(DNS_PORT, "*", apIP);
     setupRoutes();
     server.begin();
     active = true;
-    Serial.println("Wi-Fi Captive Portal started: Portal-Gun-C137 at 192.168.4.1");
+    Serial.printf("Wi-Fi Captive Portal started (status=%d): Portal-Gun-C137 at 192.168.4.1\n", apStarted);
 }
 
 void WifiPortalSystem::stopPortal() {

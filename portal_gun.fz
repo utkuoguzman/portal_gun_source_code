@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module fritzingVersion="0.9.10" moduleId="PortalGunSketch">
+  <title>Rick and Morty Portal Gun - Full Wiring</title>
+  <instances>
+    <instance moduleIdRef="Breadboard-RSR03MB102-ModuleID" modelIndex="1000" path=":/resources/parts/core/breadboard.fzp">
+      <title>Breadboard1</title>
+      <views>
+        <breadboardView layer="breadboard"><geometry z="0" x="50" y="100"/></breadboardView>
+      </views>
+    </instance>
+    <instance moduleIdRef="Arduino-Nano-ESP32" modelIndex="2000" path=":/resources/parts/core/arduino_nano_esp32.fzp">
+      <title>Arduino Nano ESP32</title>
+      <views>
+        <breadboardView layer="breadboard"><geometry z="1" x="250" y="200"/></breadboardView>
+      </views>
+    </instance>
+    <instance moduleIdRef="MAX98357A-ModuleID" modelIndex="3000">
+      <title>MAX98357A I2S DAC Amp</title>
+      <views>
+        <breadboardView layer="breadboard"><geometry z="1" x="50" y="350"/></breadboardView>
+      </views>
+    </instance>
+    <instance moduleIdRef="TM1637-ModuleID" modelIndex="4000">
+      <title>TM1637 4-Digit Display</title>
+      <views>
+        <breadboardView layer="breadboard"><geometry z="1" x="700" y="100"/></breadboardView>
+      </views>
+    </instance>
+    <instance moduleIdRef="WS2812B-Ring-7" modelIndex="5000">
+      <title>WS2812B 7-Pixel Ring</title>
+      <views>
+        <breadboardView layer="breadboard"><geometry z="1" x="700" y="250"/></breadboardView>
+      </views>
+    </instance>
+    <instance moduleIdRef="WS2812B-Strip-8" modelIndex="6000">
+      <title>WS2812B 8-Pixel Strip</title>
+      <views>
+        <breadboardView layer="breadboard"><geometry z="1" x="700" y="380"/></breadboardView>
+      </views>
+    </instance>
+    <instance moduleIdRef="Joystick-KY023" modelIndex="7000">
+      <title>Analog Thumbstick</title>
+      <views>
+        <breadboardView layer="breadboard"><geometry z="1" x="300" y="500"/></breadboardView>
+      </views>
+    </instance>
+    <instance moduleIdRef="Mini360-Buck" modelIndex="8000">
+      <title>Mini360 Buck Converter (+5.0V)</title>
+      <views>
+        <breadboardView layer="breadboard"><geometry z="1" x="50" y="50"/></breadboardView>
+      </views>
+    </instance>
+  </instances>
+</module>

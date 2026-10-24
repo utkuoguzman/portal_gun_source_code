@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rick & Morty Portal Gun - Audio Soundboard & Verification Player</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card-bg: #141b24;
+      --card-border: #1f2a38;
+      --portal-green: #00ff88;
+      --portal-glow: rgba(0, 255, 136, 0.4);
+      --amber: #ffaa00;
+      --cyan: #00d9ff;
+      --red: #ff3366;
+      --text: #e6edf3;
+      --muted: #8b949e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+      line-height: 1.5;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 20px;
+    }
+    h1 {
+      color: var(--portal-green);
+      font-size: 26px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px var(--portal-glow);
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .badge-bar {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      background: #111e1c;
+      border: 1px solid var(--portal-green);
+      color: var(--portal-green);
+      font-size: 12px;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .badge.cyan {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      background: #0d1e26;
+    }
+    .badge.amber {
+      border-color: var(--amber);
+      color: var(--amber);
+      background: #241b0d;
+    }
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 20px;
+      background: var(--card-bg);
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--card-border);
+    }
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn-filter {
+      background: #1f2937;
+      color: var(--text);
+      border: 1px solid #374151;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+    .btn-filter:hover, .btn-filter.active {
+      background: var(--portal-green);
+      color: #05140d;
+      border-color: var(--portal-green);
+      box-shadow: 0 0 8px var(--portal-glow);
+    }
+    .search-box {
+      flex: 1;
+      max-width: 320px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: #090d12;
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      font-size: 13px;
+    }
+    .search-box:focus {
+      outline: none;
+      border-color: var(--portal-green);
+      box-shadow: 0 0 5px var(--portal-glow);
+    }
+    .player-dock {
+      position: sticky;
+      top: 12px;
+      z-index: 100;
+      background: #16202c;
+      border: 1px solid var(--cyan);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .player-dock .now-playing {
+      flex: 1;
+      min-width: 220px;
+    }
+    .now-playing-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--cyan);
+      font-weight: bold;
+    }
+    .now-playing-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    audio {
+      flex: 2;
+      min-width: 260px;
+      height: 38px;
+      border-radius: 6px;
+      filter: invert(1) hue-rotate(180deg) contrast(1.2);
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin: 28px 0 14px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-count {
+      background: #21262d;
+      font-size: 12px;
+      color: var(--muted);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+    .sound-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .sound-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .sound-card:hover {
+      border-color: var(--portal-green);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 255, 136, 0.15);
+    }
+    .sound-card.playing {
+      border-color: var(--cyan);
+      background: #10222f;
+      box-shadow: 0 0 12px rgba(0, 217, 255, 0.3);
+    }
+    .sound-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .sound-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .sound-tag {
+      background: #1f2937;
+      color: var(--cyan);
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #374151;
+      white-space: nowrap;
+    }
+    .sound-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--muted);
+      border-top: 1px solid #1c2430;
+      padding-top: 6px;
+    }
+    .peak-indicator {
+      color: var(--portal-green);
+      font-weight: bold;
+    }
+    .zero-clip {
+      color: var(--portal-green);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Portal Gun Audio Player & Verification Soundboard</h1>
+    <p class="subtitle">100% Normalized at -0.94 dBFS Peak (114/127) &bull; Zero Audio Clipping &bull; 11,025 Hz 8-bit PCM</p>
+    <div class="badge-bar">
+      <span class="badge">60 Total Normalized Audio Files</span>
+      <span class="badge cyan">0 Clipped Samples (Zero Clipping)</span>
+      <span class="badge amber">MAX98357A Safe (3.0V Peak / 2.3W Max into 4Ω)</span>
+    </div>
+  </div>
+
+  <div class="player-dock">
+    <div class="now-playing">
+      <div class="now-playing-label">Now Playing</div>
+      <div class="now-playing-title" id="nowPlayingText">Select any sound below to play</div>
+    </div>
+    <audio id="mainAudio" controls autoplay></audio>
+  </div>
+
+  <div class="controls-bar">
+    <div class="filter-group">
+      <button class="btn-filter active" onclick="filterCategory('all', this)">All Sounds (60)</button>
+      <button class="btn-filter" onclick="filterCategory('portal', this)">Portal Gun (8)</button>
+      <button class="btn-filter" onclick="filterCategory('games', this)">Games & Themes (7)</button>
+      <button class="btn-filter" onclick="filterCategory('soundboard', this)">Rick Quotes (45)</button>
+    </div>
+    <input type="text" class="search-box" id="searchBox" placeholder="Search quotes, titles, tags..." onkeyup="filterSearch()">
+  </div>
+
+  <!-- Sections populated dynamically -->
+  <div id="soundList"></div>
+
+  <script>
+    const sounds = [
+      // Portal Gun
+      { cat: 'portal', tag: 'BOOT', name: 'Power-Up Sequence', file: '01_portal_gun/01_powerup.wav', dur: '4.96s' },
+      { cat: 'portal', tag: 'BCKL', name: 'Buckle Up Bitches!', file: '01_portal_gun/02_buckleup.wav', dur: '1.39s' },
+      { cat: 'portal', tag: 'SND1', name: 'Portal Fire Blast 1', file: '01_portal_gun/03_portal_open1.wav', dur: '1.09s' },
+      { cat: 'portal', tag: 'SND2', name: 'Portal Fire Blast 2', file: '01_portal_gun/04_portal_open2.wav', dur: '2.32s' },
+      { cat: 'portal', tag: 'CLS1', name: 'Portal Close 1', file: '01_portal_gun/05_portal_close1.wav', dur: '3.01s' },
+      { cat: 'portal', tag: 'CLS2', name: 'Portal Close 2', file: '01_portal_gun/06_portal_close2.wav', dur: '3.51s' },
+      { cat: 'portal', tag: 'SCHW', name: 'Get Schwifty (Full Track)', file: '01_portal_gun/07_getschwifty.wav', dur: '61.94s' },
+      { cat: 'portal', tag: 'DOWN', name: 'Power-Down Sequence', file: '01_portal_gun/08_powerdown.wav', dur: '6.82s' },
+
+      // Games & Themes
+      { cat: 'games', tag: 'M720', name: 'Evil Morty Theme Song', file: '02_games_and_themes/01_evil_morty_theme.wav', dur: '81.00s' },
+      { cat: 'games', tag: 'SPIN', name: 'Roulette Spin (Click-click)', file: '02_games_and_themes/02_roulette_spin.wav', dur: '0.87s' },
+      { cat: 'games', tag: 'SAFE', name: 'Roulette Safe Strike (Clank)', file: '02_games_and_themes/03_roulette_clack.wav', dur: '1.00s' },
+      { cat: 'games', tag: 'BOOM', name: 'Roulette Live Round (Boom)', file: '02_games_and_themes/04_roulette_boom.wav', dur: '0.89s' },
+      { cat: 'games', tag: 'GLOT', name: 'Roulette Wrecked Son (Gloat)', file: '02_games_and_themes/05_roulette_wrecked.wav', dur: '2.98s' },
+      { cat: 'games', tag: 'S555', name: 'Snake Jazz (8-Bar Loop)', file: '02_games_and_themes/06_snake_jazz.wav', dur: '6.86s' },
+      { cat: 'games', tag: 'D999', name: 'Dino Game 8-Bit Theme', file: '02_games_and_themes/07_dino_song.wav', dur: '68.29s' },
+
+      // Rick Soundboard
+      { cat: 'soundboard', tag: 'BCKL', name: 'Buckle Up Bitches!', file: '03_rick_soundboard/01_BCKL_buckleup.wav', dur: '1.39s' },
+      { cat: 'soundboard', tag: 'PCKL', name: 'Pickle Rick!!!', file: '03_rick_soundboard/02_PCKL_pickle.wav', dur: '1.84s' },
+      { cat: 'soundboard', tag: 'bOrd', name: "I'm Bored", file: '03_rick_soundboard/03_bOrd_bored.wav', dur: '1.66s' },
+      { cat: 'soundboard', tag: 'btch', name: "What's Up Bitch?", file: '03_rick_soundboard/04_btch_bitch.wav', dur: '0.87s' },
+      { cat: 'soundboard', tag: 'bUtr', name: 'What Is My Purpose? (Butter)', file: '03_rick_soundboard/05_bUtr_butter.wav', dur: '0.77s' },
+      { cat: 'soundboard', tag: 'CPU_', name: 'Central Processing Unit', file: '03_rick_soundboard/06_CPU__cpu.wav', dur: '3.08s' },
+      { cat: 'soundboard', tag: 'CrOm', name: 'Show Me What You Got (Cromulon)', file: '03_rick_soundboard/07_CrOm_cromulon.wav', dur: '2.27s' },
+      { cat: 'soundboard', tag: 'CUtE', name: "That's Real Cute", file: '03_rick_soundboard/08_CUtE_cute.wav', dur: '2.10s' },
+      { cat: 'soundboard', tag: 'dANC', name: "Let's Dance", file: '03_rick_soundboard/09_dANC_dance.wav', dur: '1.88s' },
+      { cat: 'soundboard', tag: 'dEUL', name: 'Devil You Know', file: '03_rick_soundboard/10_dEUL_devil.wav', dur: '2.28s' },
+      { cat: 'soundboard', tag: 'drnk', name: 'I Need A Drink', file: '03_rick_soundboard/11_drnk_drink.wav', dur: '0.99s' },
+      { cat: 'soundboard', tag: 'ERnd', name: 'Quick 20-Minute Errand', file: '03_rick_soundboard/12_ERnd_errand.wav', dur: '3.07s' },
+      { cat: 'soundboard', tag: 'GAF_', name: "I Don't Give A F***", file: '03_rick_soundboard/13_GAF__gaf.wav', dur: '1.37s' },
+      { cat: 'soundboard', tag: 'GRLS', name: 'Girls, Girls, Calm Down', file: '03_rick_soundboard/14_GRLS_girls.wav', dur: '2.70s' },
+      { cat: 'soundboard', tag: 'bACK', name: 'Go Back In Time', file: '03_rick_soundboard/15_bACK_goback.wav', dur: '2.05s' },
+      { cat: 'soundboard', tag: 'HndS', name: 'Keep Your Hands Off', file: '03_rick_soundboard/16_HndS_hands.wav', dur: '1.30s' },
+      { cat: 'soundboard', tag: 'ICEC', name: 'Ice Cream Stop', file: '03_rick_soundboard/17_ICEC_icecream.wav', dur: '2.13s' },
+      { cat: 'soundboard', tag: 'HAUG', name: "I'm Having An Episode", file: '03_rick_soundboard/18_HAUG_imhaving.wav', dur: '2.99s' },
+      { cat: 'soundboard', tag: 'knOU', name: 'I Know Everything', file: '03_rick_soundboard/19_knOU_know.wav', dur: '1.04s' },
+      { cat: 'soundboard', tag: 'mAKE', name: 'Make Out Session', file: '03_rick_soundboard/20_mAKE_makeout.wav', dur: '1.71s' },
+      { cat: 'soundboard', tag: 'mEEt', name: 'Meet The New Boss', file: '03_rick_soundboard/21_mEEt_meet.wav', dur: '0.69s' },
+      { cat: 'soundboard', tag: 'mnth', name: 'Nine More Seasons Morty', file: '03_rick_soundboard/22_mnth_months.wav', dur: '1.40s' },
+      { cat: 'soundboard', tag: 'mOrE', name: "There's Plenty More", file: '03_rick_soundboard/23_mOrE_more.wav', dur: '2.06s' },
+      { cat: 'soundboard', tag: 'OSmF', name: 'Oh Sh**, Motherf***', file: '03_rick_soundboard/24_OSmF_osmf.wav', dur: '2.09s' },
+      { cat: 'soundboard', tag: 'OS__', name: 'Operating System Reboot', file: '03_rick_soundboard/25_OS___os.wav', dur: '1.79s' },
+      { cat: 'soundboard', tag: 'SONG', name: 'Play That Old Song', file: '03_rick_soundboard/26_SONG_oldsong.wav', dur: '3.79s' },
+      { cat: 'soundboard', tag: 'OPER', name: 'Operation Phoenix', file: '03_rick_soundboard/27_OPER_operation.wav', dur: '5.18s' },
+      { cat: 'soundboard', tag: 'PAGE', name: 'Turn The Page', file: '03_rick_soundboard/28_PAGE_page.wav', dur: '1.79s' },
+      { cat: 'soundboard', tag: 'PRtY', name: 'Party Time', file: '03_rick_soundboard/29_PRtY_party.wav', dur: '0.75s' },
+      { cat: 'soundboard', tag: 'PPL_', name: 'I Hate People', file: '03_rick_soundboard/30_PPL__people.wav', dur: '13.43s' },
+      { cat: 'soundboard', tag: 'PLAY', name: "Don't Hate The Player", file: '03_rick_soundboard/31_PLAY_player.wav', dur: '1.86s' },
+      { cat: 'soundboard', tag: 'RLES', name: 'No Rick Is An Island', file: '03_rick_soundboard/32_RLES_rickless.wav', dur: '1.95s' },
+      { cat: 'soundboard', tag: 'RUbR', name: 'Rubber Shoes', file: '03_rick_soundboard/33_RUbR_rubber.wav', dur: '1.94s' },
+      { cat: 'soundboard', tag: 'SAtS', name: 'Satisfaction Guaranteed', file: '03_rick_soundboard/34_SAtS_satisfaction.wav', dur: '5.25s' },
+      { cat: 'soundboard', tag: 'SHdY', name: 'Shady Dealings', file: '03_rick_soundboard/35_SHdY_shady.wav', dur: '4.41s' },
+      { cat: 'soundboard', tag: 'SLEP', name: 'Sleep Is For The Weak', file: '03_rick_soundboard/36_SLEP_sleep.wav', dur: '2.05s' },
+      { cat: 'soundboard', tag: 'SUCK', name: 'This Sucks', file: '03_rick_soundboard/37_SUCK_sucks.wav', dur: '3.91s' },
+      { cat: 'soundboard', tag: 'SWEE', name: 'Hey Sweetie', file: '03_rick_soundboard/38_SWEE_sweetie.wav', dur: '0.96s' },
+      { cat: 'soundboard', tag: 'tHnk', name: 'Thank You Very Much', file: '03_rick_soundboard/39_tHnk_thankyou.wav', dur: '2.01s' },
+      { cat: 'soundboard', tag: 'WHSK', name: 'Pass The Whiskey', file: '03_rick_soundboard/40_WHSK_whiskey.wav', dur: '2.28s' },
+      { cat: 'soundboard', tag: 'YorN', name: 'Yes Or No', file: '03_rick_soundboard/41_YorN_yorn.wav', dur: '2.16s' },
+      { cat: 'soundboard', tag: 'RIGG', name: 'Riggity Riggity Wrecked Son!', file: '03_rick_soundboard/42_RIGG_riggity.wav', dur: '6.87s' },
+      { cat: 'soundboard', tag: 'tIFF', name: 'Ricky Tiffy Taffy Bitch!', file: '03_rick_soundboard/43_tIFF_rickytiffy.wav', dur: '2.20s' },
+      { cat: 'soundboard', tag: 'WUBB', name: 'Wubba Lubba Dub Dub!', file: '03_rick_soundboard/44_WUBB_wubba.wav', dur: '4.06s' },
+      { cat: 'soundboard', tag: 'RAnM', name: 'Rick And Morty 100 Years!', file: '03_rick_soundboard/45_RAnM_rickmorty.wav', dur: '1.99s' }
+    ];
+
+    let currentCategory = 'all';
+    let currentActiveCard = null;
+
+    function renderSounds() {
+      const listEl = document.getElementById('soundList');
+      listEl.innerHTML = '';
+
+      const search = (document.getElementById('searchBox').value || '').toLowerCase().trim();
+
+      const categories = [
+        { id: 'portal', label: 'Portal Gun System Audio' },
+        { id: 'games', label: 'Mini-Games & Dimension Themes' },
+        { id: 'soundboard', label: 'Rick Sanchez Soundboard Quotes' }
+      ];
+
+      categories.forEach(cat => {
+        if (currentCategory !== 'all' && currentCategory !== cat.id) return;
+
+        const catSounds = sounds.filter(s => {
+          if (s.cat !== cat.id) return false;
+          if (!search) return true;
+          return s.name.toLowerCase().includes(search) || 
+                 s.tag.toLowerCase().includes(search) ||
+                 s.file.toLowerCase().includes(search);
+        });
+
+        if (catSounds.length === 0) return;
+
+        const secTitle = document.createElement('div');
+        secTitle.className = 'section-title';
+        secTitle.innerHTML = `${cat.label} <span class="section-count">${catSounds.length}</span>`;
+        listEl.appendChild(secTitle);
+
+        const grid = document.createElement('div');
+        grid.className = 'sound-grid';
+
+        catSounds.forEach(s => {
+          const card = document.createElement('div');
+          card.className = 'sound-card';
+          card.onclick = () => playSound(s, card);
+          card.innerHTML = `
+            <div class="sound-top">
+              <span class="sound-name">${s.name}</span>
+              <span class="sound-tag">${s.tag}</span>
+            </div>
+            <div class="sound-meta">
+              <span>⏱ ${s.dur}</span>
+              <span class="peak-indicator">Peak: 114/127</span>
+              <span class="zero-clip">✓ 0% Clip</span>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+        listEl.appendChild(grid);
+      });
+    }
+
+    function playSound(item, cardEl) {
+      const audio = document.getElementById('mainAudio');
+      const text = document.getElementById('nowPlayingText');
+
+      if (currentActiveCard) {
+        currentActiveCard.classList.remove('playing');
+      }
+      currentActiveCard = cardEl;
+      if (cardEl) cardEl.classList.add('playing');
+
+      text.textContent = `[${item.tag}] ${item.name} (${item.dur})`;
+      audio.src = item.file;
+      audio.play().catch(e => console.log('Audio autoplay prevented or error:', e));
+    }
+
+    function filterCategory(cat, btn) {
+      currentCategory = cat;
+      document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderSounds();
+    }
+
+    function filterSearch() {
+      renderSounds();
+    }
+
+    renderSounds();
+  </script>
+</body>
+</html>
+

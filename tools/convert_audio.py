@@ -1,9 +1,33 @@
 import os
 import sys
 import subprocess
+import struct
 
 # This script converts .mp3 and .m4a files in soundbites/ to C++ arrays
-# Requirements: ffmpeg installed and in your system PATH
+# with peak normalization (Target peak = 114 / 127 = -0.94 dBFS) and zero-clipping guarantee.
+
+TARGET_PEAK = 114  # Range strictly bounded within [14, 242], leaving 14 LSB headroom to guarantee ZERO clipping.
+
+def normalize_pcm16_to_u8(raw_bytes, target_peak=TARGET_PEAK):
+    num_samples = len(raw_bytes) // 2
+    if num_samples == 0:
+        return b""
+    samples = struct.unpack(f"<{num_samples}h", raw_bytes)
+    mean_val = sum(samples) / num_samples
+    zero_mean = [s - mean_val for s in samples]
+    max_amp = max(abs(s) for s in zero_mean)
+    
+    gain = (target_peak * 256.0) / max_amp if max_amp > 0 else 1.0
+    min_b = 128 - target_peak
+    max_b = 128 + target_peak
+    
+    out = bytearray(num_samples)
+    for i, s in enumerate(zero_mean):
+        v = int(round((s * gain) / 256.0)) + 128
+        if v < min_b: v = min_b
+        elif v > max_b: v = max_b
+        out[i] = v
+    return bytes(out)
 
 def main():
     source_dir = "soundbites"
@@ -34,6 +58,12 @@ struct SubtitleLine {
     uint32_t startTimeMs;
     uint32_t endTimeMs;
     const char* text;
+};
+
+struct Soundbyte {
+    const uint8_t* pcmData;
+    size_t size;
+    const char* label;
 };
 
 """
@@ -78,7 +108,7 @@ struct SubtitleLine {
             
         cmd = [
             ffmpeg_bin, "-y", "-i", in_path,
-            "-f", "u8", "-ar", "11025", "-ac", "1", "temp.raw"
+            "-f", "s16le", "-ar", "11025", "-ac", "1", "temp.raw"
         ]
         
         try:
@@ -111,7 +141,10 @@ struct SubtitleLine {
             sys.exit(1)
 
         with open("temp.raw", "rb") as f:
-            raw_data = f.read()
+            raw_data_16 = f.read()
+            
+        raw_data = normalize_pcm16_to_u8(raw_data_16)
+        print(f"  Normalized {array_name}: {len(raw_data)} bytes, min={min(raw_data)}, max={max(raw_data)} (Target [{128-TARGET_PEAK}, {128+TARGET_PEAK}], Zero Clipping)")
             
         cpp_content += f"const size_t {array_name}_size = {len(raw_data)};\n"
         cpp_content += f"const uint8_t {array_name}[] = {{\n"

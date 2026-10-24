@@ -119,10 +119,24 @@ void AudioSystem::update() {
             const size_t CHUNK_SIZE = 256; 
             if (samples_to_write > CHUNK_SIZE) samples_to_write = CHUNK_SIZE;
             
+            // Scaled volume with hardware-matched safety headroom:
+            // User volume [0.0 .. 1.0] maps to [0.0 .. MAX_SAFE_HEADROOM] (0.84 = -1.5 dBFS).
+            // Guarantees the MAX98357A (Gain=9dB, VDD=5V) never clips into the power rails.
+            float effectiveVolume = currentVolume * MAX_SAFE_HEADROOM;
+            
             int16_t buffer[CHUNK_SIZE];
             for (size_t i = 0; i < samples_to_write; i++) {
-                int8_t signed_sample = (int8_t)((int)currentData[currentPos + i] - 128);
-                buffer[i] = (int16_t)(signed_sample * 256.0f * currentVolume);
+                int32_t signed_sample = (int32_t)currentData[currentPos + i] - 128;
+                int32_t sample_val = (int32_t)(signed_sample * 256.0f * effectiveVolume);
+                
+                // Hardware protection clamp: brickwall anti-clipping limiter
+                // Prevents 16-bit integer overflow and rail saturation
+                if (sample_val > MAX_UNCLIPPED_AMPLITUDE) {
+                    sample_val = MAX_UNCLIPPED_AMPLITUDE;
+                } else if (sample_val < -MAX_UNCLIPPED_AMPLITUDE) {
+                    sample_val = -MAX_UNCLIPPED_AMPLITUDE;
+                }
+                buffer[i] = (int16_t)sample_val;
             }
             
             size_t bytes_written = 0;
@@ -179,9 +193,13 @@ bool AudioSystem::isPlaying() const {
 }
 
 void AudioSystem::setVolume(float volume) {
+    if (volume < 0.0f) volume = 0.0f;
+    if (volume > 1.0f) volume = 1.0f;
     currentVolume = volume;
-    if (currentVolume < 0.0f) currentVolume = 0.0f;
-    if (currentVolume > 1.0f) currentVolume = 1.0f;
+}
+
+float AudioSystem::getVolume() const {
+    return currentVolume;
 }
 
 uint32_t AudioSystem::getPositionMs() const {

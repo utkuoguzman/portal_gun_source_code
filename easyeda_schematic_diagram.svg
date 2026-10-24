@@ -201,13 +201,11 @@
         <line x1="-33" y1="28" x2="-27" y2="28" stroke="#0f172a" stroke-width="1"/>
       </g>
 
-      <!-- GAIN -->
+      <!-- GAIN: Left Unconnected / Floating for 9dB Gain -->
       <g transform="translate(0, 165)">
-        <line x1="-30" y1="0" x2="0" y2="0" stroke="#0f172a" stroke-width="2"/>
-        <text x="10" y="5" fill="#0f172a" font-size="12" font-weight="bold">GAIN (12dB)</text>
-        <line x1="-30" y1="0" x2="-30" y2="-50" stroke="#0f172a" stroke-width="1.5"/>
-        <circle cx="-30" cy="-50" r="3" fill="#0f172a"/>
-        <text x="-40" y="-35" fill="#64748b" font-size="9" text-anchor="end">GND = 12dB (Open = 9dB)</text>
+        <line x1="-25" y1="0" x2="0" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <text x="10" y="5" fill="#0f172a" font-size="12" font-weight="bold">GAIN (9dB / Open)</text>
+        <text x="-32" y="4" fill="#64748b" font-size="9.5" font-weight="bold" text-anchor="end">NC (Open = 9dB)</text>
       </g>
 
       <!-- BCLK -->
@@ -846,7 +844,7 @@
 
     <!-- Row 3: Rev, Size, Date -->
     <text x="15" y="93" fill="#334155" font-size="12">ENGINEER: Antigravity Pair-Programmer</text>
-    <text x="545" y="93" fill="#334155" font-size="12">REV: 2.6</text>
+    <text x="545" y="93" fill="#334155" font-size="12">REV: 2.7</text>
     <text x="650" y="93" fill="#334155" font-size="12">SHEET: 1/1</text>
 
     <!-- Row 4: Date & License -->

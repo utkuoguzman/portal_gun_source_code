@@ -11,11 +11,8 @@ struct SubtitleLine {
 struct Soundbyte {
     const uint8_t* pcmData;
     size_t size;
-    const char* label; // 4-char label for TM1637 display
+    const char* label;
 };
-
-extern const Soundbyte rick_soundboard[];
-extern const size_t rick_soundboard_count;
 
 extern const uint8_t snd_powerup[];
 extern const size_t snd_powerup_size;

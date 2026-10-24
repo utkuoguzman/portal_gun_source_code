@@ -1,12 +1,36 @@
 import os
 import subprocess
+import struct
+
+TARGET_PEAK = 114  # Range strictly bounded within [14, 242], leaving 14 LSB headroom to guarantee ZERO clipping.
+
+def normalize_pcm16_to_u8(raw_bytes, target_peak=TARGET_PEAK):
+    num_samples = len(raw_bytes) // 2
+    if num_samples == 0:
+        return b""
+    samples = struct.unpack(f"<{num_samples}h", raw_bytes)
+    mean_val = sum(samples) / num_samples
+    zero_mean = [s - mean_val for s in samples]
+    max_amp = max(abs(s) for s in zero_mean)
+    
+    gain = (target_peak * 256.0) / max_amp if max_amp > 0 else 1.0
+    min_b = 128 - target_peak
+    max_b = 128 + target_peak
+    
+    out = bytearray(num_samples)
+    for i, s in enumerate(zero_mean):
+        v = int(round((s * gain) / 256.0)) + 128
+        if v < min_b: v = min_b
+        elif v > max_b: v = max_b
+        out[i] = v
+    return bytes(out)
 
 SOURCES = [
-    ('evil_morty', 'soundbites/evil_morty/Evil Morty Final Theme.mp3', 'soundbites/raw_temp/evil_morty.raw', ['-ss', '00:00:32', '-t', '81'], []),
-    ('roulette_spin', 'soundbites/roullette/Click-click-click.m4a', 'soundbites/raw_temp/roulette_spin.raw', [], ['-af', 'volume=2.2']),
-    ('roulette_clack', 'soundbites/roullette/Clank.m4a', 'soundbites/raw_temp/roulette_clack.raw', [], []),
-    ('roulette_boom', 'soundbites/roullette/Boom.m4a', 'soundbites/raw_temp/roulette_boom.raw', [], []),
-    ('roulette_wrecked', 'soundbites/roullette/Wrecked_Son.m4a', 'soundbites/raw_temp/roulette_wrecked.raw', [], ['-af', 'volume=2.5'])
+    ('evil_morty', 'soundbites/evil_morty/Evil Morty Final Theme.mp3', 'soundbites/raw_temp/evil_morty.raw', ['-ss', '00:00:32', '-t', '81']),
+    ('roulette_spin', 'soundbites/roullette/Click-click-click.m4a', 'soundbites/raw_temp/roulette_spin.raw', []),
+    ('roulette_clack', 'soundbites/roullette/Clank.m4a', 'soundbites/raw_temp/roulette_clack.raw', []),
+    ('roulette_boom', 'soundbites/roullette/Boom.m4a', 'soundbites/raw_temp/roulette_boom.raw', []),
+    ('roulette_wrecked', 'soundbites/roullette/Wrecked_Son.m4a', 'soundbites/raw_temp/roulette_wrecked.raw', [])
 ]
 
 ffmpeg_bin = 'tools/ffmpeg.exe' if os.path.exists('tools/ffmpeg.exe') else 'ffmpeg'
@@ -21,13 +45,10 @@ if user_snake_files:
     print(f"Found user Snake Jazz track: {user_file}")
     # User's snake_jazz.mp3 is the official 1-minute YouTube release.
     # The theme is an iconic 8-bar loop (6.8571s) starting at 0.2054s.
-    # Trimming to the exact 8-bar beat boundary gives an unbroken, mathematically seamless loop
-    # that repeats indefinitely in-game while fitting cleanly inside ESP32 flash.
     SOURCES.append(('snake_jazz', user_file, 'soundbites/raw_temp/snake_jazz.raw', 
-                    ['-ss', '0.2054', '-t', '6.8571'], 
-                    ['-af', 'volume=3.5']))
+                    ['-ss', '0.2054', '-t', '6.8571']))
 elif os.path.exists('soundbites/snake_jazz/snake_jazz_synth.wav'):
-    SOURCES.append(('snake_jazz', 'soundbites/snake_jazz/snake_jazz_synth.wav', 'soundbites/raw_temp/snake_jazz.raw', [], []))
+    SOURCES.append(('snake_jazz', 'soundbites/snake_jazz/snake_jazz_synth.wav', 'soundbites/raw_temp/snake_jazz.raw', []))
 
 # Check for Dino Song in soundbites/dino_game
 os.makedirs('soundbites/dino_game', exist_ok=True)
@@ -39,21 +60,33 @@ if user_dino_files:
     print(f"Found user Dino track: {dino_file}")
     # Trim first 9 seconds and last 5 seconds (total ~82.29s -> 68.2857s duration)
     SOURCES.append(('dino_song', dino_file, 'soundbites/raw_temp/dino_song.raw',
-                    ['-ss', '9', '-t', '68.2857'],
-                    []))
+                    ['-ss', '9', '-t', '68.2857']))
 
 os.makedirs('soundbites/raw_temp', exist_ok=True)
 
-# Convert any missing or modified source files using ffmpeg
-for name, src, raw, in_opts, out_opts in SOURCES:
+# Convert any missing or modified source files using ffmpeg and normalize
+temp_16le = 'soundbites/raw_temp/temp_16le.raw'
+for item in SOURCES:
+    name, src, raw = item[0], item[1], item[2]
+    in_opts = item[3] if len(item) > 3 else []
     if not os.path.exists(src):
         raise FileNotFoundError(f"Required audio source file missing: {src}")
-    if not os.path.exists(raw) or os.path.getmtime(src) > os.path.getmtime(raw) or os.path.getsize(raw) == 0:
-        print(f"Converting {src} -> {raw}...")
-        cmd = [ffmpeg_bin, '-y'] + in_opts + ['-i', src] + out_opts + ['-ac', '1', '-ar', '11025', '-f', 'u8', raw]
-        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    
+    print(f"Converting & Normalizing {src} -> {raw}...")
+    cmd = [ffmpeg_bin, '-y'] + in_opts + ['-i', src, '-ac', '1', '-ar', '11025', '-f', 's16le', temp_16le]
+    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    
+    with open(temp_16le, 'rb') as fp:
+        raw_16 = fp.read()
+    if os.path.exists(temp_16le):
+        os.remove(temp_16le)
+        
+    u8_data = normalize_pcm16_to_u8(raw_16)
+    with open(raw, 'wb') as fp:
+        fp.write(u8_data)
+    print(f"  Normalized {name}: {len(u8_data)} bytes, min={min(u8_data)}, max={max(u8_data)} (Target [{128-TARGET_PEAK}, {128+TARGET_PEAK}], Zero Clipping)")
 
-files = [(name, raw) for name, src, raw, in_opts, out_opts in SOURCES]
+files = [(item[0], item[2]) for item in SOURCES]
 
 h_out = '#pragma once\n#include <stdint.h>\n#include <stddef.h>\n\n'
 for name, p in files:

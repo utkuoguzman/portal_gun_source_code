@@ -1,6 +1,30 @@
 import os
 import re
 import subprocess
+import struct
+
+TARGET_PEAK = 114  # Range strictly bounded within [14, 242], leaving 14 LSB headroom to guarantee ZERO clipping.
+
+def normalize_pcm16_to_u8(raw_bytes, target_peak=TARGET_PEAK):
+    num_samples = len(raw_bytes) // 2
+    if num_samples == 0:
+        return b""
+    samples = struct.unpack(f"<{num_samples}h", raw_bytes)
+    mean_val = sum(samples) / num_samples
+    zero_mean = [s - mean_val for s in samples]
+    max_amp = max(abs(s) for s in zero_mean)
+    
+    gain = (target_peak * 256.0) / max_amp if max_amp > 0 else 1.0
+    min_b = 128 - target_peak
+    max_b = 128 + target_peak
+    
+    out = bytearray(num_samples)
+    for i, s in enumerate(zero_mean):
+        v = int(round((s * gain) / 256.0)) + 128
+        if v < min_b: v = min_b
+        elif v > max_b: v = max_b
+        out[i] = v
+    return bytes(out)
 
 soundbites_dir = "soundbites/rick_soundbites"
 temp_dir = "soundbites/raw_temp"
@@ -59,7 +83,9 @@ label_map = {
     "Voicy_Wubba Lubba Dub Dub (rick and morty).mp3": ("wubba", "WUBB")
 }
 
+ffmpeg_bin = "tools/ffmpeg.exe" if os.path.exists("tools/ffmpeg.exe") else "ffmpeg"
 converted_entries = []
+temp_16le = os.path.join(temp_dir, "temp_16le.raw")
 
 for mp3 in mp3_files:
     ident, label = label_map.get(mp3, (re.sub(r'[^a-zA-Z0-9]', '_', mp3.replace('.mp3', '')).lower(), "RICK"))
@@ -69,18 +95,24 @@ for mp3 in mp3_files:
     in_path = os.path.join(soundbites_dir, mp3)
     out_raw = os.path.join(temp_dir, f"{ident}.raw")
     
-    # Run ffmpeg to convert to 11025 Hz, mono, unsigned 8-bit PCM
+    # Run ffmpeg to convert to 11025 Hz, mono, 16-bit signed PCM
     cmd = [
-        "ffmpeg", "-y", "-i", in_path,
-        "-ar", "11025", "-ac", "1", "-f", "u8", out_raw
+        ffmpeg_bin, "-y", "-i", in_path,
+        "-ar", "11025", "-ac", "1", "-f", "s16le", temp_16le
     ]
     subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
     
-    with open(out_raw, "rb") as f:
-        raw_bytes = f.read()
+    with open(temp_16le, "rb") as f:
+        raw_16 = f.read()
+    if os.path.exists(temp_16le):
+        os.remove(temp_16le)
+        
+    raw_bytes = normalize_pcm16_to_u8(raw_16)
+    with open(out_raw, "wb") as f:
+        f.write(raw_bytes)
         
     converted_entries.append((ident, label, raw_bytes))
-    print(f"Converted {mp3} -> snd_rick_{ident} ({len(raw_bytes)} bytes, label '{label}')")
+    print(f"Converted & Normalized {mp3} -> snd_rick_{ident} ({len(raw_bytes)} bytes, min={min(raw_bytes)}, max={max(raw_bytes)})")
 
 # Write include/soundboard_data.h
 with open("include/soundboard_data.h", "w") as f:

@@ -55,7 +55,7 @@ namespace Pins {
     // -------------------------------------------------------------------------
     // LEFT HEADER (Top to Bottom, starting from USB-C)
     // -------------------------------------------------------------------------
-    constexpr int I2sData     = D13;  // Pin: D13 (GPIO 48) - MAX98357A I2S DIN (Data In)
+    // Pin: D13       (GPIO 48) - [Unused / Spare GPIO]
     // Pin: 3V3       - 3.3V Output Rail (Powers Joystick VCC strictly at 3.3V!)
     // Pin: B0        - BOOT0 ROM Trigger (GPIO 46)
     constexpr int JoystickX   = A0;   // Pin: A0  (GPIO 1)  - Joystick Horizontal Potentiometer (VRX)
@@ -80,7 +80,7 @@ namespace Pins {
     constexpr int JoystickSw  = D9;   // Pin: D9  (GPIO 18) - Joystick Pushbutton (INPUT_PULLUP)
     constexpr int DisplayDio  = D8;   // Pin: D8  (GPIO 17) - TM1637 4-Digit Display DIO
     constexpr int DisplayClk  = D7;   // Pin: D7  (GPIO 10) - TM1637 4-Digit Display CLK
-    // Pin: D6        (GPIO 9)  - [Unused / Available Spare GPIO]
+    constexpr int I2sData     = D6;   // Pin: D6  (GPIO 9)  - MAX98357A I2S DIN (Data In)
     constexpr int PortalData  = D5;   // Pin: D5  (GPIO 8)  - Top 7-pixel NeoPixel Ring DIN
     constexpr int GreenLed3   = D4;   // Pin: D4  (GPIO 7)  - Front HUD Green LED 3 (Right, PWM)
     constexpr int GreenLed2   = D3;   // Pin: D3  (GPIO 6)  - Front HUD Green LED 2 (Center, PWM)

@@ -176,7 +176,7 @@ Direct pin-to-pin physical wiring view showing actual component appearances:
 | :-: | :--- | :--- | :--- | :--- |
 | **AUD-01** | **Arduino Nano ESP32: D11** | 🟡 Yellow | **MAX98357A Amp: BCLK** | I2S Bit Clock line (synchronizes raw PCM sample bits). |
 | **AUD-02** | **Arduino Nano ESP32: D12** | 🟣 Purple | **MAX98357A Amp: LRC** | I2S Word Select / Left-Right Clock (frame synchronization). |
-| **AUD-03** | **Arduino Nano ESP32: D13** | ⚪ White | **MAX98357A Amp: DIN** | I2S Serial PCM Audio Data line. |
+| **AUD-03** | **Arduino Nano ESP32: D6** | ⚪ White | **MAX98357A Amp: DIN** | I2S Serial PCM Audio Data line. |
 | **AUD-04** | **MAX98357A Amp: SPK+** | 🔴 Red (Twisted Pair) | **3W Mini Speaker: Terminal (+)** | Differential Bridge-Tied Load (BTL) speaker output. |
 | **AUD-05** | **MAX98357A Amp: SPK-** | ⚫ Black (Twisted Pair) | **3W Mini Speaker: Terminal (-)** | **⚠️ NEVER connect speaker (-) to GND! It is a differential drive.** |
 

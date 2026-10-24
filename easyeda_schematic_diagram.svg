@@ -320,13 +320,12 @@
       <line x1="230" y1="52" x2="230" y2="1240" stroke="#f1f5f9" stroke-width="2" stroke-dasharray="8 6"/>
 
       <!-- ==================== LEFT HEADER (D13 down to VIN) ==================== -->
-      <!-- Left Pin 1: D13 (GPIO 48) -> I2S_DIN -->
+      <!-- Left Pin 1: D13 (GPIO 48) -->
       <g transform="translate(0, 80)">
-        <line x1="-30" y1="0" x2="0" y2="0" stroke="#0284c7" stroke-width="2"/>
+        <line x1="-25" y1="0" x2="0" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (D13)</text>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#0f172a" font-size="12" font-weight="bold">D13 / GPIO 48</text>
-        <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
-        <text x="-125" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_DIN</text>
+        <text x="12" y="4" fill="#64748b" font-size="12">D13 / GPIO 48 (Spare)</text>
       </g>
 
       <!-- Left Pin 2: 3.3V -> +3V3_JOY -->
@@ -505,12 +504,13 @@
         <text x="48" y="4" fill="#6b21a8" font-size="11" font-weight="bold">DISP_CLK</text>
       </g>
 
-      <!-- Right Pin 7: D6 (GPIO 9) -->
+      <!-- Right Pin 7: D6 (GPIO 9) -> I2S_DIN -->
       <g transform="translate(460, 560)">
-        <line x1="0" y1="0" x2="25" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <line x1="0" y1="0" x2="30" y2="0" stroke="#0284c7" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#64748b" font-size="12" text-anchor="end">D6 / GPIO 9 (Spare)</text>
-        <text x="32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="start">NC (D6)</text>
+        <text x="-12" y="4" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">D6 / GPIO 9</text>
+        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="48" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_DIN</text>
       </g>
 
       <!-- Right Pin 8: D5 (GPIO 8) -> NEO_RING_DIN -->

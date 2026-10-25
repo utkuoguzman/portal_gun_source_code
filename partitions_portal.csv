@@ -1,8 +1,8 @@
-# ESP32-S3 16MB Partition Table for Rick's Portal Gun
+# ESP32-S3 16MB Partition Table for Rick's Portal Gun (Dual A/B OTA Safe)
 # Name,   Type, SubType, Offset,   Size,     Flags
 nvs,      data, nvs,     0x9000,   0x5000,
 otadata,  data, ota,     0xe000,   0x2000,
-app0,     app,  factory, 0x10000,  0x800000,
-ffat,     data, fat,     0x810000, 0x7E0000,
+app0,     app,  ota_0,   0x10000,  0x680000,
+app1,     app,  ota_1,   0x690000, 0x680000,
+ffat,     data, fat,     0xD10000, 0x2E0000,
 coredump, data, coredump,0xFF0000, 0x10000,
-

@@ -1,11 +1,17 @@
 #include "wifi_portal.h"
 #include "web_page.h"
+#include "web_ota.h"
 #include "site_assets.h"
 #include "portal_gun.h"
+#include "display.h"
+#include "leds.h"
 #include "naked_test.h"
 #include <WiFi.h>
 #include <WebServer.h>
 #include <DNSServer.h>
+#include <Update.h>
+#include <ArduinoOTA.h>
+#include <esp_ota_ops.h>
 
 WifiPortalSystem wifiPortal;
 
@@ -143,6 +149,64 @@ void WifiPortalSystem::setupRoutes() {
         server.send(200, "application/json", "{\"success\":true,\"active\":true,\"device\":\"Portal-Gun-C137\"}");
     });
 
+    // OTA Firmware Update Endpoints
+    server.on("/update", HTTP_GET, []() {
+        server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        server.send_P(200, "text/html", PAGE_UPDATE);
+    });
+
+    server.on("/api/ota_info", HTTP_GET, []() {
+        const esp_partition_t* running = esp_ota_get_running_partition();
+        const char* part_label = running ? running->label : "app0";
+        char buf[256];
+        snprintf(buf, sizeof(buf), 
+            "{\"chip\":\"Arduino Nano ESP32\",\"partition\":\"%s\",\"flash_size\":16,\"free_heap\":%u,\"sketch_size\":%u,\"free_sketch_space\":%u}",
+            part_label, ESP.getFreeHeap(), ESP.getSketchSize(), ESP.getFreeSketchSpace());
+        server.send(200, "application/json", buf);
+    });
+
+    server.on("/update", HTTP_POST, []() {
+        server.sendHeader("Connection", "close");
+        if (Update.hasError()) {
+            server.send(500, "application/json", "{\"success\":false,\"error\":\"OTA Flash Verification Failed\"}");
+            display.showText("ERR_");
+        } else {
+            server.send(200, "application/json", "{\"success\":true,\"message\":\"FIRMWARE FLASHED SUCCESSFULLY!\"}");
+            display.showText("DONE");
+            delay(1000);
+            ESP.restart();
+        }
+    }, []() {
+        HTTPUpload& upload = server.upload();
+        if (upload.status == UPLOAD_FILE_START) {
+            Serial.printf("[OTA] Updating firmware from %s\n", upload.filename.c_str());
+            display.showText("UPDT");
+            leds.setAllPortalColor(0, 200, 255);
+            leds.showPortal();
+            if (!Update.begin(UPDATE_SIZE_UNKNOWN, U_FLASH)) {
+                Update.printError(Serial);
+                display.showText("ERR_");
+            }
+        } else if (upload.status == UPLOAD_FILE_WRITE) {
+            if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
+                Update.printError(Serial);
+                display.showText("ERR_");
+            }
+        } else if (upload.status == UPLOAD_FILE_END) {
+            if (Update.end(true)) {
+                Serial.printf("[OTA] Successfully written: %u bytes\n", upload.totalSize);
+                display.showText("DONE");
+            } else {
+                Update.printError(Serial);
+                display.showText("ERR_");
+            }
+        } else if (upload.status == UPLOAD_FILE_ABORTED) {
+            Update.end();
+            Serial.println("[OTA] Upload Aborted!");
+            display.showText("ABRT");
+        }
+    });
+
     // Catch-all: redirect any arbitrary HTTP request to captive portal
     server.onNotFound([]() {
         server.sendHeader("Location", "http://192.168.4.1/", true);
@@ -167,12 +231,39 @@ void WifiPortalSystem::startPortal() {
     dnsServer.start(DNS_PORT, "*", apIP);
     setupRoutes();
     server.begin();
+
+    // Setup ArduinoOTA for IDE/PlatformIO direct wireless flashing
+    ArduinoOTA.setHostname("Portal-Gun-C137");
+    ArduinoOTA.onStart([]() {
+        String type = (ArduinoOTA.getCommand() == U_FLASH) ? "firmware" : "filesystem";
+        Serial.println("[ArduinoOTA] Start updating " + type);
+        display.showText("UPDT");
+        leds.setAllPortalColor(0, 200, 255);
+        leds.showPortal();
+    });
+    ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+        if (total > 0) {
+            int pct = (progress * 100) / total;
+            display.showNumber(pct);
+        }
+    });
+    ArduinoOTA.onEnd([]() {
+        Serial.println("\n[ArduinoOTA] Update complete. Rebooting...");
+        display.showText("DONE");
+    });
+    ArduinoOTA.onError([](ota_error_t error) {
+        Serial.printf("[ArduinoOTA] Error[%u]\n", error);
+        display.showText("ERR_");
+    });
+    ArduinoOTA.begin();
+
     active = true;
-    Serial.printf("Wi-Fi Captive Portal started (status=%d): Portal-Gun-C137 at 192.168.4.1\n", apStarted);
+    Serial.printf("Wi-Fi Captive Portal & OTA started (status=%d): Portal-Gun-C137 at 192.168.4.1\n", apStarted);
 }
 
 void WifiPortalSystem::stopPortal() {
     if (!active) return;
+    ArduinoOTA.end();
     server.stop();
     dnsServer.stop();
     WiFi.softAPdisconnect(true);
@@ -185,6 +276,7 @@ void WifiPortalSystem::update() {
     if (!active) return;
     dnsServer.processNextRequest();
     server.handleClient();
+    ArduinoOTA.handle();
 }
 
 bool WifiPortalSystem::isActive() const {

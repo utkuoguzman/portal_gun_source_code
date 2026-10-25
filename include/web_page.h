@@ -491,6 +491,15 @@ static const char PAGE_INDEX[] PROGMEM = R"rawliteral(<!DOCTYPE html>
                 <div class="chip" style="border-color: #ffffff;" onclick="setColor(255, 255, 255, '#ffffff')">🧪 Rick</div>
             </div>
         </div>
+
+        <!-- Wireless Firmware OTA Flash Card -->
+        <div class="dim-card" style="text-align: center;">
+            <div class="dim-title" style="justify-content: center; margin-bottom: 6px;">⚡ Wireless Firmware Flash (OTA)</div>
+            <p style="font-size: 0.72rem; color: #8edaa0; margin-bottom: 12px;">Flash new firmware directly from battery power over Wi-Fi without USB cables.</p>
+            <a href="/update" style="display: block; width: 100%; padding: 12px; background: rgba(57, 255, 20, 0.15); border: 1px solid var(--portal-green); border-radius: 8px; color: var(--portal-green); text-decoration: none; font-weight: bold; font-size: 0.82rem; letter-spacing: 1px; text-shadow: 0 0 6px var(--portal-green); box-shadow: 0 0 10px rgba(57, 255, 20, 0.2); transition: all 0.2s;">
+                🚀 OPEN OTA FIRMWARE UPDATER
+            </a>
+        </div>
     </div>
 
     <!-- Feedback Toast -->

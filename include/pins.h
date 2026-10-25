@@ -3,92 +3,68 @@
 
 namespace Pins {
 
-#ifdef WOKWI_SIM
+#if defined(ARDUINO_NANO_ESP32)
     // =========================================================================
-    // Generic ESP32 DevKitC pins for Wokwi Simulation
+    // ARDUINO NANO ESP32 (ESP32-S3)
     // =========================================================================
-    constexpr int GreenLed1   = 12;
-    constexpr int GreenLed2   = 14;
-    constexpr int GreenLed3   = 27;
-
-    constexpr int PortalData  = 4;  // Top 7-pixel NeoPixel ring data pin
-
-    constexpr int DisplayClk  = 16;
-    constexpr int DisplayDio  = 17;
-
-    constexpr int JoystickX   = 34;
-    constexpr int JoystickY   = 35;
-    constexpr int JoystickSw  = 32;
-
-    constexpr int PowerButton = 33; 
-
-    constexpr int I2sBclk     = 18;
-    constexpr int I2sLrc      = 19;
-    constexpr int I2sData     = 23;
+    constexpr int JoystickX   = A0;   // Pin: A0  (GPIO 1)
+    constexpr int JoystickY   = A1;   // Pin: A1  (GPIO 2)
+    constexpr int I2sLrc      = D12;  // Pin: D12 (GPIO 47)
+    constexpr int I2sBclk     = D11;  // Pin: D11 (GPIO 38)
+    constexpr int PowerButton = D10;  // Pin: D10 (GPIO 21)
+    constexpr int JoystickSw  = D9;   // Pin: D9  (GPIO 18)
+    constexpr int DisplayDio  = D8;   // Pin: D8  (GPIO 17)
+    constexpr int DisplayClk  = D7;   // Pin: D7  (GPIO 10)
+    constexpr int I2sData     = D6;   // Pin: D6  (GPIO 9)
+    constexpr int PortalData  = D5;   // Pin: D5  (GPIO 8)
+    constexpr int GreenLed3   = D4;   // Pin: D4  (GPIO 7)
+    constexpr int GreenLed2   = D3;   // Pin: D3  (GPIO 6)
+    constexpr int GreenLed1   = D2;   // Pin: D2  (GPIO 5)
 
 #else
     // =========================================================================
-    // ARDUINO NANO ESP32 — REAL PHYSICAL PINOUT ORDER (USB-C PORT AT TOP)
+    // ESP32 DEVKIT V1 (30-PIN DUAL-CORE ESP-WROOM-32)
+    // Grouped by function: Left Header = UI/Inputs | Right Header = Audio & LEDs
     // =========================================================================
     //
-    //                      [ USB-C PORT ]
+    //                      [ ESP-WROOM-32 ANTENNA (TOP) ]
     //
-    //        LEFT HEADER (Top to Bottom)     RIGHT HEADER (Top to Bottom)
-    //        ---------------------------     ----------------------------
-    //        D13  (GPIO 48)           |       |   D12  (GPIO 47)
-    //        3V3  (3.3V Out)          |       |   D11  (GPIO 38)
-    //        B0   (BOOT0 / GPIO 46)   |       |   D10  (GPIO 21)
-    //        A0   (GPIO 1)            |       |   D9   (GPIO 18)
-    //        A1   (GPIO 2)            |       |   D8   (GPIO 17)
-    //        A2   (GPIO 3)            |       |   D7   (GPIO 10)
-    //        A3   (GPIO 4)            |       |   D6   (GPIO 9)
-    //        A4   (GPIO 11 / SDA)     |       |   D5   (GPIO 8)
-    //        A5   (GPIO 12 / SCL)     |       |   D4   (GPIO 7)
-    //        A6   (GPIO 13)           |       |   D3   (GPIO 6)
-    //        A7   (GPIO 14)           |       |   D2   (GPIO 5)
-    //        VBUS (5V USB)            |       |   GND  (Ground)
-    //        B1   (BOOT1 / GPIO 0)    |       |   RST  (Reset)
-    //        GND  (Ground)            |       |   RX0  (D0 / GPIO 44)
-    //        VIN  (6V-21V In)         |       |   TX1  (D1 / GPIO 43)
+    //        LEFT HEADER (Inputs & Display)     RIGHT HEADER (Audio & LEDs)
+    //        ------------------------------     ---------------------------
+    //  [15]: EN   (Hardware Reset Button)|      | [15]: D23  (GPIO 23) -> LED_HUD3 (Right)
+    //  [14]: VP   (GPIO 36 / Spare)      |      | [14]: D22  (GPIO 22) -> LED_HUD2 (Center)
+    //  [13]: VN   (GPIO 39 / Spare)      |      | [13]: TX0  (GPIO 1  / USB TX)
+    //  [12]: D34  (GPIO 34) -> JOY_VRX   |      | [12]: RX0  (GPIO 3  / USB RX)
+    //  [11]: D35  (GPIO 35) -> JOY_VRY   |      | [11]: D21  (GPIO 21) -> LED_HUD1 (Left)
+    //  [10]: D32  (GPIO 32) -> JOY_SW    |      | [10]: D19  (GPIO 19) -> NEO_RING_DIN
+    //  [ 9]: D33  (GPIO 33) -> BTN_WAKE  |      | [ 9]: D18  (GPIO 18) -> I2S_BCLK
+    //  [ 8]: D25  (GPIO 25) -> DISP_CLK  |      | [ 8]: D5   (GPIO 5  / Spare)
+    //  [ 7]: D26  (GPIO 26) -> DISP_DIO  |      | [ 7]: TX2  (GPIO 17) -> I2S_LRC
+    //  [ 6]: D27  (GPIO 27 / Spare)      |      | [ 6]: RX2  (GPIO 16) -> I2S_DIN
+    //  [ 5]: D14  (GPIO 14 / Spare)      |      | [ 5]: D4   (GPIO 4  / Spare)
+    //  [ 4]: D12  (GPIO 12 / Strapping)  |      | [ 4]: D2   (GPIO 2  / Blue LED)
+    //  [ 3]: D13  (GPIO 13 / Spare)      |      | [ 3]: D15  (GPIO 15 / Strapping)
+    //  [ 2]: GND  (Ground Return Bus)    |      | [ 2]: GND  (Ground Return Bus)
+    //  [ 1]: VIN  (+5V Safe Power In)    |      | [ 1]: 3V3  (+3.3V Out for Joy Pots)
     //        ------------------------------------------------------------
+    //                      [ MICRO-USB / USB-C (BOTTOM) ]
     //
-    // -------------------------------------------------------------------------
-    // LEFT HEADER (Top to Bottom, starting from USB-C)
-    // -------------------------------------------------------------------------
-    // Pin: D13       (GPIO 48) - [Unused / Spare GPIO]
-    // Pin: 3V3       - 3.3V Output Rail (Powers Joystick VCC strictly at 3.3V!)
-    // Pin: B0        - BOOT0 ROM Trigger (GPIO 46)
-    constexpr int JoystickX   = A0;   // Pin: A0  (GPIO 1)  - Joystick Horizontal Potentiometer (VRX)
-    constexpr int JoystickY   = A1;   // Pin: A1  (GPIO 2)  - Joystick Vertical Potentiometer (VRY)
-    // Pin: A2        (GPIO 3)  - [Unused / Spare Analog or Digital GPIO]
-    // Pin: A3        (GPIO 4)  - [Unused / Spare Analog or Digital GPIO]
-    // Pin: A4        (GPIO 11) - [Unused / I2C SDA]
-    // Pin: A5        (GPIO 12) - [Unused / I2C SCL]
-    // Pin: A6        (GPIO 13) - [Unused / Spare Analog]
-    // Pin: A7        (GPIO 14) - [Unused / Spare Analog]
-    // Pin: VBUS      - 5.0V USB Power Feed
-    // Pin: B1        - BOOT1 ROM Trigger (GPIO 0)
-    // Pin: GND       - Common Power Ground Bus
-    // Pin: VIN       - 2S LiPo Battery Raw Switched (+) Input (6V to 21V into MP2322)
+    // --- User Controls & Display (Left Header: Pins 7 to 12) ---
+    constexpr int JoystickX   = 34;   // Pin 12: D34 (GPIO 34 / ADC1_CH6) - Horizontal Pot (VRX)
+    constexpr int JoystickY   = 35;   // Pin 11: D35 (GPIO 35 / ADC1_CH7) - Vertical Pot (VRY)
+    constexpr int JoystickSw  = 32;   // Pin 10: D32 (GPIO 32) - Pushbutton (INPUT_PULLUP)
+    constexpr int PowerButton = 33;   // Pin 9:  D33 (GPIO 33 / RTC_GPIO8) - Soft Power Wake Button
+    constexpr int DisplayClk  = 25;   // Pin 8:  D25 (GPIO 25) - TM1637 Display Clock (CLK)
+    constexpr int DisplayDio  = 26;   // Pin 7:  D26 (GPIO 26) - TM1637 Display Data (DIO)
 
-    // -------------------------------------------------------------------------
-    // RIGHT HEADER (Top to Bottom, starting from USB-C)
-    // -------------------------------------------------------------------------
-    constexpr int I2sLrc      = D12;  // Pin: D12 (GPIO 47) - MAX98357A I2S LRC / WS (Word Select)
-    constexpr int I2sBclk     = D11;  // Pin: D11 (GPIO 38) - MAX98357A I2S BCLK (Bit Clock)
-    constexpr int PowerButton = D10;  // Pin: D10 (GPIO 21) - Soft Power Sleep / Wake (RTC_GPIO21)
-    constexpr int JoystickSw  = D9;   // Pin: D9  (GPIO 18) - Joystick Pushbutton (INPUT_PULLUP)
-    constexpr int DisplayDio  = D8;   // Pin: D8  (GPIO 17) - TM1637 4-Digit Display DIO
-    constexpr int DisplayClk  = D7;   // Pin: D7  (GPIO 10) - TM1637 4-Digit Display CLK
-    constexpr int I2sData     = D6;   // Pin: D6  (GPIO 9)  - MAX98357A I2S DIN (Data In)
-    constexpr int PortalData  = D5;   // Pin: D5  (GPIO 8)  - Top 7-pixel NeoPixel Ring DIN
-    constexpr int GreenLed3   = D4;   // Pin: D4  (GPIO 7)  - Front HUD Green LED 3 (Right, PWM)
-    constexpr int GreenLed2   = D3;   // Pin: D3  (GPIO 6)  - Front HUD Green LED 2 (Center, PWM)
-    constexpr int GreenLed1   = D2;   // Pin: D2  (GPIO 5)  - Front HUD Green LED 1 (Left, PWM)
-    // Pin: GND       - Common Power Ground Bus
-    // Pin: RST       - Hardware Reset Pushbutton / Header Pin
-    // Pin: RX0 / D0  (GPIO 44) - [Unused / Reserved for Serial RX]
-    // Pin: TX1 / D1  (GPIO 43) - [Unused / Reserved for Serial TX]
+    // --- Audio & Lighting Actuators (Right Header: Pins 6, 7, 9, 10, 11, 14, 15) ---
+    constexpr int GreenLed1   = 21;   // Pin 11: D21 (GPIO 21) - Left Green LED PWM (via 220Ω resistor)
+    constexpr int GreenLed2   = 22;   // Pin 14: D22 (GPIO 22) - Center Green LED PWM (via 220Ω resistor)
+    constexpr int GreenLed3   = 23;   // Pin 15: D23 (GPIO 23) - Right Green LED PWM (via 220Ω resistor)
+    constexpr int PortalData  = 19;   // Pin 10: D19 (GPIO 19) - Top 7-Pixel WS2812B Ring DIN (via 330Ω resistor)
+    constexpr int I2sBclk     = 18;   // Pin 9:  D18 (GPIO 18) - MAX98357A I2S Bit Clock (BCLK)
+    constexpr int I2sLrc      = 17;   // Pin 7:  TX2 (GPIO 17) - MAX98357A Word Select (LRC/WS)
+    constexpr int I2sData     = 16;   // Pin 6:  RX2 (GPIO 16) - MAX98357A Serial Data In (DIN)
 
 #endif
 

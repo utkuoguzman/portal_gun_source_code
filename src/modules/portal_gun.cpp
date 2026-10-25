@@ -22,6 +22,25 @@ static bool portalIsOpen = false;
 static bool portalJustClosed = false;
 static float frontLedSmooth[3] = {0.0f, 0.0f, 0.0f};
 
+static void printDimensionInfo() {
+    const char* modeHint = "";
+    switch (dimLetter) {
+        case 'C': modeHint = (dimNumber == 137) ? " [Earth Dimension C-137 (Rick's Home)]" : " [Dimension C Series]"; break;
+        case 'B': modeHint = " [Citadel Radar - Double Click to Activate]"; break;
+        case 'U': modeHint = " [Wi-Fi Portal & Web OTA - Double Click to Activate]"; break;
+        case 'P': modeHint = " [Party Mode (Get Schwifty!) - Double Click to Activate]"; break;
+        case 'E': modeHint = " [Evil Morty Amber Portal - Double Click to Activate]"; break;
+        case 'S': modeHint = " [Snake Game - Double Click to Play]"; break;
+        case 'R': 
+        case 'G': modeHint = " [Chamber Roulette - Double Click to Play]"; break;
+        case 'D': modeHint = " [Dino Runner Game - Double Click to Play]"; break;
+        case 'Q': modeHint = " [Rick Quotes Soundboard - Double Click to Browse]"; break;
+        case 'L': modeHint = " [Flashlight / Torch - Double Click to Activate]"; break;
+        default:  modeHint = " [Multiverse Coordinates - Single Click to Fire]"; break;
+    }
+    Serial.printf("[Dimension Dial] -> %c-%03d%s\n", dimLetter, dimNumber, modeHint);
+}
+
 void PortalGun::begin() {
     // Start at DeepSleep or PowerUp based on wakeup cause
     esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
@@ -45,6 +64,7 @@ void PortalGun::update() {
 
     // Universal 3-click escape: Return to Dimension Selection from ANY mode, game, torch, party, or firing portal!
     if (joy.tripleClicked) {
+        Serial.println("[Input] Triple Click (Escape) -> Returning to Dimension Selection");
         if (currentState != PortalState::DimensionSelection &&
             currentState != PortalState::PowerUp &&
             currentState != PortalState::PowerUpFinalize &&
@@ -139,22 +159,50 @@ void PortalGun::changeState(PortalState newState) {
     stateStartTime = millis();
     stateInit = true;
     
-    Serial.print("State changed to: ");
+    Serial.print("\n>>> [State] -> ");
     switch (currentState) {
-        case PortalState::PowerUp: Serial.println("PowerUp"); break;
-        case PortalState::PowerUpFinalize: Serial.println("PowerUpFinalize"); break;
-        case PortalState::DimensionSelection: Serial.println("DimensionSelection"); break;
-        case PortalState::Party: Serial.println("Party"); break;
-        case PortalState::Torch: Serial.println("Torch"); break;
-        case PortalState::RadarScan: Serial.println("RadarScan"); break;
-        case PortalState::WifiPortal: Serial.println("WifiPortal"); break;
-        case PortalState::EvilMorty: Serial.println("EvilMorty"); break;
-        case PortalState::SnakeGame: Serial.println("SnakeGame"); break;
-        case PortalState::Roulette: Serial.println("Roulette"); break;
-        case PortalState::DinoGame: Serial.println("DinoGame"); break;
-        case PortalState::RickQuote: Serial.println("RickQuote"); break;
-        case PortalState::PowerDown: Serial.println("PowerDown"); break;
-        case PortalState::DeepSleep: Serial.println("DeepSleep"); break;
+        case PortalState::PowerUp: 
+            Serial.println("PowerUp (Initial Boot Animation)"); 
+            break;
+        case PortalState::PowerUpFinalize: 
+            Serial.println("PowerUpFinalize (Buckle Up Rick Intro)"); 
+            break;
+        case PortalState::DimensionSelection: 
+            Serial.printf("DimensionSelection (Current: %c-%03d)\n", dimLetter, dimNumber); 
+            break;
+        case PortalState::Party: 
+            Serial.println("Party Mode (Get Schwifty!)"); 
+            break;
+        case PortalState::Torch: 
+            Serial.println("Torch / Flashlight Mode"); 
+            break;
+        case PortalState::RadarScan: 
+            Serial.println("RadarScan (Citadel / Federation Bluetooth Proximity Scanner)"); 
+            break;
+        case PortalState::WifiPortal: 
+            Serial.println("WifiPortal (Web AP: 'PortalGun-AP' | IP: 192.168.4.1 | OTA: http://192.168.4.1/update)"); 
+            break;
+        case PortalState::EvilMorty: 
+            Serial.println("EvilMorty (Amber Golden Portal - For The Damaged Coda)"); 
+            break;
+        case PortalState::SnakeGame: 
+            Serial.println("SnakeGame (7-Segment Snake)"); 
+            break;
+        case PortalState::Roulette: 
+            Serial.println("Roulette (Interdimensional Chamber Roulette)"); 
+            break;
+        case PortalState::DinoGame: 
+            Serial.println("DinoGame (Google Chrome T-Rex Runner)"); 
+            break;
+        case PortalState::RickQuote: 
+            Serial.println("RickQuote (Interdimensional Rick Soundboard Browser)"); 
+            break;
+        case PortalState::PowerDown: 
+            Serial.println("PowerDown (Powering Down)"); 
+            break;
+        case PortalState::DeepSleep: 
+            Serial.println("DeepSleep (Entering Ultra-Low Power Standby)"); 
+            break;
     }
 }
 
@@ -242,6 +290,7 @@ void PortalGun::handleDimensionSelection() {
         portalIsOpen = false;
         portalJustClosed = false;
         leds.clearPortal();
+        printDimensionInfo();
     }
     
     if (portalIsOpen) {
@@ -249,6 +298,7 @@ void PortalGun::handleDimensionSelection() {
         if (millis() - portalOpenTime >= 5000) {
             portalIsOpen = false;
             portalJustClosed = true;
+            Serial.println("[Portal Gun] Portal beam closed.");
             // Play random close sound
             if (millis() % 2 == 0) {
                 audio.playRaw(snd_portal_close1, snd_portal_close1_size);
@@ -277,6 +327,7 @@ void PortalGun::handleDimensionSelection() {
         // 2 Clicks: Enters universe corresponding to dialed dimension
         if (joy.doubleClicked) {
             input.clearClicks();
+            Serial.printf("[Input] Double Click -> Activating Dimension %c-%03d!\n", dimLetter, dimNumber);
             if (dimLetter == 'B') {
                 // 'B' dimension activates 60s Citadel/Federation Proximity Radar (BT-Radar)
                 changeState(PortalState::RadarScan);
@@ -325,11 +376,10 @@ void PortalGun::handleDimensionSelection() {
             }
         } else if (joy.singleClicked) {
             // 1 Click: "open simply a portal wherever we are"
-            // Regardless of whether dialed to D, S, R, Q, E, P, U, B, L, or C,
-            // 1 click simply opens the portal beam to that dimension!
             input.clearClicks();
             portalIsOpen = true;
             portalOpenTime = millis();
+            Serial.printf("[Input] Single Click -> Opening Portal Beam to %c-%03d!\n", dimLetter, dimNumber);
             if (millis() % 2 == 0) {
                 audio.playRaw(snd_portal_open1, snd_portal_open1_size);
             } else {
@@ -338,26 +388,35 @@ void PortalGun::handleDimensionSelection() {
         }
         
         static unsigned long lastMove = 0;
+        bool dimChanged = false;
         if (millis() - lastMove > 200) {
             if (joy.up) {
                 dimLetter++;
                 if (dimLetter > 'Z') dimLetter = 'A';
                 lastMove = millis();
+                dimChanged = true;
             } else if (joy.down) {
                 dimLetter--;
                 if (dimLetter < 'A') dimLetter = 'Z';
                 lastMove = millis();
+                dimChanged = true;
             }
             
             if (joy.right) {
                 dimNumber++;
                 if (dimNumber > 999) dimNumber = 0;
                 lastMove = millis();
+                dimChanged = true;
             } else if (joy.left) {
                 dimNumber--;
                 if (dimNumber < 0) dimNumber = 999;
                 lastMove = millis();
+                dimChanged = true;
             }
+        }
+
+        if (dimChanged) {
+            printDimensionInfo();
         }
 
         // Display C137 formatting

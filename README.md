@@ -246,7 +246,7 @@ python tools/generate_extra_audio.py
 ```
 *(You will see all tracks—including Evil Morty, Snake Jazz, and Dino Song—packed into `include/extra_audio.h` and `src/modules/extra_audio.cpp`).*
 
-### Step 3: Build & Flash
+### Step 3: Build & Flash (Initial USB Flashing)
 Connect your **Arduino Nano ESP32** via USB-C and run:
 ```bash
 pio run -e arduino_nano_esp32 --target upload
@@ -256,6 +256,24 @@ To monitor debug serial output:
 ```bash
 pio device monitor -b 115200
 ```
+
+### Step 4: Wireless Over-The-Air (OTA) Updates (Battery Powered)
+Once your Portal Gun is fully assembled inside the 3D-printed shell and running on battery power, **you never need to plug in a USB cable again**:
+
+#### Option A: Web Browser Flash (Any Phone or PC)
+1. Double-click the joystick button to launch the **`Portal-Gun-C137`** Wi-Fi Access Point.
+2. Connect to `Portal-Gun-C137` on your phone or computer.
+3. Open **`http://192.168.4.1/update`** in your browser.
+4. Drag and drop or browse for `.pio/build/arduino_nano_esp32/firmware.bin` and click **"INITIATE QUANTUM RE-FLASH"**.
+5. The 4-digit display shows `UPDT` and live `%` progress, while the top ring glows cyan. The gun verifies the image and auto-reboots into the new code in under 10 seconds!
+
+#### Option B: PlatformIO Direct Wireless Upload
+While connected to `Portal-Gun-C137` Wi-Fi, run:
+```bash
+pio run -e arduino_nano_esp32_ota -t upload
+```
+
+> **🛡️ Fail-Safe A/B Partitioning:** The 16MB flash is partitioned with dual 6.5MB slots (`app0` and `app1`). The ESP32 writes updates into the inactive bank while running. If an upload is ever interrupted or corrupted, it automatically rolls back to the previous working firmware without bricking.
 
 ---
 

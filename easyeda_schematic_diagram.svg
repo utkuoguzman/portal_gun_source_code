@@ -14,32 +14,30 @@
   <rect x="36" y="36" width="2428" height="1528" fill="none" stroke="#64748b" stroke-width="1"/>
 
   <!-- ===================================================================== -->
-  <!-- COLUMN 1: POWER SUPPLY, AUDIO & SPECIFICATIONS -->
+  <!-- COLUMN 1: BURN-PROOF POWER SUPPLY, AUDIO & SYSTEM SPECIFICATIONS -->
   <!-- ===================================================================== -->
 
-  <!-- 1. POWER SUPPLY & ISOLATION -->
+  <!-- 1. POWER SUPPLY & BURN-PROOF 5V ISOLATION -->
   <g id="block_power" transform="translate(60, 55)">
-    <rect width="700" height="470" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 3"/>
-    <rect x="15" y="-12" width="310" height="24" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
-    <text x="25" y="5" fill="#dc2626" font-size="13" font-weight="bold">1. POWER SUPPLY &amp; ISOLATION</text>
+    <rect width="700" height="480" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 3"/>
+    <rect x="15" y="-12" width="410" height="24" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="25" y="5" fill="#dc2626" font-size="13" font-weight="bold">1. POWER SUPPLY &amp; BURN-PROOF 5V ISOLATION</text>
 
     <!-- BT1: 2S LiPo Battery Symbol -->
-    <!-- Schematic Standard: Long thin plate = Positive (+), Short thick plate = Negative (-) -->
-    <!-- Flow: (-) terminal on left (x=10) connected to short plate, then alternating to (+) on right (x=66) connected to long plate -->
-    <g transform="translate(60, 75)">
-      <text x="0" y="-20" fill="#0f172a" font-size="14" font-weight="bold">BT1</text>
-      <text x="0" y="-5" fill="#64748b" font-size="11">2S LiPo 850mAh</text>
-      <text x="0" y="8" fill="#64748b" font-size="10">7.4V Nom / 8.4V Peak</text>
+    <g transform="translate(60, 65)">
+      <text x="0" y="-18" fill="#0f172a" font-size="14" font-weight="bold">BT1</text>
+      <text x="0" y="-3" fill="#64748b" font-size="11">2S LiPo 850mAh</text>
+      <text x="0" y="10" fill="#64748b" font-size="10">7.4V Nom / 8.4V Peak</text>
 
-      <!-- Cell 1: (-) Short thick plate at x=30, (+) Long thin plate at x=42 -->
+      <!-- Cell 1: (-) Short thick plate, (+) Long thin plate -->
       <line x1="30" y1="40" x2="30" y2="60" stroke="#0f172a" stroke-width="5"/>
       <line x1="42" y1="30" x2="42" y2="70" stroke="#0f172a" stroke-width="2.5"/>
 
-      <!-- Cell 2: (-) Short thick plate at x=54, (+) Long thin plate at x=66 -->
+      <!-- Cell 2: (-) Short thick plate, (+) Long thin plate -->
       <line x1="54" y1="40" x2="54" y2="60" stroke="#0f172a" stroke-width="5"/>
       <line x1="66" y1="30" x2="66" y2="70" stroke="#dc2626" stroke-width="2.5"/>
 
-      <!-- Terminal Leads: (-) on left from short plate, (+) on right from long plate -->
+      <!-- Terminal Leads -->
       <line x1="10" y1="50" x2="30" y2="50" stroke="#0f172a" stroke-width="2.5"/>
       <line x1="66" y1="50" x2="90" y2="50" stroke="#dc2626" stroke-width="2.5"/>
       <text x="75" y="42" fill="#dc2626" font-size="14" font-weight="bold">+</text>
@@ -48,35 +46,31 @@
     </g>
 
     <!-- DIRECT BATTERY GROUND WIRE: From BT1 (-) down to Buck IN- -->
-    <line x1="70" y1="125" x2="70" y2="350" stroke="#0f172a" stroke-width="2.5"/>
-    <line x1="70" y1="350" x2="160" y2="350" stroke="#0f172a" stroke-width="2.5"/>
-    <circle cx="160" cy="350" r="3.5" fill="#0f172a"/>
+    <line x1="70" y1="115" x2="70" y2="330" stroke="#0f172a" stroke-width="2.5"/>
+    <line x1="70" y1="330" x2="160" y2="330" stroke="#0f172a" stroke-width="2.5"/>
+    <circle cx="160" cy="330" r="3.5" fill="#0f172a"/>
 
     <!-- Explicit Wire Callout Tag -->
-    <rect x="78" y="215" width="105" height="42" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
-    <text x="130" y="232" fill="#0f172a" font-size="10.5" font-weight="bold" text-anchor="middle">BATTERY (-)</text>
-    <text x="130" y="247" fill="#dc2626" font-size="9" font-weight="bold" text-anchor="middle">GROUND RETURN</text>
+    <rect x="78" y="195" width="105" height="42" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
+    <text x="130" y="212" fill="#0f172a" font-size="10.5" font-weight="bold" text-anchor="middle">BATTERY (-)</text>
+    <text x="130" y="227" fill="#dc2626" font-size="9" font-weight="bold" text-anchor="middle">GROUND RETURN</text>
 
-    <!-- F1: 3.15A Glass Cartridge Fuse Symbol (6x30mm) -->
-    <g transform="translate(195, 105)">
-      <text x="30" y="-20" fill="#0f172a" font-size="14" font-weight="bold" text-anchor="middle">F1</text>
-      <text x="30" y="-5" fill="#64748b" font-size="11" text-anchor="middle">3.15A Glass (6x30mm)</text>
-      <!-- Glass body -->
-      <rect x="0" y="8" width="60" height="24" rx="4" fill="#f0fdf4" stroke="#0f172a" stroke-width="1.8"/>
-      <!-- Metallic End Caps -->
-      <rect x="0" y="8" width="10" height="24" rx="2" fill="#94a3b8" stroke="#0f172a" stroke-width="1.5"/>
-      <rect x="50" y="8" width="10" height="24" rx="2" fill="#94a3b8" stroke="#0f172a" stroke-width="1.5"/>
-      <!-- Internal Fuse Element (Fine wire) -->
-      <path d="M 10 20 Q 25 13 35 25 T 50 20" fill="none" stroke="#dc2626" stroke-width="1.8"/>
-      <!-- In & Out Leads -->
+    <!-- F1: 1.0A - 1.1A PTC Resettable Polyfuse -->
+    <g transform="translate(195, 95)">
+      <text x="35" y="-18" fill="#0f172a" font-size="13" font-weight="bold" text-anchor="middle">F1 (PTC)</text>
+      <text x="35" y="-3" fill="#059669" font-size="10.5" font-weight="bold" text-anchor="middle">1.1A Resettable</text>
+      <rect x="0" y="8" width="70" height="24" rx="3" fill="#ecfdf5" stroke="#059669" stroke-width="1.8"/>
+      <line x1="10" y1="28" x2="35" y2="12" stroke="#059669" stroke-width="1.5"/>
+      <line x1="35" y1="12" x2="60" y2="12" stroke="#059669" stroke-width="1.5"/>
+      <text x="35" y="24" fill="#047857" font-size="8.5" font-weight="bold" text-anchor="middle">POLYSWITCH</text>
       <line x1="-15" y1="20" x2="0" y2="20" stroke="#dc2626" stroke-width="2"/>
-      <line x1="60" y1="20" x2="75" y2="20" stroke="#dc2626" stroke-width="2"/>
+      <line x1="70" y1="20" x2="85" y2="20" stroke="#dc2626" stroke-width="2"/>
     </g>
 
     <!-- SW1: Latching Power Switch Symbol -->
-    <g transform="translate(320, 95)">
+    <g transform="translate(325, 85)">
       <text x="35" y="-10" fill="#0f172a" font-size="14" font-weight="bold">SW1</text>
-      <text x="35" y="5" fill="#64748b" font-size="11">Main Power Latch</text>
+      <text x="35" y="5" fill="#64748b" font-size="11">Main Power Switch</text>
       <circle cx="10" cy="30" r="3.5" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
       <circle cx="60" cy="30" r="3.5" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
       <line x1="13" y1="30" x2="55" y2="15" stroke="#dc2626" stroke-width="2.5"/>
@@ -84,30 +78,25 @@
       <text x="60" y="48" fill="#64748b" font-size="10" text-anchor="middle">NO</text>
     </g>
 
-    <!-- Switched Battery Positive Distribution Node -->
-    <circle cx="430" cy="125" r="4.5" fill="#dc2626"/>
-    <!-- Wire to Net Label BAT_SW -->
-    <line x1="430" y1="125" x2="430" y2="65" stroke="#dc2626" stroke-width="2"/>
-    <line x1="430" y1="65" x2="480" y2="65" stroke="#dc2626" stroke-width="2"/>
-    <!-- Net Flag: BAT_SW -->
-    <polygon points="480,55 570,55 585,65 570,75 480,75" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
-    <text x="488" y="69" fill="#991b1b" font-size="11" font-weight="bold">BAT_SW (7.4V)</text>
-    <text x="480" y="90" fill="#64748b" font-size="9.5">➔ Feeds Nano ESP32 VIN</text>
+    <!-- Switched 7.4V line strictly enters Mini360 IN+ -->
+    <line x1="385" y1="115" x2="430" y2="115" stroke="#dc2626" stroke-width="2"/>
+    <line x1="430" y1="115" x2="430" y2="175" stroke="#dc2626" stroke-width="2"/>
+    <line x1="430" y1="175" x2="160" y2="175" stroke="#dc2626" stroke-width="2"/>
+    <line x1="160" y1="175" x2="160" y2="290" stroke="#dc2626" stroke-width="2"/>
+    <line x1="160" y1="290" x2="190" y2="290" stroke="#dc2626" stroke-width="2"/>
 
-    <!-- Connect SW1 to Buck IN+ -->
-    <line x1="380" y1="125" x2="430" y2="125" stroke="#dc2626" stroke-width="2"/>
-    <line x1="430" y1="125" x2="430" y2="190" stroke="#dc2626" stroke-width="2"/>
-    <line x1="430" y1="190" x2="160" y2="190" stroke="#dc2626" stroke-width="2"/>
-    <line x1="160" y1="190" x2="160" y2="310" stroke="#dc2626" stroke-width="2"/>
-    <line x1="160" y1="310" x2="190" y2="310" stroke="#dc2626" stroke-width="2"/>
+    <!-- High Voltage Containment Warning Banner -->
+    <rect x="445" y="90" width="235" height="75" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="562" y="112" fill="#991b1b" font-size="11" font-weight="bold" text-anchor="middle">🛡️ 100% BURN-PROOF DESIGN</text>
+    <text x="562" y="130" fill="#7f1d1d" font-size="9.5" text-anchor="middle">7.4V NEVER touches ESP32!</text>
+    <text x="562" y="146" fill="#7f1d1d" font-size="9" text-anchor="middle">It STOPS at Mini360 Converter.</text>
 
     <!-- U1: Mini360 DC-DC Buck Converter -->
-    <g transform="translate(190, 230)">
+    <g transform="translate(190, 210)">
       <rect width="270" height="150" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
       <text x="135" y="26" fill="#0284c7" font-size="14" font-weight="bold" text-anchor="middle">U1: MINI360 STEP-DOWN</text>
-      <text x="135" y="42" fill="#64748b" font-size="10.5" text-anchor="middle">MP2307 Regulator (Adj 5.0V)</text>
+      <text x="135" y="42" fill="#64748b" font-size="10.5" text-anchor="middle">MP2307 Regulator (Adjust to 5.0V)</text>
 
-      <!-- Internal Architecture Callout -->
       <rect x="25" y="55" width="220" height="40" rx="3" fill="#f8fafc" stroke="#cbd5e1"/>
       <text x="135" y="71" fill="#0f172a" font-size="10" font-weight="bold" text-anchor="middle">⚡ IN- = BATTERY (-) RETURN</text>
       <text x="135" y="86" fill="#475569" font-size="9" text-anchor="middle">IN- &amp; OUT- share common GND plane</text>
@@ -115,9 +104,9 @@
       <!-- Pins Left (Inputs) -->
       <line x1="-30" y1="80" x2="0" y2="80" stroke="#dc2626" stroke-width="2"/>
       <circle cx="-30" cy="80" r="3" fill="#dc2626"/>
-      <text x="10" y="84" fill="#0f172a" font-size="12" font-weight="bold">IN+</text>
+      <text x="10" y="84" fill="#0f172a" font-size="12" font-weight="bold">IN+ (7.4V)</text>
 
-      <!-- IN- Terminal (Directly marked as Battery Ground) -->
+      <!-- IN- Terminal -->
       <line x1="-30" y1="120" x2="0" y2="120" stroke="#0f172a" stroke-width="2.5"/>
       <text x="10" y="118" fill="#0f172a" font-size="12" font-weight="bold">IN-</text>
       <text x="10" y="132" fill="#dc2626" font-size="9" font-weight="bold">(BAT -)</text>
@@ -130,9 +119,9 @@
 
       <!-- Pins Right (Outputs) -->
       <line x1="270" y1="80" x2="300" y2="80" stroke="#dc2626" stroke-width="2"/>
-      <text x="258" y="84" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">OUT+</text>
+      <text x="258" y="84" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">OUT+ (+5.0V)</text>
 
-      <!-- OUT- Terminal (Marked as Common System GND) -->
+      <!-- OUT- Terminal -->
       <line x1="270" y1="120" x2="300" y2="120" stroke="#0f172a" stroke-width="2"/>
       <text x="258" y="118" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">OUT-</text>
       <text x="258" y="132" fill="#0284c7" font-size="9" font-weight="bold" text-anchor="end">(SYS GND)</text>
@@ -144,17 +133,15 @@
       <text x="300" y="160" fill="#334155" font-size="10" font-weight="bold" text-anchor="middle">GND</text>
     </g>
 
-    <!-- C1: 1000uF Bulk Electrolytic Capacitor -->
-    <g transform="translate(520, 290)">
+    <!-- C1: 1000uF Bulk Electrolytic Capacitor on +5V Rail -->
+    <g transform="translate(520, 270)">
       <text x="15" y="-12" fill="#0f172a" font-size="13" font-weight="bold">C1</text>
       <text x="15" y="2" fill="#64748b" font-size="10">1000µF 10V</text>
-      <!-- Cap plates -->
       <line x1="0" y1="20" x2="30" y2="20" stroke="#0f172a" stroke-width="2.5"/>
       <path d="M 0 30 Q 15 22 30 30" stroke="#0f172a" stroke-width="2.5" fill="none"/>
       <line x1="15" y1="0" x2="15" y2="20" stroke="#dc2626" stroke-width="2"/>
       <line x1="15" y1="30" x2="15" y2="50" stroke="#0f172a" stroke-width="2"/>
       <text x="25" y="15" fill="#dc2626" font-size="12" font-weight="bold">+</text>
-      <!-- Ground on negative lead -->
       <line x1="15" y1="50" x2="15" y2="65" stroke="#0f172a" stroke-width="1.5"/>
       <line x1="5" y1="65" x2="25" y2="65" stroke="#0f172a" stroke-width="2.5"/>
       <line x1="9" y1="69" x2="21" y2="69" stroke="#0f172a" stroke-width="1.5"/>
@@ -163,22 +150,28 @@
     </g>
 
     <!-- Wire from Buck OUT+ to C1 (+) and to Net Flag +5V -->
-    <line x1="490" y1="310" x2="535" y2="310" stroke="#dc2626" stroke-width="2"/>
-    <circle cx="535" cy="310" r="3.5" fill="#dc2626"/>
-    <line x1="535" y1="310" x2="590" y2="310" stroke="#dc2626" stroke-width="2"/>
+    <line x1="490" y1="290" x2="535" y2="290" stroke="#dc2626" stroke-width="2"/>
+    <circle cx="535" cy="290" r="3.5" fill="#dc2626"/>
+    <line x1="535" y1="290" x2="590" y2="290" stroke="#dc2626" stroke-width="2"/>
     <!-- Net Flag: +5V -->
-    <polygon points="590,300 650,300 665,310 650,320 590,320" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
-    <text x="600" y="314" fill="#991b1b" font-size="12" font-weight="bold">+5V</text>
+    <polygon points="590,280 660,280 675,290 660,300 590,300" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="600" y="294" fill="#991b1b" font-size="12" font-weight="bold">+5V MAIN</text>
+
+    <!-- Subtitle explaining +5V feeds ESP32 VIN safely -->
+    <text x="495" y="415" fill="#0284c7" font-size="10.5" font-weight="bold">➔ Regulated +5.0V feeds:</text>
+    <text x="510" y="432" fill="#334155" font-size="10">• ESP32 DevKit V1 (VIN)</text>
+    <text x="510" y="447" fill="#334155" font-size="10">• MAX98357A Amp (VIN)</text>
+    <text x="510" y="462" fill="#334155" font-size="10">• WS2812B Ring (5V)</text>
   </g>
 
-  <!-- 3. I2S DIGITAL AUDIO SYSTEM -->
-  <g id="block_audio" transform="translate(60, 550)">
-    <rect width="700" height="490" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 3"/>
-    <rect x="15" y="-12" width="290" height="24" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
-    <text x="25" y="5" fill="#7c3aed" font-size="13" font-weight="bold">3. I2S DIGITAL AUDIO SYSTEM</text>
+  <!-- 3. I2S DIGITAL AUDIO SYSTEM (RIGHT HEADER DRIVEN) -->
+  <g id="block_audio" transform="translate(60, 555)">
+    <rect width="700" height="485" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 3"/>
+    <rect x="15" y="-12" width="310" height="24" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="25" y="5" fill="#7c3aed" font-size="13" font-weight="bold">3. I2S DIGITAL AUDIO SYSTEM (RIGHT HEADER)</text>
 
     <!-- U3: MAX98357A Breakout Symbol -->
-    <g transform="translate(170, 60)">
+    <g transform="translate(170, 55)">
       <rect width="280" height="370" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
       <rect x="0" y="0" width="280" height="35" fill="#7c3aed"/>
       <text x="140" y="24" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle">U3: MAX98357A I2S DAC AMP</text>
@@ -208,32 +201,31 @@
         <text x="-32" y="4" fill="#64748b" font-size="9.5" font-weight="bold" text-anchor="end">NC (Open = 9dB)</text>
       </g>
 
-      <!-- BCLK -->
+      <!-- BCLK (Pin 9 / D18) -->
       <g transform="translate(0, 235)">
         <line x1="-30" y1="0" x2="0" y2="0" stroke="#0284c7" stroke-width="2"/>
-        <text x="10" y="5" fill="#0f172a" font-size="12" font-weight="bold">BCLK</text>
+        <text x="10" y="5" fill="#0f172a" font-size="12" font-weight="bold">BCLK (D18)</text>
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
         <text x="-125" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_BCLK</text>
       </g>
 
-      <!-- LRC -->
+      <!-- LRC (Pin 7 / TX2 - GPIO 17) -->
       <g transform="translate(0, 285)">
         <line x1="-30" y1="0" x2="0" y2="0" stroke="#0284c7" stroke-width="2"/>
-        <text x="10" y="5" fill="#0f172a" font-size="12" font-weight="bold">LRC / WS</text>
+        <text x="10" y="5" fill="#0f172a" font-size="12" font-weight="bold">LRC / WS (TX2)</text>
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
         <text x="-125" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_LRC</text>
       </g>
 
-      <!-- DIN -->
+      <!-- DIN (Pin 6 / RX2 - GPIO 16) -->
       <g transform="translate(0, 335)">
         <line x1="-30" y1="0" x2="0" y2="0" stroke="#0284c7" stroke-width="2"/>
-        <text x="10" y="5" fill="#0f172a" font-size="12" font-weight="bold">DIN</text>
+        <text x="10" y="5" fill="#0f172a" font-size="12" font-weight="bold">DIN (RX2)</text>
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
         <text x="-125" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_DIN</text>
       </g>
 
       <!-- Outputs Right (Speaker Differential Terminals) -->
-      <!-- U3 right edge is at x=280 inside U3 (170+280 = 450 global in block_audio). SPK1 is at x=510. Distance is 60px! -->
       <g transform="translate(280, 110)">
         <line x1="0" y1="0" x2="60" y2="0" stroke="#dc2626" stroke-width="2"/>
         <text x="-10" y="5" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">SPK+</text>
@@ -245,194 +237,274 @@
       </g>
     </g>
 
-    <!-- SPK1: 3W Speaker Symbol (Scaled up & perfectly aligned with SPK+ at y=170 and SPK- at y=230) -->
-    <!-- U3 right edge is at 170+280 = 450. Lines extend 60px to x=510, directly meeting SPK1 at x=510! -->
-    <g transform="translate(510, 150)">
+    <!-- SPK1: 3W Speaker Symbol -->
+    <g transform="translate(510, 145)">
       <text x="38" y="-18" fill="#0f172a" font-size="14" font-weight="bold">SPK1</text>
-      <text x="38" y="-3" fill="#64748b" font-size="10">3W 4Ω/8Ω</text>
-      <!-- Speaker Rectangular Body: height 80 (from y=10 to y=90) -->
+      <text x="38" y="-3" fill="#059669" font-size="10" font-weight="bold">3W 4Ω (4.4Ω OK)</text>
       <rect x="0" y="10" width="28" height="80" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
-      <!-- Speaker Cone: spans from y=0 to y=100 -->
       <polygon points="28,24 75,0 75,100 28,76" fill="#f8fafc" stroke="#0f172a" stroke-width="2"/>
-      <!-- Terminal polarity labels -->
       <text x="-12" y="14" fill="#dc2626" font-size="11" font-weight="bold">(+)</text>
       <text x="-12" y="74" fill="#0f172a" font-size="11" font-weight="bold">(-)</text>
 
-      <!-- Critical Warning Box -->
       <rect x="-60" y="115" width="220" height="42" rx="3" fill="#fee2e2" stroke="#dc2626"/>
       <text x="50" y="133" fill="#991b1b" font-size="10" font-weight="bold" text-anchor="middle">⚠️ BRIDGE-TIED LOAD (BTL)</text>
       <text x="50" y="148" fill="#991b1b" font-size="9" text-anchor="middle">NEVER connect SPK- to GND!</text>
     </g>
   </g>
 
-  <!-- ELECTRICAL SPECIFICATIONS & RULES BOX -->
-  <g transform="translate(60, 1065)">
-    <rect width="700" height="470" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <!-- ELECTRICAL SPECIFICATIONS & PERFBOARD JST-XH INTERFACE GUIDE -->
+  <g transform="translate(60, 1060)">
+    <rect width="700" height="475" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
     <rect x="0" y="0" width="700" height="34" rx="4" fill="#0f172a"/>
-    <text x="20" y="23" fill="#ffffff" font-size="13" font-weight="bold">ELECTRICAL SPECIFICATIONS &amp; RULES</text>
+    <text x="20" y="23" fill="#ffffff" font-size="13" font-weight="bold">ELECTRICAL SPECIFICATIONS &amp; JST-XH PERFBOARD BUS MAP</text>
 
-    <g transform="translate(20, 60)" font-size="12" fill="#334155">
-      <text x="0" y="0" fill="#dc2626" font-weight="bold">⚡ POWER BUSES &amp; GROUND TOPOLOGY:</text>
-      <text x="15" y="20">• BAT_SW (7.4V - 8.4V): Feeds Nano ESP32 VIN directly (MP2322 regulator 6V-21V).</text>
-      <text x="15" y="38">• IN- = BATTERY (-) RETURN: Solder 2S battery (-) lead directly to Buck IN- terminal.</text>
-      <text x="15" y="56">• OUT- = MASTER PERIPHERAL GND: Ties to Nano GND and all module grounds.</text>
-      <text x="15" y="74">• +5V (Regulated): Mini360 output powers single 7-Pixel Top Ring, MAX98357A, TM1637.</text>
-      <text x="15" y="92">• +3V3_JOY (3.3V): Dedicated ADC-safe rail from Nano 3V3 pin powering KY-023 joystick.</text>
+    <g transform="translate(20, 55)" font-size="11.5" fill="#334155">
+      <text x="0" y="0" fill="#dc2626" font-weight="bold">⚡ DUAL-HEADER ARCHITECTURE (ZERO WI-FI / ADC CONFLICTS):</text>
+      <text x="15" y="18">• LEFT HEADER = 100% USER CONTROLS &amp; DISPLAY: Joystick (VRX, VRY, SW), Wake, TM1637.</text>
+      <text x="15" y="34">• RIGHT HEADER = 100% LIGHTS &amp; AUDIO: 3x Green LEDs, NeoPixel Ring, MAX98357A I2S Amp.</text>
+      <text x="15" y="50">• Safe Wi-Fi ADC1: VRX (D34) &amp; VRY (D35) on ADC1 ensure 100% glitch-free dialing during Wi-Fi.</text>
+      <text x="15" y="66">• Safe USB Programming: Plug in USB anytime without disconnecting battery; onboard diode protects USB!</text>
 
-      <text x="0" y="130" fill="#0284c7" font-weight="bold">🔍 NET LABEL MATRIX:</text>
-      <text x="15" y="150">• I2S Digital Audio: D11 (BCLK), D12 (LRC), D13 (DIN) ➔ MAX98357A Amp Pins</text>
-      <text x="15" y="168">• Display: D7 (CLK), D8 (DIO) ➔ TM1637 4-Digit Display</text>
-      <text x="15" y="186">• NeoPixel: D5 (330Ω) ➔ Top 7-Pixel Bulb Ring DIN (Only 1 ring in entire build)</text>
-      <text x="15" y="204">• Front Life HUD: D2 (LED1), D3 (LED2), D4 (LED3) with 220Ω series resistors</text>
-      <text x="15" y="222">• User Inputs: A0 (VRX), A1 (VRY), D9 (SW), D10 (Sleep/Wake RTC GPIO21)</text>
+      <text x="0" y="98" fill="#0284c7" font-weight="bold">🔌 PERFBOARD JST-XH POLARIZED CONNECTOR PINOUTS (GROUPED BY HEADER):</text>
+      <text x="15" y="116">• J1 [BATT_IN] (2-Pin): Pin 1 = 7.4V (+), Pin 2 = Battery GND (-)</text>
+      <text x="15" y="132">• J2 [PWR_SW] (2-Pin): Pin 1 = Switch COM, Pin 2 = Switch NO (Inline positive)</text>
+      <text x="15" y="148">• J3 [SPEAKER] (2-Pin): Pin 1 = SPK+, Pin 2 = SPK- (From MAX98357A)</text>
+      <text x="15" y="164">• J4 [TOP_RING] (3-Pin / Right): Pin 1 = +5V, Pin 2 = NEO_RING_DIN (GPIO 19), Pin 3 = GND</text>
+      <text x="15" y="180">• J5 [DISPLAY] (4-Pin / Left): Pin 1 = +5V, Pin 2 = GND, Pin 3 = DISP_DIO (GPIO 26), Pin 4 = DISP_CLK (GPIO 25)</text>
+      <text x="15" y="196">• J6 [JOYSTICK] (5-Pin / Left): Pin 1 = +3V3, Pin 2 = GND, Pin 3 = VRX (GPIO 34), Pin 4 = VRY (GPIO 35), Pin 5 = SW (GPIO 32)</text>
+      <text x="15" y="212">• J7 [FRONT_LEDS] (4-Pin / Right): Pin 1 = LED1 (GPIO 21), Pin 2 = LED2 (GPIO 22), Pin 3 = LED3 (GPIO 23), Pin 4 = GND</text>
+      <text x="15" y="228">• J8 [WAKE_BTN] (2-Pin / Left): Pin 1 = BTN_WAKE (GPIO 33), Pin 2 = GND</text>
 
-      <text x="0" y="260" fill="#059669" font-weight="bold">🛡️ PROTECTION &amp; FILTERING:</text>
-      <text x="15" y="280">• F1 (3.15A Fast Glass Fuse, 6x30mm) on battery (+) prevents catastrophic short circuits.</text>
-      <text x="15" y="298">• C1 (1000 µF 10V electrolytic) across +5V and GND absorbs WS2812B current inrush.</text>
-      <text x="15" y="316">• 330Ω Series Resistor (R4) prevents line reflection &amp; protects the ring's data input.</text>
+      <text x="0" y="258" fill="#059669" font-weight="bold">🛡️ CIRCUIT PROTECTION &amp; AUDIO HEADROOM:</text>
+      <text x="15" y="276">• F1 (1.1A PTC Polyfuse): Resets automatically on short circuit. Replaces dangerous 3.15A glass fuse.</text>
+      <text x="15" y="292">• C1 (1000 µF 10V electrolytic): Absorbs NeoPixel inrush current and prevents audio rail ripple.</text>
+      <text x="15" y="308">• MAX98357A GAIN: Left Floating/Open for 9dB Gain. Firmware capped at 0.84 to prevent clipping.</text>
+      <text x="15" y="324">• 100% Clean Boot: Strapping pins D2, D12, D15, TX0, RX0 are completely untouched.</text>
 
-      <text x="0" y="352" fill="#d97706" font-weight="bold">⚠️ SYSTEM SAFEGUARDS:</text>
-      <text x="15" y="372">• NEVER supply joystick pots with 5V! ESP32 ADC inputs permanently damage above 3.6V.</text>
-      <text x="15" y="390">• Buck Common Ground: IN- and OUT- share internal ground plane on the Mini360 PCB.</text>
+      <text x="0" y="352" fill="#d97706" font-weight="bold">⚠️ ASSEMBLY RULE #1:</text>
+      <text x="15" y="370">• BEFORE plugging in the ESP32 DevKit into its socket: Measure Mini360 OUT+ with multimeter and turn trimpot until it reads EXACTLY 5.00V!</text>
     </g>
   </g>
 
 
   <!-- ===================================================================== -->
-  <!-- COLUMN 2: MICROCONTROLLER CORE (ARDUINO NANO ESP32 - PHYSICAL PINOUT) -->
+  <!-- COLUMN 2: MICROCONTROLLER CORE (LEFT = UI/INPUTS | RIGHT = AUDIO/LEDS) -->
   <!-- ===================================================================== -->
   <g id="block_mcu" transform="translate(800, 55)">
     <rect width="760" height="1480" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 3"/>
-    <rect x="15" y="-12" width="410" height="24" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
-    <text x="25" y="5" fill="#0284c7" font-size="13" font-weight="bold">2. MICROCONTROLLER (ARDUINO NANO ESP32)</text>
+    <rect x="15" y="-12" width="480" height="24" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+    <text x="25" y="5" fill="#0284c7" font-size="13" font-weight="bold">2. MCU (LEFT = UI &amp; INPUTS | RIGHT = AUDIO &amp; LEDS)</text>
 
-    <!-- MCU Symbol Box (Centered within the column) -->
-    <g transform="translate(150, 60)">
-      <!-- USB-C Port Header Indicator -->
-      <rect x="185" y="-14" width="90" height="14" rx="4" fill="#e2e8f0" stroke="#0f172a" stroke-width="1.5"/>
-      <text x="230" y="-4" fill="#475569" font-size="8.5" font-weight="bold" text-anchor="middle">USB-C PORT</text>
+    <!-- MCU Symbol Box (Centered within column, width=470) -->
+    <g transform="translate(145, 60)">
+      <!-- Top PCB Antenna Indicator -->
+      <path d="M 160,-16 L 310,-16 L 310,0 L 160,0 Z" fill="#1e293b" stroke="#0f172a" stroke-width="1.5"/>
+      <path d="M 175,-3 L 175,-12 L 195,-12 L 195,-3 L 215,-3 L 215,-12 L 235,-12 L 235,-3 L 255,-3 L 255,-12 L 275,-12 L 275,-3 L 295,-3" fill="none" stroke="#d97706" stroke-width="2"/>
+      <text x="235" y="-5" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle">2.4GHz PCB ANTENNA</text>
 
-      <rect width="460" height="1360" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
-      <rect x="0" y="0" width="460" height="42" fill="#0284c7"/>
-      <text x="230" y="27" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle">U2: ARDUINO NANO ESP32 (ESP32-S3)</text>
+      <!-- Main MCU Body -->
+      <rect width="470" height="1360" rx="6" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+      <rect x="0" y="0" width="470" height="42" rx="4" fill="#0284c7"/>
+      <text x="235" y="27" fill="#ffffff" font-size="15" font-weight="bold" text-anchor="middle">U2: ESP32 DEVKIT V1 (ESP-WROOM-32)</text>
 
-      <!-- Central Dividing Line / Watermark -->
-      <line x1="230" y1="52" x2="230" y2="1240" stroke="#f1f5f9" stroke-width="2" stroke-dasharray="8 6"/>
+      <!-- Subtitle Header showing Grouped Side Functions -->
+      <rect x="10" y="48" width="450" height="20" rx="3" fill="#f1f5f9" stroke="#e2e8f0"/>
+      <text x="20" y="62" fill="#0284c7" font-size="9" font-weight="bold">◄ LEFT: 100% CONTROLS &amp; DISPLAY</text>
+      <text x="450" y="62" fill="#7c3aed" font-size="9" font-weight="bold" text-anchor="end">RIGHT: 100% AUDIO &amp; LEDS ►</text>
 
-      <!-- ==================== LEFT HEADER (D13 down to VIN) ==================== -->
-      <!-- Left Pin 1: D13 (GPIO 48) -->
+      <!-- Stylized Center Module Silkscreen (ESP-WROOM-32 Metal Can) -->
+      <rect x="180" y="100" width="110" height="150" rx="4" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"/>
+      <text x="235" y="130" fill="#334155" font-size="9" font-weight="bold" text-anchor="middle">ESP-WROOM-32</text>
+      <text x="235" y="150" fill="#64748b" font-size="8" text-anchor="middle">FCC ID: 2AC7Z</text>
+      <circle cx="235" cy="180" r="14" fill="none" stroke="#64748b" stroke-width="1.5"/>
+      <text x="235" y="184" fill="#64748b" font-size="10" font-weight="bold" text-anchor="middle">CE</text>
+      <text x="235" y="215" fill="#64748b" font-size="7.5" text-anchor="middle">Wi-Fi + BT SoC</text>
+
+      <!-- Onboard Indicator LEDs -->
+      <g transform="translate(205, 830)">
+        <rect x="0" y="0" width="16" height="8" rx="2" fill="#ef4444" stroke="#0f172a" stroke-width="1"/>
+        <text x="8" y="18" fill="#ef4444" font-size="7.5" font-weight="bold" text-anchor="middle">PWR</text>
+      </g>
+      <g transform="translate(245, 830)">
+        <rect x="0" y="0" width="16" height="8" rx="2" fill="#3b82f6" stroke="#0f172a" stroke-width="1"/>
+        <text x="8" y="18" fill="#3b82f6" font-size="7.5" font-weight="bold" text-anchor="middle">GPIO2</text>
+      </g>
+
+      <!-- Onboard AMS1117-3.3 Regulator -->
+      <rect x="195" y="930" width="80" height="60" rx="3" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+      <text x="235" y="958" fill="#ffffff" font-size="8.5" font-weight="bold" text-anchor="middle">AMS1117</text>
+      <text x="235" y="972" fill="#94a3b8" font-size="7.5" text-anchor="middle">3.3V LDO</text>
+
+      <!-- Onboard CP2102 USB Bridge -->
+      <rect x="200" y="1040" width="70" height="70" rx="3" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+      <text x="235" y="1075" fill="#ffffff" font-size="8.5" font-weight="bold" text-anchor="middle">CP2102</text>
+      <text x="235" y="1090" fill="#94a3b8" font-size="7.5" text-anchor="middle">USB-UART</text>
+
+      <!-- Pushbuttons EN & BOOT at bottom -->
+      <g transform="translate(165, 1285)">
+        <circle cx="10" cy="10" r="8" fill="#cbd5e1" stroke="#0f172a" stroke-width="1.5"/>
+        <circle cx="10" cy="10" r="4" fill="#ffffff" stroke="#0f172a" stroke-width="1"/>
+        <text x="10" y="28" fill="#475569" font-size="8" font-weight="bold" text-anchor="middle">EN</text>
+      </g>
+      <g transform="translate(285, 1285)">
+        <circle cx="10" cy="10" r="8" fill="#cbd5e1" stroke="#0f172a" stroke-width="1.5"/>
+        <circle cx="10" cy="10" r="4" fill="#ffffff" stroke="#0f172a" stroke-width="1"/>
+        <text x="10" y="28" fill="#475569" font-size="8" font-weight="bold" text-anchor="middle">BOOT</text>
+      </g>
+
+      <!-- Bottom Micro-USB Port Indicator -->
+      <rect x="200" y="1335" width="70" height="25" rx="3" fill="#e2e8f0" stroke="#0f172a" stroke-width="1.5"/>
+      <rect x="210" y="1342" width="50" height="12" rx="2" fill="#64748b"/>
+      <text x="235" y="1351" fill="#ffffff" font-size="7.5" font-weight="bold" text-anchor="middle">MICRO-USB</text>
+
+
+      <!-- =================================================================== -->
+      <!-- LEFT HEADER: 100% USER CONTROLS & DISPLAY (Pins 15 down to 1)       -->
+      <!-- =================================================================== -->
+
+      <!-- Pin 15: EN (ENABLE) -->
       <g transform="translate(0, 80)">
         <line x1="-25" y1="0" x2="0" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
-        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (D13)</text>
+        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (EN)</text>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#64748b" font-size="12">D13 / GPIO 48 (Spare)</text>
+        <rect x="6" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">15</text>
+        <text x="34" y="4" fill="#64748b" font-size="11.5">EN (ENABLE / RST)</text>
       </g>
 
-      <!-- Left Pin 2: 3.3V -> +3V3_JOY -->
+      <!-- Pin 14: VP (GPIX 36 / ADC1_0) -->
       <g transform="translate(0, 160)">
-        <line x1="-30" y1="0" x2="0" y2="0" stroke="#0284c7" stroke-width="2"/>
+        <line x1="-25" y1="0" x2="0" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (VP)</text>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#0f172a" font-size="12" font-weight="bold">3.3V (500mA LDO)</text>
-        <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
-        <text x="-125" y="4" fill="#0369a1" font-size="10.5" font-weight="bold">+3V3_JOY</text>
+        <rect x="6" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">14</text>
+        <text x="34" y="4" fill="#64748b" font-size="11.5">VP (GPIX 36 / ADC1_0)</text>
       </g>
 
-      <!-- Left Pin 3: B0 / BOOT0 (GPIO 46) -->
+      <!-- Pin 13: VN (GPIX 39 / ADC1_3) -->
       <g transform="translate(0, 240)">
         <line x1="-25" y1="0" x2="0" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
-        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (B0)</text>
+        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (VN)</text>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#64748b" font-size="12">B0 / GPIO 46 (BOOT0)</text>
+        <rect x="6" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">13</text>
+        <text x="34" y="4" fill="#64748b" font-size="11.5">VN (GPIX 39 / ADC1_3)</text>
       </g>
 
-      <!-- Left Pin 4: A0 (GPIO 1) -> JOY_VRX -->
+      <!-- Pin 12: D34 (GPIX 34 / ADC1_6) -> JOY_VRX -->
       <g transform="translate(0, 320)">
         <line x1="-30" y1="0" x2="0" y2="0" stroke="#ea580c" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#0f172a" font-size="12" font-weight="bold">A0 / GPIO 1 (ADC1)</text>
+        <rect x="6" y="-9" width="22" height="18" rx="3" fill="#ea580c"/>
+        <text x="17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">12</text>
+        <text x="34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold">D34 (GPIX 34 / ADC1_6)</text>
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
         <text x="-125" y="4" fill="#c2410c" font-size="11" font-weight="bold">JOY_VRX</text>
       </g>
 
-      <!-- Left Pin 5: A1 (GPIO 2) -> JOY_VRY -->
+      <!-- Pin 11: D35 (GPIX 35 / ADC1_7) -> JOY_VRY -->
       <g transform="translate(0, 400)">
         <line x1="-30" y1="0" x2="0" y2="0" stroke="#ea580c" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#0f172a" font-size="12" font-weight="bold">A1 / GPIO 2 (ADC1)</text>
+        <rect x="6" y="-9" width="22" height="18" rx="3" fill="#ea580c"/>
+        <text x="17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">11</text>
+        <text x="34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold">D35 (GPIX 35 / ADC1_7)</text>
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
         <text x="-125" y="4" fill="#c2410c" font-size="11" font-weight="bold">JOY_VRY</text>
       </g>
 
-      <!-- Left Pin 6: A2 (GPIO 3) -->
+      <!-- Pin 10: D32 (GPIO 32 / Touch 9 / ADC1_4) -> JOY_SW -->
       <g transform="translate(0, 480)">
-        <line x1="-25" y1="0" x2="0" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
-        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (A2)</text>
+        <line x1="-30" y1="0" x2="0" y2="0" stroke="#d97706" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#64748b" font-size="12">A2 / GPIO 3 (Spare)</text>
+        <rect x="6" y="-9" width="22" height="18" rx="3" fill="#d97706"/>
+        <text x="17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">10</text>
+        <text x="34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold">D32 (GPIO 32 / Touch 9)</text>
+        <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+        <text x="-125" y="4" fill="#b45309" font-size="11" font-weight="bold">JOY_SW</text>
       </g>
 
-      <!-- Left Pin 7: A3 (GPIO 4) -->
+      <!-- Pin 9: D33 (GPIO 33 / Touch 8 / RTCIO8) -> BTN_WAKE -->
       <g transform="translate(0, 560)">
-        <line x1="-25" y1="0" x2="0" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
-        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (A3)</text>
+        <line x1="-30" y1="0" x2="0" y2="0" stroke="#ea580c" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#64748b" font-size="12">A3 / GPIO 4 (Spare)</text>
+        <rect x="6" y="-9" width="22" height="18" rx="3" fill="#ea580c"/>
+        <text x="17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">9</text>
+        <text x="34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold">D33 (GPIO 33 / RTCIO8)</text>
+        <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
+        <text x="-125" y="4" fill="#c2410c" font-size="11" font-weight="bold">BTN_WAKE</text>
       </g>
 
-      <!-- Left Pin 8: A4 (GPIO 11) -->
+      <!-- Pin 8: D25 (GPIO 25) -> DISP_CLK (TM1637 Display Clock) -->
       <g transform="translate(0, 640)">
-        <line x1="-25" y1="0" x2="0" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
-        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (SDA)</text>
+        <line x1="-30" y1="0" x2="0" y2="0" stroke="#7c3aed" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#64748b" font-size="12">A4 / GPIO 11 (SDA)</text>
+        <rect x="6" y="-9" width="22" height="18" rx="3" fill="#7c3aed"/>
+        <text x="17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">8</text>
+        <text x="34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold">D25 (GPIO 25 / DAC1)</text>
+        <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#f3e8ff" stroke="#7c3aed" stroke-width="1.5"/>
+        <text x="-125" y="4" fill="#6b21a8" font-size="11" font-weight="bold">DISP_CLK</text>
       </g>
 
-      <!-- Left Pin 9: A5 (GPIO 12) -->
+      <!-- Pin 7: D26 (GPIO 26) -> DISP_DIO (TM1637 Display Data) -->
       <g transform="translate(0, 720)">
-        <line x1="-25" y1="0" x2="0" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
-        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (SCL)</text>
+        <line x1="-30" y1="0" x2="0" y2="0" stroke="#7c3aed" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#64748b" font-size="12">A5 / GPIO 12 (SCL)</text>
+        <rect x="6" y="-9" width="22" height="18" rx="3" fill="#7c3aed"/>
+        <text x="17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">7</text>
+        <text x="34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold">D26 (GPIO 26 / DAC2)</text>
+        <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#f3e8ff" stroke="#7c3aed" stroke-width="1.5"/>
+        <text x="-125" y="4" fill="#6b21a8" font-size="11" font-weight="bold">DISP_DIO</text>
       </g>
 
-      <!-- Left Pin 10: A6 (GPIO 13) -->
+      <!-- Pin 6: D27 (GPIO 27 / Spare) -->
       <g transform="translate(0, 800)">
         <line x1="-25" y1="0" x2="0" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
-        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (A6)</text>
+        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (D27)</text>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#64748b" font-size="12">A6 / GPIO 13 (Spare)</text>
+        <rect x="6" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">6</text>
+        <text x="34" y="4" fill="#64748b" font-size="11.5">D27 (GPIO 27 / Touch 7)</text>
       </g>
 
-      <!-- Left Pin 11: A7 (GPIO 14) -->
+      <!-- Pin 5: D14 (GPIO 14 / Spare) -->
       <g transform="translate(0, 880)">
         <line x1="-25" y1="0" x2="0" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
-        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (A7)</text>
+        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (D14)</text>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#64748b" font-size="12">A7 / GPIO 14 (Spare)</text>
+        <rect x="6" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">5</text>
+        <text x="34" y="4" fill="#64748b" font-size="11.5">D14 (GPIO 14 / Touch 6)</text>
       </g>
 
-      <!-- Left Pin 12: VBUS (5V USB) -->
+      <!-- Pin 4: D12 (GPIO 12 / Strapping) -->
       <g transform="translate(0, 960)">
         <line x1="-25" y1="0" x2="0" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
-        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (VBUS)</text>
+        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (D12)</text>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#64748b" font-size="12">VBUS (5V USB)</text>
+        <rect x="6" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">4</text>
+        <text x="34" y="4" fill="#64748b" font-size="11.5">D12 (GPIO 12 / Strapping NC)</text>
       </g>
 
-      <!-- Left Pin 13: B1 / BOOT1 (GPIO 0) -->
+      <!-- Pin 3: D13 (GPIO 13 / Spare) -->
       <g transform="translate(0, 1040)">
         <line x1="-25" y1="0" x2="0" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
-        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (B1)</text>
+        <text x="-32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="end">NC (D13)</text>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#64748b" font-size="12">B1 / GPIO 0 (BOOT1)</text>
+        <rect x="6" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">3</text>
+        <text x="34" y="4" fill="#64748b" font-size="11.5">D13 (GPIO 13 / Touch 4)</text>
       </g>
 
-      <!-- Left Pin 14: GND -->
+      <!-- Pin 2: GND -->
       <g transform="translate(0, 1120)">
         <line x1="-30" y1="0" x2="0" y2="0" stroke="#0f172a" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#0f172a" font-size="12" font-weight="bold">GND (Digital Ground)</text>
-        <!-- GND Symbol -->
+        <rect x="6" y="-9" width="22" height="18" rx="3" fill="#0f172a"/>
+        <text x="17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">2</text>
+        <text x="34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold">GND (Digital Ground)</text>
         <line x1="-30" y1="0" x2="-30" y2="15" stroke="#0f172a" stroke-width="1.5"/>
         <line x1="-40" y1="15" x2="-20" y2="15" stroke="#0f172a" stroke-width="2.5"/>
         <line x1="-36" y1="19" x2="-24" y2="19" stroke="#0f172a" stroke-width="1.5"/>
@@ -440,121 +512,166 @@
         <text x="-30" y="34" fill="#334155" font-size="9" font-weight="bold" text-anchor="middle">GND</text>
       </g>
 
-      <!-- Left Pin 15: VIN -> BAT_SW -->
+      <!-- Pin 1: VIN -> SAFE +5V MAIN POWER INPUT -->
       <g transform="translate(0, 1200)">
         <line x1="-30" y1="0" x2="0" y2="0" stroke="#dc2626" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="12" y="4" fill="#0f172a" font-size="12" font-weight="bold">VIN (6V - 21V)</text>
-        <polygon points="-145,-10 -40,-10 -30,0 -40,10 -145,10" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
-        <text x="-140" y="4" fill="#991b1b" font-size="10" font-weight="bold">BAT_SW (7.4V)</text>
+        <rect x="6" y="-9" width="22" height="18" rx="3" fill="#dc2626"/>
+        <text x="17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">1</text>
+        <text x="34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold">VIN (+5.0V Regulated In)</text>
+        <polygon points="-125,-10 -40,-10 -30,0 -40,10 -125,10" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+        <text x="-115" y="4" fill="#991b1b" font-size="11" font-weight="bold">+5V</text>
       </g>
 
-      <!-- ==================== RIGHT HEADER (D12 down to TX1) ==================== -->
-      <!-- Right Pin 1: D12 (GPIO 47) -> I2S_LRC -->
-      <g transform="translate(460, 80)">
-        <line x1="0" y1="0" x2="30" y2="0" stroke="#0284c7" stroke-width="2"/>
-        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">D12 / GPIO 47</text>
-        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
-        <text x="48" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_LRC</text>
-      </g>
 
-      <!-- Right Pin 2: D11 (GPIO 38) -> I2S_BCLK -->
-      <g transform="translate(460, 160)">
-        <line x1="0" y1="0" x2="30" y2="0" stroke="#0284c7" stroke-width="2"/>
-        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">D11 / GPIO 38</text>
-        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
-        <text x="48" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_BCLK</text>
-      </g>
+      <!-- =================================================================== -->
+      <!-- RIGHT HEADER: 100% LIGHTS & AUDIO (Pins 15 down to 1)               -->
+      <!-- =================================================================== -->
 
-      <!-- Right Pin 3: D10 (GPIO 21) -> BTN_WAKE -->
-      <g transform="translate(460, 240)">
-        <line x1="0" y1="0" x2="30" y2="0" stroke="#ea580c" stroke-width="2"/>
-        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">D10 / GPIO 21 (RTC)</text>
-        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
-        <text x="48" y="4" fill="#c2410c" font-size="11" font-weight="bold">BTN_WAKE</text>
-      </g>
-
-      <!-- Right Pin 4: D9 (GPIO 18) -> JOY_SW -->
-      <g transform="translate(460, 320)">
-        <line x1="0" y1="0" x2="30" y2="0" stroke="#d97706" stroke-width="2"/>
-        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">D9 / GPIO 18 (PULLUP)</text>
-        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
-        <text x="48" y="4" fill="#b45309" font-size="11" font-weight="bold">JOY_SW</text>
-      </g>
-
-      <!-- Right Pin 5: D8 (GPIO 17) -> DISP_DIO -->
-      <g transform="translate(460, 400)">
-        <line x1="0" y1="0" x2="30" y2="0" stroke="#7c3aed" stroke-width="2"/>
-        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">D8 / GPIO 17</text>
-        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#f3e8ff" stroke="#7c3aed" stroke-width="1.5"/>
-        <text x="48" y="4" fill="#6b21a8" font-size="11" font-weight="bold">DISP_DIO</text>
-      </g>
-
-      <!-- Right Pin 6: D7 (GPIO 10) -> DISP_CLK -->
-      <g transform="translate(460, 480)">
-        <line x1="0" y1="0" x2="30" y2="0" stroke="#7c3aed" stroke-width="2"/>
-        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">D7 / GPIO 10</text>
-        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#f3e8ff" stroke="#7c3aed" stroke-width="1.5"/>
-        <text x="48" y="4" fill="#6b21a8" font-size="11" font-weight="bold">DISP_CLK</text>
-      </g>
-
-      <!-- Right Pin 7: D6 (GPIO 9) -> I2S_DIN -->
-      <g transform="translate(460, 560)">
-        <line x1="0" y1="0" x2="30" y2="0" stroke="#0284c7" stroke-width="2"/>
-        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">D6 / GPIO 9</text>
-        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
-        <text x="48" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_DIN</text>
-      </g>
-
-      <!-- Right Pin 8: D5 (GPIO 8) -> NEO_RING_DIN -->
-      <g transform="translate(460, 640)">
-        <line x1="0" y1="0" x2="30" y2="0" stroke="#16a34a" stroke-width="2"/>
-        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">D5 / GPIO 8</text>
-        <polygon points="30,0 40,-10 145,-10 145,10 40,10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
-        <text x="44" y="4" fill="#15803d" font-size="10.5" font-weight="bold">NEO_RING_DIN</text>
-      </g>
-
-      <!-- Right Pin 9: D4 (GPIO 7) -> LED_HUD3 -->
-      <g transform="translate(460, 720)">
+      <!-- Pin 15: D23 (GPIO 23) -> LED_HUD3 (Right Green LED) -->
+      <g transform="translate(470, 80)">
         <line x1="0" y1="0" x2="30" y2="0" stroke="#059669" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">D4 / GPIO 7</text>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#059669"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">15</text>
+        <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">D23 (GPIO 23 / MOSI)</text>
         <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
         <text x="48" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD3</text>
       </g>
 
-      <!-- Right Pin 10: D3 (GPIO 6) -> LED_HUD2 -->
-      <g transform="translate(460, 800)">
+      <!-- Pin 14: D22 (GPIO 22) -> LED_HUD2 (Center Green LED) -->
+      <g transform="translate(470, 160)">
         <line x1="0" y1="0" x2="30" y2="0" stroke="#059669" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">D3 / GPIO 6</text>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#059669"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">14</text>
+        <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">D22 (GPIO 22 / SCL)</text>
         <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
         <text x="48" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD2</text>
       </g>
 
-      <!-- Right Pin 11: D2 (GPIO 5) -> LED_HUD1 -->
-      <g transform="translate(460, 880)">
+      <!-- Pin 13: TX0 (GPIO 1 / TX0) -->
+      <g transform="translate(470, 240)">
+        <line x1="0" y1="0" x2="25" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">13</text>
+        <text x="-34" y="4" fill="#64748b" font-size="11.5" text-anchor="end">TX0 (GPIO 1 / USB TX)</text>
+        <text x="32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="start">NC (TX0)</text>
+      </g>
+
+      <!-- Pin 12: RX0 (GPIO 3 / RX0) -->
+      <g transform="translate(470, 320)">
+        <line x1="0" y1="0" x2="25" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">12</text>
+        <text x="-34" y="4" fill="#64748b" font-size="11.5" text-anchor="end">RX0 (GPIO 3 / USB RX)</text>
+        <text x="32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="start">NC (RX0)</text>
+      </g>
+
+      <!-- Pin 11: D21 (GPIO 21) -> LED_HUD1 (Left Green LED) -->
+      <g transform="translate(470, 400)">
         <line x1="0" y1="0" x2="30" y2="0" stroke="#059669" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">D2 / GPIO 5</text>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#059669"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">11</text>
+        <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">D21 (GPIO 21 / SDA)</text>
         <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
         <text x="48" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD1</text>
       </g>
 
-      <!-- Right Pin 12: GND -->
-      <g transform="translate(460, 960)">
+      <!-- Pin 10: D19 (GPIO 19) -> NEO_RING_DIN (Top NeoPixel Ring) -->
+      <g transform="translate(470, 480)">
+        <line x1="0" y1="0" x2="30" y2="0" stroke="#16a34a" stroke-width="2"/>
+        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#16a34a"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">10</text>
+        <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">D19 (GPIO 19 / MISO)</text>
+        <polygon points="30,0 40,-10 145,-10 145,10 40,10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+        <text x="44" y="4" fill="#15803d" font-size="10.5" font-weight="bold">NEO_RING_DIN</text>
+      </g>
+
+      <!-- Pin 9: D18 (GPIO 18) -> I2S_BCLK (Audio Bit Clock) -->
+      <g transform="translate(470, 560)">
+        <line x1="0" y1="0" x2="30" y2="0" stroke="#0284c7" stroke-width="2"/>
+        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">9</text>
+        <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">D18 (GPIO 18 / SCK)</text>
+        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="48" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_BCLK</text>
+      </g>
+
+      <!-- Pin 8: D5 (GPIO 5 / Spare Strapping) -->
+      <g transform="translate(470, 640)">
+        <line x1="0" y1="0" x2="25" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">8</text>
+        <text x="-34" y="4" fill="#64748b" font-size="11.5" text-anchor="end">D5 (GPIO 5 / CS)</text>
+        <text x="32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="start">NC (D5)</text>
+      </g>
+
+      <!-- Pin 7: TX2 (GPIO 17) -> I2S_LRC (Audio Word Select) -->
+      <g transform="translate(470, 720)">
+        <line x1="0" y1="0" x2="30" y2="0" stroke="#0284c7" stroke-width="2"/>
+        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">7</text>
+        <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">TX2 (GPIO 17 / UART2)</text>
+        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="48" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_LRC</text>
+      </g>
+
+      <!-- Pin 6: RX2 (GPIO 16) -> I2S_DIN (Audio Serial Data) -->
+      <g transform="translate(470, 800)">
+        <line x1="0" y1="0" x2="30" y2="0" stroke="#0284c7" stroke-width="2"/>
+        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">6</text>
+        <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">RX2 (GPIO 16 / UART2)</text>
+        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="48" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_DIN</text>
+      </g>
+
+      <!-- Pin 5: D4 (GPIO 4 / Spare) -->
+      <g transform="translate(470, 880)">
+        <line x1="0" y1="0" x2="25" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">5</text>
+        <text x="-34" y="4" fill="#64748b" font-size="11.5" text-anchor="end">D4 (GPIO 4 / Touch 0)</text>
+        <text x="32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="start">NC (D4)</text>
+      </g>
+
+      <!-- Pin 4: D2 (GPIO 2 / Blue LED / Strapping) -->
+      <g transform="translate(470, 960)">
+        <line x1="0" y1="0" x2="25" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">4</text>
+        <text x="-34" y="4" fill="#64748b" font-size="11.5" text-anchor="end">D2 (GPIO 2 / Blue LED)</text>
+        <text x="32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="start">NC (D2)</text>
+      </g>
+
+      <!-- Pin 3: D15 (GPIO 15 / Strapping) -->
+      <g transform="translate(470, 1040)">
+        <line x1="0" y1="0" x2="25" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">3</text>
+        <text x="-34" y="4" fill="#64748b" font-size="11.5" text-anchor="end">D15 (GPIO 15 / Strapping NC)</text>
+        <text x="32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="start">NC (D15)</text>
+      </g>
+
+      <!-- Pin 2: GND -->
+      <g transform="translate(470, 1120)">
         <line x1="0" y1="0" x2="30" y2="0" stroke="#0f172a" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#0f172a" font-size="12" font-weight="bold" text-anchor="end">GND (Digital Ground)</text>
-        <!-- GND Symbol -->
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#0f172a"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">2</text>
+        <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">GND (Digital Ground)</text>
         <line x1="30" y1="0" x2="30" y2="15" stroke="#0f172a" stroke-width="1.5"/>
         <line x1="20" y1="15" x2="40" y2="15" stroke="#0f172a" stroke-width="2.5"/>
         <line x1="24" y1="19" x2="36" y2="19" stroke="#0f172a" stroke-width="1.5"/>
@@ -562,34 +679,21 @@
         <text x="30" y="34" fill="#334155" font-size="9" font-weight="bold" text-anchor="middle">GND</text>
       </g>
 
-      <!-- Right Pin 13: RST -->
-      <g transform="translate(460, 1040)">
-        <line x1="0" y1="0" x2="25" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <!-- Pin 1: 3V3 -> SAFE +3V3 OUTPUT FOR JOYSTICK POTS -->
+      <g transform="translate(470, 1200)">
+        <line x1="0" y1="0" x2="30" y2="0" stroke="#0284c7" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#64748b" font-size="12" text-anchor="end">RST (Reset Button)</text>
-        <text x="32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="start">NC (RST)</text>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">1</text>
+        <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">3V3 (Onboard 3.3V Out)</text>
+        <polygon points="30,0 40,-10 145,-10 145,10 40,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="48" y="4" fill="#0369a1" font-size="10.5" font-weight="bold">+3V3_JOY</text>
       </g>
 
-      <!-- Right Pin 14: RX0 / D0 (GPIO 44) -->
-      <g transform="translate(460, 1120)">
-        <line x1="0" y1="0" x2="25" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
-        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#64748b" font-size="12" text-anchor="end">RX0 / D0 (GPIO 44)</text>
-        <text x="32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="start">NC (RX)</text>
-      </g>
-
-      <!-- Right Pin 15: TX1 / D1 (GPIO 43) -->
-      <g transform="translate(460, 1200)">
-        <line x1="0" y1="0" x2="25" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
-        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <text x="-12" y="4" fill="#64748b" font-size="12" text-anchor="end">TX1 / D1 (GPIO 43)</text>
-        <text x="32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="start">NC (TX)</text>
-      </g>
-
-      <!-- Decorative note box inside MCU -->
-      <rect x="30" y="1260" width="400" height="70" rx="4" fill="#f1f5f9" stroke="#cbd5e1"/>
-      <text x="230" y="1288" fill="#0284c7" font-size="12" font-weight="bold" text-anchor="middle">ESP32-S3 DUAL CORE (PHYSICAL PINOUT)</text>
-      <text x="230" y="1310" fill="#64748b" font-size="10" text-anchor="middle">Left: D13..VIN | Right: D12..TX1 (Matches Hardware Silkscreen)</text>
+      <!-- Decorative Architecture Note Box -->
+      <rect x="30" y="1230" width="410" height="45" rx="4" fill="#f1f5f9" stroke="#cbd5e1"/>
+      <text x="235" y="1248" fill="#0284c7" font-size="10.5" font-weight="bold" text-anchor="middle">ESP32 DEVKIT V1 (PHYSICAL PIN CORRELATION)</text>
+      <text x="235" y="1263" fill="#64748b" font-size="9" text-anchor="middle">LEFT: UI &amp; Controls (Pins 7-12) | RIGHT: Audio &amp; Lights (Pins 6,7,9,10,11,14,15)</text>
     </g>
   </g>
 
@@ -598,13 +702,13 @@
   <!-- COLUMN 3: DISPLAYS, INPUTS & FRONT HUD -->
   <!-- ===================================================================== -->
 
-  <!-- 4. DISPLAYS & ADDRESSABLE NEOPIXEL RING (ONLY 1 RING AT TOP) -->
+  <!-- 4. DISPLAYS & ADDRESSABLE NEOPIXEL RING -->
   <g id="block_display" transform="translate(1600, 55)">
     <rect width="740" height="490" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 3"/>
     <rect x="15" y="-12" width="360" height="24" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
     <text x="25" y="5" fill="#059669" font-size="13" font-weight="bold">4. DISPLAYS &amp; TOP NEOPIXEL RING</text>
 
-    <!-- DISP1: TM1637 4-Digit Display (Placed at x=200 inside column) -->
+    <!-- DISP1: TM1637 4-Digit Display (Left Header Driven: Pins 8 & 7) -->
     <g transform="translate(200, 45)">
       <rect width="280" height="170" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
       <rect x="0" y="0" width="280" height="30" fill="#0284c7"/>
@@ -628,24 +732,24 @@
         <line x1="-33" y1="23" x2="-27" y2="23" stroke="#0f172a" stroke-width="1"/>
       </g>
 
-      <!-- CLK -->
+      <!-- CLK (Pin 8 / D25) -->
       <g transform="translate(0, 120)">
         <line x1="-30" y1="0" x2="0" y2="0" stroke="#7c3aed" stroke-width="2"/>
-        <text x="10" y="4" fill="#0f172a" font-size="11" font-weight="bold">CLK</text>
+        <text x="10" y="4" fill="#0f172a" font-size="11" font-weight="bold">CLK (D25)</text>
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#f3e8ff" stroke="#7c3aed" stroke-width="1.5"/>
         <text x="-125" y="4" fill="#6b21a8" font-size="11" font-weight="bold">DISP_CLK</text>
       </g>
 
-      <!-- DIO -->
+      <!-- DIO (Pin 7 / D26) -->
       <g transform="translate(0, 150)">
         <line x1="-30" y1="0" x2="0" y2="0" stroke="#7c3aed" stroke-width="2"/>
-        <text x="10" y="4" fill="#0f172a" font-size="11" font-weight="bold">DIO</text>
+        <text x="10" y="4" fill="#0f172a" font-size="11" font-weight="bold">DIO (D26)</text>
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#f3e8ff" stroke="#7c3aed" stroke-width="1.5"/>
         <text x="-125" y="4" fill="#6b21a8" font-size="11" font-weight="bold">DISP_DIO</text>
       </g>
     </g>
 
-    <!-- TOP 7-PIXEL BULB RING (THE ONLY NEOPIXEL RING IN SYSTEM) -->
+    <!-- TOP 7-PIXEL BULB RING (Right Header Driven: Pin 10 / D19) -->
     <g transform="translate(200, 265)">
       <rect width="280" height="175" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
       <rect x="0" y="0" width="280" height="30" fill="#16a34a"/>
@@ -668,11 +772,10 @@
         <line x1="-33" y1="23" x2="-27" y2="23" stroke="#0f172a" stroke-width="1"/>
       </g>
 
-      <!-- DIN with R4 330 ohm resistor -->
+      <!-- DIN with R4 330 ohm resistor (from Pin 10 / D19) -->
       <g transform="translate(0, 145)">
         <line x1="-20" y1="0" x2="0" y2="0" stroke="#16a34a" stroke-width="2"/>
-        <text x="10" y="4" fill="#0f172a" font-size="11" font-weight="bold">DIN</text>
-        <!-- R4 Resistor Symbol -->
+        <text x="10" y="4" fill="#0f172a" font-size="11" font-weight="bold">DIN (D19)</text>
         <rect x="-60" y="-8" width="40" height="16" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
         <text x="-40" y="4" fill="#0f172a" font-size="8.5" font-weight="bold" text-anchor="middle">330Ω</text>
         <line x1="-70" y1="0" x2="-60" y2="0" stroke="#16a34a" stroke-width="2"/>
@@ -683,12 +786,12 @@
   </g>
 
   <!-- 5. USER CONTROLS & FRONT INDICATOR LEDS -->
-  <g id="block_controls" transform="translate(1600, 580)">
-    <rect width="740" height="810" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 3"/>
+  <g id="block_controls" transform="translate(1600, 560)">
+    <rect width="740" height="830" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 3"/>
     <rect x="15" y="-12" width="370" height="24" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
     <text x="25" y="5" fill="#ea580c" font-size="13" font-weight="bold">5. USER INPUTS &amp; FRONT LIFE HUD</text>
 
-    <!-- JOY1: Dual-Axis Analog Joystick (Placed at x=200) -->
+    <!-- JOY1: Dual-Axis Analog Joystick (Left Header Driven: Pins 12, 11, 10) -->
     <g transform="translate(200, 45)">
       <rect width="280" height="210" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
       <rect x="0" y="0" width="280" height="30" fill="#dc2626"/>
@@ -712,30 +815,29 @@
 
       <g transform="translate(0, 120)">
         <line x1="-30" y1="0" x2="0" y2="0" stroke="#ea580c" stroke-width="2"/>
-        <text x="10" y="4" fill="#0f172a" font-size="11" font-weight="bold">VRX (Horiz)</text>
+        <text x="10" y="4" fill="#0f172a" font-size="11" font-weight="bold">VRX (D34 / ADC1)</text>
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
         <text x="-120" y="4" fill="#c2410c" font-size="11" font-weight="bold">JOY_VRX</text>
       </g>
 
       <g transform="translate(0, 155)">
         <line x1="-30" y1="0" x2="0" y2="0" stroke="#ea580c" stroke-width="2"/>
-        <text x="10" y="4" fill="#0f172a" font-size="11" font-weight="bold">VRY (Vert)</text>
+        <text x="10" y="4" fill="#0f172a" font-size="11" font-weight="bold">VRY (D35 / ADC1)</text>
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
         <text x="-120" y="4" fill="#c2410c" font-size="11" font-weight="bold">JOY_VRY</text>
       </g>
 
       <g transform="translate(0, 190)">
         <line x1="-30" y1="0" x2="0" y2="0" stroke="#d97706" stroke-width="2"/>
-        <text x="10" y="4" fill="#0f172a" font-size="11" font-weight="bold">SW (Click)</text>
+        <text x="10" y="4" fill="#0f172a" font-size="11" font-weight="bold">SW (D32 / Pullup)</text>
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
         <text x="-120" y="4" fill="#b45309" font-size="11" font-weight="bold">JOY_SW</text>
       </g>
     </g>
 
-    <!-- SW2: Sleep/Wake Button -->
+    <!-- SW2: Sleep/Wake Button (Left Header Driven: Pin 9 / D33) -->
     <g transform="translate(200, 290)">
-      <text x="0" y="-10" fill="#0f172a" font-size="13" font-weight="bold">SW2: MOMENTARY SLEEP/WAKE BUTTON</text>
-      <!-- Pushbutton switch symbol -->
+      <text x="0" y="-10" fill="#0f172a" font-size="13" font-weight="bold">SW2: MOMENTARY SLEEP/WAKE BUTTON (D33)</text>
       <circle cx="20" cy="20" r="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
       <circle cx="60" cy="20" r="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
       <line x1="20" y1="10" x2="60" y2="10" stroke="#0f172a" stroke-width="2"/>
@@ -755,26 +857,23 @@
       <text x="90" y="55" fill="#334155" font-size="9" font-weight="bold" text-anchor="middle">GND</text>
     </g>
 
-    <!-- 3x FRONT HUD LEDS (D1, D2, D3 with R1, R2, R3) -->
+    <!-- 3x FRONT HUD LEDS (Right Header Driven: Pins 11, 14, 15) -->
     <g transform="translate(200, 420)">
-      <text x="0" y="-10" fill="#0f172a" font-size="13" font-weight="bold">SCREEN-ACCURATE FRONT LIFE HUD (3x GREEN LEDS)</text>
+      <text x="0" y="-10" fill="#0f172a" font-size="13" font-weight="bold">SCREEN-ACCURATE FRONT LIFE HUD (RIGHT HEADER: D21, D22, D23)</text>
 
-      <!-- LED 1: D2 -->
+      <!-- LED 1: D21 (Left) -->
       <g transform="translate(0, 30)">
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
         <text x="-125" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD1</text>
         <line x1="-30" y1="0" x2="0" y2="0" stroke="#059669" stroke-width="2"/>
-        <!-- R1 220 ohm Resistor Symbol -->
         <rect x="0" y="-8" width="40" height="16" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
         <text x="20" y="4" fill="#0f172a" font-size="8.5" font-weight="bold" text-anchor="middle">220Ω (R1)</text>
         <line x1="40" y1="0" x2="70" y2="0" stroke="#059669" stroke-width="2"/>
-        <!-- Diode Symbol D1 -->
         <polygon points="70,-12 70,12 95,0" fill="#10b981" stroke="#0f172a" stroke-width="1.5"/>
         <line x1="95" y1="-12" x2="95" y2="12" stroke="#0f172a" stroke-width="2"/>
         <line x1="80" y1="-12" x2="90" y2="-22" stroke="#10b981" stroke-width="1.5"/>
         <line x1="88" y1="-10" x2="98" y2="-20" stroke="#10b981" stroke-width="1.5"/>
-        <text x="82" y="25" fill="#0f172a" font-size="10" font-weight="bold">D1</text>
-        <!-- Cathode to GND -->
+        <text x="75" y="25" fill="#0f172a" font-size="10" font-weight="bold">D1 (D21 Left)</text>
         <line x1="95" y1="0" x2="125" y2="0" stroke="#0f172a" stroke-width="2"/>
         <line x1="125" y1="0" x2="125" y2="15" stroke="#0f172a" stroke-width="1.5"/>
         <line x1="115" y1="15" x2="135" y2="15" stroke="#0f172a" stroke-width="2.5"/>
@@ -782,7 +881,7 @@
         <line x1="122" y1="23" x2="128" y2="23" stroke="#0f172a" stroke-width="1"/>
       </g>
 
-      <!-- LED 2: D3 -->
+      <!-- LED 2: D22 (Center) -->
       <g transform="translate(0, 115)">
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
         <text x="-125" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD2</text>
@@ -794,7 +893,7 @@
         <line x1="95" y1="-12" x2="95" y2="12" stroke="#0f172a" stroke-width="2"/>
         <line x1="80" y1="-12" x2="90" y2="-22" stroke="#10b981" stroke-width="1.5"/>
         <line x1="88" y1="-10" x2="98" y2="-20" stroke="#10b981" stroke-width="1.5"/>
-        <text x="82" y="25" fill="#0f172a" font-size="10" font-weight="bold">D2</text>
+        <text x="70" y="25" fill="#0f172a" font-size="10" font-weight="bold">D2 (D22 Center)</text>
         <line x1="95" y1="0" x2="125" y2="0" stroke="#0f172a" stroke-width="2"/>
         <line x1="125" y1="0" x2="125" y2="15" stroke="#0f172a" stroke-width="1.5"/>
         <line x1="115" y1="15" x2="135" y2="15" stroke="#0f172a" stroke-width="2.5"/>
@@ -802,7 +901,7 @@
         <line x1="122" y1="23" x2="128" y2="23" stroke="#0f172a" stroke-width="1"/>
       </g>
 
-      <!-- LED 3: D4 -->
+      <!-- LED 3: D23 (Right) -->
       <g transform="translate(0, 200)">
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
         <text x="-125" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD3</text>
@@ -814,7 +913,7 @@
         <line x1="95" y1="-12" x2="95" y2="12" stroke="#0f172a" stroke-width="2"/>
         <line x1="80" y1="-12" x2="90" y2="-22" stroke="#10b981" stroke-width="1.5"/>
         <line x1="88" y1="-10" x2="98" y2="-20" stroke="#10b981" stroke-width="1.5"/>
-        <text x="82" y="25" fill="#0f172a" font-size="10" font-weight="bold">D3</text>
+        <text x="73" y="25" fill="#0f172a" font-size="10" font-weight="bold">D3 (D23 Right)</text>
         <line x1="95" y1="0" x2="125" y2="0" stroke="#0f172a" stroke-width="2"/>
         <line x1="125" y1="0" x2="125" y2="15" stroke="#0f172a" stroke-width="1.5"/>
         <line x1="115" y1="15" x2="135" y2="15" stroke="#0f172a" stroke-width="2.5"/>
@@ -832,24 +931,24 @@
     <rect width="740" height="125" fill="#f8fafc" stroke="#0f172a" stroke-width="2"/>
     <line x1="0" y1="35" x2="740" y2="35" stroke="#0f172a" stroke-width="1.5"/>
     <line x1="0" y1="70" x2="740" y2="70" stroke="#0f172a" stroke-width="1.5"/>
-    <line x1="530" y1="35" x2="530" y2="125" stroke="#0f172a" stroke-width="1.5"/>
-    <line x1="635" y1="70" x2="635" y2="125" stroke="#0f172a" stroke-width="1.5"/>
+    <line x1="510" y1="35" x2="510" y2="125" stroke="#0f172a" stroke-width="1.5"/>
+    <line x1="630" y1="70" x2="630" y2="125" stroke="#0f172a" stroke-width="1.5"/>
 
     <!-- Row 1: Title -->
-    <text x="15" y="24" fill="#0f172a" font-size="15" font-weight="bold">TITLE: RICK &amp; MORTY PORTAL GUN — MAIN SYSTEM SCHEMATIC</text>
+    <text x="15" y="24" fill="#0f172a" font-size="14" font-weight="bold">TITLE: RICK &amp; MORTY PORTAL GUN — MAIN SYSTEM SCHEMATIC</text>
 
     <!-- Row 2: Project / Company -->
-    <text x="15" y="55" fill="#334155" font-size="12">PROJECT: Portal Gun C-137 Hardware Controller (EasyEDA Standard)</text>
-    <text x="545" y="55" fill="#334155" font-size="12">SYSTEM: ESP32-S3</text>
+    <text x="15" y="55" fill="#334155" font-size="11.5">PROJECT: Portal Gun C-137 Hardware Controller (EasyEDA Standard)</text>
+    <text x="525" y="55" fill="#334155" font-size="11.5">SYSTEM: ESP32 DEVKIT V1</text>
 
     <!-- Row 3: Rev, Size, Date -->
-    <text x="15" y="93" fill="#334155" font-size="12">ENGINEER: Antigravity Pair-Programmer</text>
-    <text x="545" y="93" fill="#334155" font-size="12">REV: 2.7</text>
-    <text x="650" y="93" fill="#334155" font-size="12">SHEET: 1/1</text>
+    <text x="15" y="93" fill="#334155" font-size="11.5">ENGINEER: Antigravity Pair-Programmer</text>
+    <text x="525" y="93" fill="#334155" font-size="11.5">REV: 3.1 (SPLIT SIDES)</text>
+    <text x="645" y="93" fill="#334155" font-size="11.5">SHEET: 1/1</text>
 
     <!-- Row 4: Date & License -->
-    <text x="15" y="115" fill="#334155" font-size="11">DATE: 2026-10-24</text>
-    <text x="160" y="115" fill="#059669" font-size="11" font-weight="bold">LICENSE: GNU GPL v3.0 (Copyleft Open Source)</text>
-    <text x="545" y="115" fill="#334155" font-size="11">SIZE: A3</text>
+    <text x="15" y="115" fill="#334155" font-size="11">DATE: 2026-10-25</text>
+    <text x="160" y="115" fill="#059669" font-size="11" font-weight="bold">LEFT: UI &amp; INPUTS | RIGHT: AUDIO &amp; LEDS</text>
+    <text x="525" y="115" fill="#334155" font-size="11">SIZE: A3</text>
   </g>
 </svg>

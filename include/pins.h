@@ -31,12 +31,12 @@ namespace Pins {
     //
     //        LEFT HEADER (Inputs & Display)     RIGHT HEADER (Audio & LEDs)
     //        ------------------------------     ---------------------------
-    //  [15]: EN   (Hardware Reset Button)|      | [15]: D23  (GPIO 23) -> LED_HUD3 (Right)
-    //  [14]: VP   (GPIO 36 / Spare)      |      | [14]: D22  (GPIO 22) -> LED_HUD2 (Center)
+    //  [15]: EN   (Hardware Reset Button)|      | [15]: D23  (GPIO 23) -> NEO_RING_DIN
+    //  [14]: VP   (GPIO 36 / Spare)      |      | [14]: D22  (GPIO 22) -> LED_HUD1 (Left)
     //  [13]: VN   (GPIO 39 / Spare)      |      | [13]: TX0  (GPIO 1  / USB TX)
     //  [12]: D34  (GPIO 34) -> JOY_VRX   |      | [12]: RX0  (GPIO 3  / USB RX)
-    //  [11]: D35  (GPIO 35) -> JOY_VRY   |      | [11]: D21  (GPIO 21) -> LED_HUD1 (Left)
-    //  [10]: D32  (GPIO 32) -> JOY_SW    |      | [10]: D19  (GPIO 19) -> NEO_RING_DIN
+    //  [11]: D35  (GPIO 35) -> JOY_VRY   |      | [11]: D21  (GPIO 21) -> LED_HUD2 (Center)
+    //  [10]: D32  (GPIO 32) -> JOY_SW    |      | [10]: D19  (GPIO 19) -> LED_HUD3 (Right)
     //  [ 9]: D33  (GPIO 33) -> BTN_WAKE  |      | [ 9]: D18  (GPIO 18) -> I2S_BCLK
     //  [ 8]: D25  (GPIO 25) -> DISP_CLK  |      | [ 8]: D5   (GPIO 5  / Spare)
     //  [ 7]: D26  (GPIO 26) -> DISP_DIO  |      | [ 7]: TX2  (GPIO 17) -> I2S_LRC
@@ -58,10 +58,10 @@ namespace Pins {
     constexpr int DisplayDio  = 26;   // Pin 7:  D26 (GPIO 26) - TM1637 Display Data (DIO)
 
     // --- Audio & Lighting Actuators (Right Header: Pins 6, 7, 9, 10, 11, 14, 15) ---
-    constexpr int GreenLed1   = 21;   // Pin 11: D21 (GPIO 21) - Left Green LED PWM (via 220Ω resistor)
-    constexpr int GreenLed2   = 22;   // Pin 14: D22 (GPIO 22) - Center Green LED PWM (via 220Ω resistor)
-    constexpr int GreenLed3   = 23;   // Pin 15: D23 (GPIO 23) - Right Green LED PWM (via 220Ω resistor)
-    constexpr int PortalData  = 19;   // Pin 10: D19 (GPIO 19) - Top 7-Pixel WS2812B Ring DIN (via 330Ω resistor)
+    constexpr int GreenLed1   = 22;   // Pin 14: D22 (GPIO 22) - Left Green LED PWM (via 220Ω resistor)
+    constexpr int GreenLed2   = 21;   // Pin 11: D21 (GPIO 21) - Center Green LED PWM (via 220Ω resistor)
+    constexpr int GreenLed3   = 19;   // Pin 10: D19 (GPIO 19) - Right Green LED PWM (via 220Ω resistor)
+    constexpr int PortalData  = 23;   // Pin 15: D23 (GPIO 23) - Top 7-Pixel WS2812B Ring DIN (via 330Ω resistor)
     constexpr int I2sBclk     = 18;   // Pin 9:  D18 (GPIO 18) - MAX98357A I2S Bit Clock (BCLK)
     constexpr int I2sLrc      = 17;   // Pin 7:  TX2 (GPIO 17) - MAX98357A Word Select (LRC/WS)
     constexpr int I2sData     = 16;   // Pin 6:  RX2 (GPIO 16) - MAX98357A Serial Data In (DIN)

@@ -269,10 +269,10 @@
       <text x="15" y="116">• J1 [BATT_IN] (2-Pin): Pin 1 = 7.4V (+), Pin 2 = Battery GND (-)</text>
       <text x="15" y="132">• J2 [PWR_SW] (2-Pin): Pin 1 = Switch COM, Pin 2 = Switch NO (Inline positive)</text>
       <text x="15" y="148">• J3 [SPEAKER] (2-Pin): Pin 1 = SPK+, Pin 2 = SPK- (From MAX98357A)</text>
-      <text x="15" y="164">• J4 [TOP_RING] (3-Pin / Right): Pin 1 = +5V, Pin 2 = NEO_RING_DIN (GPIO 19), Pin 3 = GND</text>
+      <text x="15" y="164">• J4 [TOP_RING] (3-Pin / Right): Pin 1 = +5V, Pin 2 = NEO_RING_DIN (GPIO 23), Pin 3 = GND</text>
       <text x="15" y="180">• J5 [DISPLAY] (4-Pin / Left): Pin 1 = +5V, Pin 2 = GND, Pin 3 = DISP_DIO (GPIO 26), Pin 4 = DISP_CLK (GPIO 25)</text>
       <text x="15" y="196">• J6 [JOYSTICK] (5-Pin / Left): Pin 1 = +3V3, Pin 2 = GND, Pin 3 = VRX (GPIO 34), Pin 4 = VRY (GPIO 35), Pin 5 = SW (GPIO 32)</text>
-      <text x="15" y="212">• J7 [FRONT_LEDS] (4-Pin / Right): Pin 1 = LED1 (GPIO 21), Pin 2 = LED2 (GPIO 22), Pin 3 = LED3 (GPIO 23), Pin 4 = GND</text>
+      <text x="15" y="212">• J7 [FRONT_LEDS] (4-Pin / Right): Pin 1 = LED1 (GPIO 22), Pin 2 = LED2 (GPIO 21), Pin 3 = LED3 (GPIO 19), Pin 4 = GND</text>
       <text x="15" y="228">• J8 [WAKE_BTN] (2-Pin / Left): Pin 1 = BTN_WAKE (GPIO 33), Pin 2 = GND</text>
 
       <text x="0" y="258" fill="#059669" font-weight="bold">🛡️ CIRCUIT PROTECTION &amp; AUDIO HEADROOM:</text>
@@ -528,18 +528,18 @@
       <!-- RIGHT HEADER: 100% LIGHTS & AUDIO (Pins 15 down to 1)               -->
       <!-- =================================================================== -->
 
-      <!-- Pin 15: D23 (GPIO 23) -> LED_HUD3 (Right Green LED) -->
+      <!-- Pin 15: D23 (GPIO 23) -> NEO_RING_DIN (Top NeoPixel Ring) -->
       <g transform="translate(470, 80)">
-        <line x1="0" y1="0" x2="30" y2="0" stroke="#059669" stroke-width="2"/>
+        <line x1="0" y1="0" x2="30" y2="0" stroke="#16a34a" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#059669"/>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#16a34a"/>
         <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">15</text>
         <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">D23 (GPIO 23 / MOSI)</text>
-        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
-        <text x="48" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD3</text>
+        <polygon points="30,0 40,-10 145,-10 145,10 40,10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+        <text x="44" y="4" fill="#15803d" font-size="10.5" font-weight="bold">NEO_RING_DIN</text>
       </g>
 
-      <!-- Pin 14: D22 (GPIO 22) -> LED_HUD2 (Center Green LED) -->
+      <!-- Pin 14: D22 (GPIO 22) -> LED_HUD1 (Left Green LED) -->
       <g transform="translate(470, 160)">
         <line x1="0" y1="0" x2="30" y2="0" stroke="#059669" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
@@ -547,7 +547,7 @@
         <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">14</text>
         <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">D22 (GPIO 22 / SCL)</text>
         <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
-        <text x="48" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD2</text>
+        <text x="48" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD1</text>
       </g>
 
       <!-- Pin 13: TX0 (GPIO 1 / TX0) -->
@@ -570,7 +570,7 @@
         <text x="32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="start">NC (RX0)</text>
       </g>
 
-      <!-- Pin 11: D21 (GPIO 21) -> LED_HUD1 (Left Green LED) -->
+      <!-- Pin 11: D21 (GPIO 21) -> LED_HUD2 (Center Green LED) -->
       <g transform="translate(470, 400)">
         <line x1="0" y1="0" x2="30" y2="0" stroke="#059669" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
@@ -578,18 +578,18 @@
         <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">11</text>
         <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">D21 (GPIO 21 / SDA)</text>
         <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
-        <text x="48" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD1</text>
+        <text x="48" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD2</text>
       </g>
 
-      <!-- Pin 10: D19 (GPIO 19) -> NEO_RING_DIN (Top NeoPixel Ring) -->
+      <!-- Pin 10: D19 (GPIO 19) -> LED_HUD3 (Right Green LED) -->
       <g transform="translate(470, 480)">
-        <line x1="0" y1="0" x2="30" y2="0" stroke="#16a34a" stroke-width="2"/>
+        <line x1="0" y1="0" x2="30" y2="0" stroke="#059669" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#16a34a"/>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#059669"/>
         <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">10</text>
         <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">D19 (GPIO 19 / MISO)</text>
-        <polygon points="30,0 40,-10 145,-10 145,10 40,10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
-        <text x="44" y="4" fill="#15803d" font-size="10.5" font-weight="bold">NEO_RING_DIN</text>
+        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+        <text x="48" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD3</text>
       </g>
 
       <!-- Pin 9: D18 (GPIO 18) -> I2S_BCLK (Audio Bit Clock) -->
@@ -749,7 +749,7 @@
       </g>
     </g>
 
-    <!-- TOP 7-PIXEL BULB RING (Right Header Driven: Pin 10 / D19) -->
+    <!-- TOP 7-PIXEL BULB RING (Right Header Driven: Pin 15 / D23) -->
     <g transform="translate(200, 265)">
       <rect width="280" height="175" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
       <rect x="0" y="0" width="280" height="30" fill="#16a34a"/>
@@ -772,10 +772,10 @@
         <line x1="-33" y1="23" x2="-27" y2="23" stroke="#0f172a" stroke-width="1"/>
       </g>
 
-      <!-- DIN with R4 330 ohm resistor (from Pin 10 / D19) -->
+      <!-- DIN with R4 330 ohm resistor (from Pin 15 / D23) -->
       <g transform="translate(0, 145)">
         <line x1="-20" y1="0" x2="0" y2="0" stroke="#16a34a" stroke-width="2"/>
-        <text x="10" y="4" fill="#0f172a" font-size="11" font-weight="bold">DIN (D19)</text>
+        <text x="10" y="4" fill="#0f172a" font-size="11" font-weight="bold">DIN (D23)</text>
         <rect x="-60" y="-8" width="40" height="16" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
         <text x="-40" y="4" fill="#0f172a" font-size="8.5" font-weight="bold" text-anchor="middle">330Ω</text>
         <line x1="-70" y1="0" x2="-60" y2="0" stroke="#16a34a" stroke-width="2"/>
@@ -857,11 +857,11 @@
       <text x="90" y="55" fill="#334155" font-size="9" font-weight="bold" text-anchor="middle">GND</text>
     </g>
 
-    <!-- 3x FRONT HUD LEDS (Right Header Driven: Pins 11, 14, 15) -->
+    <!-- 3x FRONT HUD LEDS (Right Header Driven: Pins 14, 11, 10) -->
     <g transform="translate(200, 420)">
-      <text x="0" y="-10" fill="#0f172a" font-size="13" font-weight="bold">SCREEN-ACCURATE FRONT LIFE HUD (RIGHT HEADER: D21, D22, D23)</text>
+      <text x="0" y="-10" fill="#0f172a" font-size="13" font-weight="bold">SCREEN-ACCURATE FRONT LIFE HUD (RIGHT HEADER: D22, D21, D19)</text>
 
-      <!-- LED 1: D21 (Left) -->
+      <!-- LED 1: D22 (Left) -->
       <g transform="translate(0, 30)">
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
         <text x="-125" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD1</text>
@@ -873,7 +873,7 @@
         <line x1="95" y1="-12" x2="95" y2="12" stroke="#0f172a" stroke-width="2"/>
         <line x1="80" y1="-12" x2="90" y2="-22" stroke="#10b981" stroke-width="1.5"/>
         <line x1="88" y1="-10" x2="98" y2="-20" stroke="#10b981" stroke-width="1.5"/>
-        <text x="75" y="25" fill="#0f172a" font-size="10" font-weight="bold">D1 (D21 Left)</text>
+        <text x="75" y="25" fill="#0f172a" font-size="10" font-weight="bold">D1 (D22 Left)</text>
         <line x1="95" y1="0" x2="125" y2="0" stroke="#0f172a" stroke-width="2"/>
         <line x1="125" y1="0" x2="125" y2="15" stroke="#0f172a" stroke-width="1.5"/>
         <line x1="115" y1="15" x2="135" y2="15" stroke="#0f172a" stroke-width="2.5"/>
@@ -881,7 +881,7 @@
         <line x1="122" y1="23" x2="128" y2="23" stroke="#0f172a" stroke-width="1"/>
       </g>
 
-      <!-- LED 2: D22 (Center) -->
+      <!-- LED 2: D21 (Center) -->
       <g transform="translate(0, 115)">
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
         <text x="-125" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD2</text>
@@ -893,7 +893,7 @@
         <line x1="95" y1="-12" x2="95" y2="12" stroke="#0f172a" stroke-width="2"/>
         <line x1="80" y1="-12" x2="90" y2="-22" stroke="#10b981" stroke-width="1.5"/>
         <line x1="88" y1="-10" x2="98" y2="-20" stroke="#10b981" stroke-width="1.5"/>
-        <text x="70" y="25" fill="#0f172a" font-size="10" font-weight="bold">D2 (D22 Center)</text>
+        <text x="70" y="25" fill="#0f172a" font-size="10" font-weight="bold">D2 (D21 Center)</text>
         <line x1="95" y1="0" x2="125" y2="0" stroke="#0f172a" stroke-width="2"/>
         <line x1="125" y1="0" x2="125" y2="15" stroke="#0f172a" stroke-width="1.5"/>
         <line x1="115" y1="15" x2="135" y2="15" stroke="#0f172a" stroke-width="2.5"/>
@@ -901,7 +901,7 @@
         <line x1="122" y1="23" x2="128" y2="23" stroke="#0f172a" stroke-width="1"/>
       </g>
 
-      <!-- LED 3: D23 (Right) -->
+      <!-- LED 3: D19 (Right) -->
       <g transform="translate(0, 200)">
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
         <text x="-125" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD3</text>
@@ -913,7 +913,7 @@
         <line x1="95" y1="-12" x2="95" y2="12" stroke="#0f172a" stroke-width="2"/>
         <line x1="80" y1="-12" x2="90" y2="-22" stroke="#10b981" stroke-width="1.5"/>
         <line x1="88" y1="-10" x2="98" y2="-20" stroke="#10b981" stroke-width="1.5"/>
-        <text x="73" y="25" fill="#0f172a" font-size="10" font-weight="bold">D3 (D23 Right)</text>
+        <text x="73" y="25" fill="#0f172a" font-size="10" font-weight="bold">D3 (D19 Right)</text>
         <line x1="95" y1="0" x2="125" y2="0" stroke="#0f172a" stroke-width="2"/>
         <line x1="125" y1="0" x2="125" y2="15" stroke="#0f172a" stroke-width="1.5"/>
         <line x1="115" y1="15" x2="135" y2="15" stroke="#0f172a" stroke-width="2.5"/>

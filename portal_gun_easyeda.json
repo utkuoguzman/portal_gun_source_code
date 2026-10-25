@@ -93,30 +93,30 @@
       ]
     },
     {
-      "name": "LED_HUD3",
+      "name": "LED_HUD1",
       "pins": [
-        "U2.D23",
-        "R3.1"
+        "U2.D22",
+        "R1.1"
       ]
     },
     {
       "name": "LED_HUD2",
       "pins": [
-        "U2.D22",
+        "U2.D21",
         "R2.1"
       ]
     },
     {
-      "name": "LED_HUD1",
+      "name": "LED_HUD3",
       "pins": [
-        "U2.D21",
-        "R1.1"
+        "U2.D19",
+        "R3.1"
       ]
     },
     {
       "name": "NEO_RING_DIN",
       "pins": [
-        "U2.D19",
+        "U2.D23",
         "R4.1"
       ]
     },

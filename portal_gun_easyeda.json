@@ -10,8 +10,8 @@
       "link": ""
     }
   },
-  "title": "Rick and Morty Portal Gun - Main System Schematic (Rev 3.1)",
-  "description": "DOIT ESP32 DevKit V1 (30-pin) with complete side functional separation: Left = 100% UI & Inputs, Right = 100% Audio & Lighting, 100% Burn-Proof Power Isolation, JST-XH Perfboard Connectors",
+  "title": "Rick and Morty Portal Gun - Main System Schematic (Rev 3.2)",
+  "description": "DOIT ESP32 DevKit V1 (30-pin) with 2N7000 MOSFET-driven High-Brightness Front LEDs (+5V), Left/Right separation, 100% Burn-Proof Power Isolation, JST-XH Perfboard Connectors",
   "nets": [
     {
       "name": "+5V",
@@ -21,7 +21,10 @@
         "U2.VIN",
         "U3.VIN",
         "DISP1.VCC",
-        "RING1.5V"
+        "RING1.5V",
+        "D1.A",
+        "D2.A",
+        "D3.A"
       ]
     },
     {
@@ -38,9 +41,9 @@
         "RING1.GND",
         "JOY1.GND",
         "SW2.2",
-        "D1.C",
-        "D2.C",
-        "D3.C"
+        "Q1.S",
+        "Q2.S",
+        "Q3.S"
       ]
     },
     {
@@ -96,21 +99,21 @@
       "name": "LED_HUD1",
       "pins": [
         "U2.D22",
-        "R1.1"
+        "RG1.1"
       ]
     },
     {
       "name": "LED_HUD2",
       "pins": [
         "U2.D21",
-        "R2.1"
+        "RG2.1"
       ]
     },
     {
       "name": "LED_HUD3",
       "pins": [
-        "U2.D19",
-        "R3.1"
+        "U2.D5",
+        "RG3.1"
       ]
     },
     {
@@ -130,14 +133,14 @@
     {
       "name": "I2S_LRC",
       "pins": [
-        "U2.TX2",
+        "U2.RX2",
         "U3.LRC"
       ]
     },
     {
       "name": "I2S_DIN",
       "pins": [
-        "U2.RX2",
+        "U2.D4",
         "U3.DIN"
       ]
     }

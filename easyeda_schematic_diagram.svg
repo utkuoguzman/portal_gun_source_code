@@ -209,18 +209,18 @@
         <text x="-125" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_BCLK</text>
       </g>
 
-      <!-- LRC (Pin 7 / TX2 - GPIO 17) -->
+      <!-- LRC (Pin 6 / RX2 - GPIO 16) -->
       <g transform="translate(0, 285)">
         <line x1="-30" y1="0" x2="0" y2="0" stroke="#0284c7" stroke-width="2"/>
-        <text x="10" y="5" fill="#0f172a" font-size="12" font-weight="bold">LRC / WS (TX2)</text>
+        <text x="10" y="5" fill="#0f172a" font-size="12" font-weight="bold">LRC / WS (RX2)</text>
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
         <text x="-125" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_LRC</text>
       </g>
 
-      <!-- DIN (Pin 6 / RX2 - GPIO 16) -->
+      <!-- DIN (Pin 5 / D4 - GPIO 4) -->
       <g transform="translate(0, 335)">
         <line x1="-30" y1="0" x2="0" y2="0" stroke="#0284c7" stroke-width="2"/>
-        <text x="10" y="5" fill="#0f172a" font-size="12" font-weight="bold">DIN (RX2)</text>
+        <text x="10" y="5" fill="#0f172a" font-size="12" font-weight="bold">DIN (D4)</text>
         <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
         <text x="-125" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_DIN</text>
       </g>
@@ -272,7 +272,7 @@
       <text x="15" y="164">• J4 [TOP_RING] (3-Pin / Right): Pin 1 = +5V, Pin 2 = NEO_RING_DIN (GPIO 23), Pin 3 = GND</text>
       <text x="15" y="180">• J5 [DISPLAY] (4-Pin / Left): Pin 1 = +5V, Pin 2 = GND, Pin 3 = DISP_DIO (GPIO 26), Pin 4 = DISP_CLK (GPIO 25)</text>
       <text x="15" y="196">• J6 [JOYSTICK] (5-Pin / Left): Pin 1 = +3V3, Pin 2 = GND, Pin 3 = VRX (GPIO 34), Pin 4 = VRY (GPIO 35), Pin 5 = SW (GPIO 32)</text>
-      <text x="15" y="212">• J7 [FRONT_LEDS] (4-Pin / Right): Pin 1 = LED1 (GPIO 22), Pin 2 = LED2 (GPIO 21), Pin 3 = LED3 (GPIO 19), Pin 4 = GND</text>
+      <text x="15" y="212">• J7 [FRONT_LEDS] (4-Pin / Right): Pin 1 = +5V (Anodes), Pin 2 = Q1 Drain (LED1), Pin 3 = Q2 Drain (LED2), Pin 4 = Q3 Drain (LED3)</text>
       <text x="15" y="228">• J8 [WAKE_BTN] (2-Pin / Left): Pin 1 = BTN_WAKE (GPIO 33), Pin 2 = GND</text>
 
       <text x="0" y="258" fill="#059669" font-weight="bold">🛡️ CIRCUIT PROTECTION &amp; AUDIO HEADROOM:</text>
@@ -581,15 +581,14 @@
         <text x="48" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD2</text>
       </g>
 
-      <!-- Pin 10: D19 (GPIO 19) -> LED_HUD3 (Right Green LED) -->
+      <!-- Pin 10: D19 (GPIO 19 / MISO) -> Spare GPIO -->
       <g transform="translate(470, 480)">
-        <line x1="0" y1="0" x2="30" y2="0" stroke="#059669" stroke-width="2"/>
+        <line x1="0" y1="0" x2="25" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#059669"/>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
         <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">10</text>
-        <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">D19 (GPIO 19 / MISO)</text>
-        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
-        <text x="48" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD3</text>
+        <text x="-34" y="4" fill="#64748b" font-size="11.5" text-anchor="end">D19 (GPIO 19 / MISO)</text>
+        <text x="32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="start">NC (D19)</text>
       </g>
 
       <!-- Pin 9: D18 (GPIO 18) -> I2S_BCLK (Audio Bit Clock) -->
@@ -603,28 +602,28 @@
         <text x="48" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_BCLK</text>
       </g>
 
-      <!-- Pin 8: D5 (GPIO 5 / Spare Strapping) -->
+      <!-- Pin 8: D5 (GPIO 5) -> LED_HUD3 (Right Green LED) -->
       <g transform="translate(470, 640)">
+        <line x1="0" y1="0" x2="30" y2="0" stroke="#059669" stroke-width="2"/>
+        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
+        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#059669"/>
+        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">8</text>
+        <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">D5 (GPIO 5 / CS)</text>
+        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+        <text x="48" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD3</text>
+      </g>
+
+      <!-- Pin 7: TX2 (GPIO 17 / UART2) -> Spare GPIO -->
+      <g transform="translate(470, 720)">
         <line x1="0" y1="0" x2="25" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
         <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
-        <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">8</text>
-        <text x="-34" y="4" fill="#64748b" font-size="11.5" text-anchor="end">D5 (GPIO 5 / CS)</text>
-        <text x="32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="start">NC (D5)</text>
-      </g>
-
-      <!-- Pin 7: TX2 (GPIO 17) -> I2S_LRC (Audio Word Select) -->
-      <g transform="translate(470, 720)">
-        <line x1="0" y1="0" x2="30" y2="0" stroke="#0284c7" stroke-width="2"/>
-        <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
-        <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
         <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">7</text>
-        <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">TX2 (GPIO 17 / UART2)</text>
-        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
-        <text x="48" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_LRC</text>
+        <text x="-34" y="4" fill="#64748b" font-size="11.5" text-anchor="end">TX2 (GPIO 17 / UART2)</text>
+        <text x="32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="start">NC (TX2)</text>
       </g>
 
-      <!-- Pin 6: RX2 (GPIO 16) -> I2S_DIN (Audio Serial Data) -->
+      <!-- Pin 6: RX2 (GPIO 16) -> I2S_LRC (Audio Word Select) -->
       <g transform="translate(470, 800)">
         <line x1="0" y1="0" x2="30" y2="0" stroke="#0284c7" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
@@ -632,17 +631,18 @@
         <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">6</text>
         <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">RX2 (GPIO 16 / UART2)</text>
         <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
-        <text x="48" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_DIN</text>
+        <text x="48" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_LRC</text>
       </g>
 
-      <!-- Pin 5: D4 (GPIO 4 / Spare) -->
+      <!-- Pin 5: D4 (GPIO 4) -> I2S_DIN (Audio Serial Data) -->
       <g transform="translate(470, 880)">
-        <line x1="0" y1="0" x2="25" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <line x1="0" y1="0" x2="30" y2="0" stroke="#0284c7" stroke-width="2"/>
         <circle cx="0" cy="0" r="2.5" fill="#0284c7"/>
         <rect x="-28" y="-9" width="22" height="18" rx="3" fill="#0284c7"/>
         <text x="-17" y="4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">5</text>
-        <text x="-34" y="4" fill="#64748b" font-size="11.5" text-anchor="end">D4 (GPIO 4 / Touch 0)</text>
-        <text x="32" y="4" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="start">NC (D4)</text>
+        <text x="-34" y="4" fill="#0f172a" font-size="11.5" font-weight="bold" text-anchor="end">D4 (GPIO 4 / Touch 0)</text>
+        <polygon points="30,0 40,-10 135,-10 135,10 40,10" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="48" y="4" fill="#0369a1" font-size="11" font-weight="bold">I2S_DIN</text>
       </g>
 
       <!-- Pin 4: D2 (GPIO 2 / Blue LED / Strapping) -->
@@ -857,68 +857,168 @@
       <text x="90" y="55" fill="#334155" font-size="9" font-weight="bold" text-anchor="middle">GND</text>
     </g>
 
-    <!-- 3x FRONT HUD LEDS (Right Header Driven: Pins 14, 11, 10) -->
-    <g transform="translate(200, 420)">
-      <text x="0" y="-10" fill="#0f172a" font-size="13" font-weight="bold">SCREEN-ACCURATE FRONT LIFE HUD (RIGHT HEADER: D22, D21, D19)</text>
+    <!-- 3x FRONT HUD LEDS (MOSFET DRIVEN FROM +5V: Q1, Q2, Q3 2N7000) -->
+    <g transform="translate(135, 420)">
+      <text x="-95" y="-12" fill="#0f172a" font-size="13" font-weight="bold">HIGH-OUTPUT FRONT LIFE HUD (3x 2N7000 N-MOSFETs DRIVEN FROM +5V)</text>
 
-      <!-- LED 1: D22 (Left) -->
-      <g transform="translate(0, 30)">
-        <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
-        <text x="-125" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD1</text>
-        <line x1="-30" y1="0" x2="0" y2="0" stroke="#059669" stroke-width="2"/>
-        <rect x="0" y="-8" width="40" height="16" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
-        <text x="20" y="4" fill="#0f172a" font-size="8.5" font-weight="bold" text-anchor="middle">220Ω (R1)</text>
-        <line x1="40" y1="0" x2="70" y2="0" stroke="#059669" stroke-width="2"/>
-        <polygon points="70,-12 70,12 95,0" fill="#10b981" stroke="#0f172a" stroke-width="1.5"/>
-        <line x1="95" y1="-12" x2="95" y2="12" stroke="#0f172a" stroke-width="2"/>
-        <line x1="80" y1="-12" x2="90" y2="-22" stroke="#10b981" stroke-width="1.5"/>
-        <line x1="88" y1="-10" x2="98" y2="-20" stroke="#10b981" stroke-width="1.5"/>
-        <text x="75" y="25" fill="#0f172a" font-size="10" font-weight="bold">D1 (D22 Left)</text>
-        <line x1="95" y1="0" x2="125" y2="0" stroke="#0f172a" stroke-width="2"/>
-        <line x1="125" y1="0" x2="125" y2="15" stroke="#0f172a" stroke-width="1.5"/>
-        <line x1="115" y1="15" x2="135" y2="15" stroke="#0f172a" stroke-width="2.5"/>
-        <line x1="119" y1="19" x2="131" y2="19" stroke="#0f172a" stroke-width="1.5"/>
-        <line x1="122" y1="23" x2="128" y2="23" stroke="#0f172a" stroke-width="1"/>
+      <!-- Common +5V Rail Feed for Anodes -->
+      <g transform="translate(0, 10)">
+        <polygon points="-95,-10 -25,-10 -15,0 -25,10 -95,10" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+        <text x="-75" y="4" fill="#991b1b" font-size="11" font-weight="bold">+5V</text>
+        <line x1="-15" y1="0" x2="480" y2="0" stroke="#dc2626" stroke-width="2"/>
+        <circle cx="45" cy="0" r="3" fill="#dc2626"/>
+        <circle cx="255" cy="0" r="3" fill="#dc2626"/>
+        <circle cx="465" cy="0" r="3" fill="#dc2626"/>
+        <text x="488" y="4" fill="#dc2626" font-size="10" font-weight="bold">+5V ANODE BUS</text>
       </g>
 
-      <!-- LED 2: D21 (Center) -->
-      <g transform="translate(0, 115)">
-        <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
-        <text x="-125" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD2</text>
-        <line x1="-30" y1="0" x2="0" y2="0" stroke="#059669" stroke-width="2"/>
-        <rect x="0" y="-8" width="40" height="16" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
-        <text x="20" y="4" fill="#0f172a" font-size="8.5" font-weight="bold" text-anchor="middle">220Ω (R2)</text>
-        <line x1="40" y1="0" x2="70" y2="0" stroke="#059669" stroke-width="2"/>
-        <polygon points="70,-12 70,12 95,0" fill="#10b981" stroke="#0f172a" stroke-width="1.5"/>
-        <line x1="95" y1="-12" x2="95" y2="12" stroke="#0f172a" stroke-width="2"/>
-        <line x1="80" y1="-12" x2="90" y2="-22" stroke="#10b981" stroke-width="1.5"/>
-        <line x1="88" y1="-10" x2="98" y2="-20" stroke="#10b981" stroke-width="1.5"/>
-        <text x="70" y="25" fill="#0f172a" font-size="10" font-weight="bold">D2 (D21 Center)</text>
-        <line x1="95" y1="0" x2="125" y2="0" stroke="#0f172a" stroke-width="2"/>
-        <line x1="125" y1="0" x2="125" y2="15" stroke="#0f172a" stroke-width="1.5"/>
-        <line x1="115" y1="15" x2="135" y2="15" stroke="#0f172a" stroke-width="2.5"/>
-        <line x1="119" y1="19" x2="131" y2="19" stroke="#0f172a" stroke-width="1.5"/>
-        <line x1="122" y1="23" x2="128" y2="23" stroke="#0f172a" stroke-width="1"/>
+      <!-- CHANNEL 1: D22 -> Q1 (2N7000) -> D1 Left -->
+      <g transform="translate(0, 40)">
+        <!-- Vertical power down to Anode -->
+        <line x1="45" y1="-30" x2="45" y2="10" stroke="#dc2626" stroke-width="2"/>
+        <!-- LED 1 Symbol (pointing down: Anode top, Cathode bottom) -->
+        <polygon points="35,10 55,10 45,26" fill="#10b981" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="33" y1="26" x2="57" y2="26" stroke="#0f172a" stroke-width="2"/>
+        <line x1="55" y1="16" x2="67" y2="24" stroke="#10b981" stroke-width="1.2"/>
+        <line x1="53" y1="22" x2="65" y2="30" stroke="#10b981" stroke-width="1.2"/>
+        <text x="70" y="18" fill="#0f172a" font-size="10" font-weight="bold">D1</text>
+        <text x="70" y="29" fill="#64748b" font-size="8.5">(Left)</text>
+
+        <!-- Cathode to 100Ω Resistor R1 -->
+        <line x1="45" y1="26" x2="45" y2="40" stroke="#059669" stroke-width="2"/>
+        <rect x="37" y="40" width="16" height="32" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="45" y="58" fill="#0f172a" font-size="8" font-weight="bold" text-anchor="middle">100Ω</text>
+        <line x1="45" y1="72" x2="45" y2="90" stroke="#059669" stroke-width="2"/>
+
+        <!-- 2N7000 MOSFET Q1 Symbol -->
+        <g transform="translate(45, 105)">
+          <rect x="-18" y="-15" width="36" height="30" rx="3" fill="#f8fafc" stroke="#0284c7" stroke-width="1.5"/>
+          <text x="0" y="-3" fill="#0284c7" font-size="8.5" font-weight="bold" text-anchor="middle">Q1</text>
+          <text x="0" y="8" fill="#64748b" font-size="7.5" text-anchor="middle">2N7000</text>
+          <!-- Drain (top) -->
+          <circle cx="0" cy="-15" r="2" fill="#0284c7"/>
+          <text x="8" y="-18" fill="#64748b" font-size="7.5" font-weight="bold">D</text>
+          <!-- Source (bottom) to GND -->
+          <circle cx="0" cy="15" r="2" fill="#0284c7"/>
+          <text x="8" y="24" fill="#64748b" font-size="7.5" font-weight="bold">S</text>
+          <!-- Gate (left) -->
+          <circle cx="-18" cy="0" r="2" fill="#0284c7"/>
+          <text x="-21" y="-6" fill="#64748b" font-size="7.5" font-weight="bold" text-anchor="end">G</text>
+        </g>
+
+        <!-- Source lead to GND Bus -->
+        <line x1="45" y1="120" x2="45" y2="150" stroke="#0f172a" stroke-width="2"/>
+
+        <!-- Gate line from Net Flag via 1kΩ R_G1 -->
+        <polygon points="-95,95 -25,95 -15,105 -25,115 -95,115" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+        <text x="-88" y="109" fill="#047857" font-size="10" font-weight="bold">LED_HUD1</text>
+        <line x1="-15" y1="105" x2="-4" y2="105" stroke="#059669" stroke-width="1.5"/>
+        <rect x="-4" y="97" width="22" height="16" fill="#ffffff" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="7" y="108" fill="#0f172a" font-size="7.5" font-weight="bold" text-anchor="middle">1kΩ</text>
+        <line x1="18" y1="105" x2="27" y2="105" stroke="#059669" stroke-width="1.5"/>
       </g>
 
-      <!-- LED 3: D19 (Right) -->
-      <g transform="translate(0, 200)">
-        <polygon points="-135,-10 -40,-10 -30,0 -40,10 -135,10" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
-        <text x="-125" y="4" fill="#047857" font-size="11" font-weight="bold">LED_HUD3</text>
-        <line x1="-30" y1="0" x2="0" y2="0" stroke="#059669" stroke-width="2"/>
-        <rect x="0" y="-8" width="40" height="16" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
-        <text x="20" y="4" fill="#0f172a" font-size="8.5" font-weight="bold" text-anchor="middle">220Ω (R3)</text>
-        <line x1="40" y1="0" x2="70" y2="0" stroke="#059669" stroke-width="2"/>
-        <polygon points="70,-12 70,12 95,0" fill="#10b981" stroke="#0f172a" stroke-width="1.5"/>
-        <line x1="95" y1="-12" x2="95" y2="12" stroke="#0f172a" stroke-width="2"/>
-        <line x1="80" y1="-12" x2="90" y2="-22" stroke="#10b981" stroke-width="1.5"/>
-        <line x1="88" y1="-10" x2="98" y2="-20" stroke="#10b981" stroke-width="1.5"/>
-        <text x="73" y="25" fill="#0f172a" font-size="10" font-weight="bold">D3 (D19 Right)</text>
-        <line x1="95" y1="0" x2="125" y2="0" stroke="#0f172a" stroke-width="2"/>
-        <line x1="125" y1="0" x2="125" y2="15" stroke="#0f172a" stroke-width="1.5"/>
-        <line x1="115" y1="15" x2="135" y2="15" stroke="#0f172a" stroke-width="2.5"/>
-        <line x1="119" y1="19" x2="131" y2="19" stroke="#0f172a" stroke-width="1.5"/>
-        <line x1="122" y1="23" x2="128" y2="23" stroke="#0f172a" stroke-width="1"/>
+      <!-- CHANNEL 2: D21 -> Q2 (2N7000) -> D2 Center -->
+      <g transform="translate(210, 40)">
+        <!-- Vertical power down to Anode -->
+        <line x1="45" y1="-30" x2="45" y2="10" stroke="#dc2626" stroke-width="2"/>
+        <!-- LED 2 Symbol -->
+        <polygon points="35,10 55,10 45,26" fill="#10b981" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="33" y1="26" x2="57" y2="26" stroke="#0f172a" stroke-width="2"/>
+        <line x1="55" y1="16" x2="67" y2="24" stroke="#10b981" stroke-width="1.2"/>
+        <line x1="53" y1="22" x2="65" y2="30" stroke="#10b981" stroke-width="1.2"/>
+        <text x="70" y="18" fill="#0f172a" font-size="10" font-weight="bold">D2</text>
+        <text x="70" y="29" fill="#64748b" font-size="8.5">(Center)</text>
+
+        <!-- Cathode to 100Ω Resistor R2 -->
+        <line x1="45" y1="26" x2="45" y2="40" stroke="#059669" stroke-width="2"/>
+        <rect x="37" y="40" width="16" height="32" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="45" y="58" fill="#0f172a" font-size="8" font-weight="bold" text-anchor="middle">100Ω</text>
+        <line x1="45" y1="72" x2="45" y2="90" stroke="#059669" stroke-width="2"/>
+
+        <!-- 2N7000 MOSFET Q2 Symbol -->
+        <g transform="translate(45, 105)">
+          <rect x="-18" y="-15" width="36" height="30" rx="3" fill="#f8fafc" stroke="#0284c7" stroke-width="1.5"/>
+          <text x="0" y="-3" fill="#0284c7" font-size="8.5" font-weight="bold" text-anchor="middle">Q2</text>
+          <text x="0" y="8" fill="#64748b" font-size="7.5" text-anchor="middle">2N7000</text>
+          <!-- Drain (top) -->
+          <circle cx="0" cy="-15" r="2" fill="#0284c7"/>
+          <text x="8" y="-18" fill="#64748b" font-size="7.5" font-weight="bold">D</text>
+          <!-- Source (bottom) to GND -->
+          <circle cx="0" cy="15" r="2" fill="#0284c7"/>
+          <text x="8" y="24" fill="#64748b" font-size="7.5" font-weight="bold">S</text>
+          <!-- Gate (left) -->
+          <circle cx="-18" cy="0" r="2" fill="#0284c7"/>
+          <text x="-21" y="-6" fill="#64748b" font-size="7.5" font-weight="bold" text-anchor="end">G</text>
+        </g>
+
+        <!-- Source lead to GND Bus -->
+        <line x1="45" y1="120" x2="45" y2="150" stroke="#0f172a" stroke-width="2"/>
+
+        <!-- Gate line from Net Flag via 1kΩ R_G2 -->
+        <polygon points="-95,95 -25,95 -15,105 -25,115 -95,115" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+        <text x="-88" y="109" fill="#047857" font-size="10" font-weight="bold">LED_HUD2</text>
+        <line x1="-15" y1="105" x2="-4" y2="105" stroke="#059669" stroke-width="1.5"/>
+        <rect x="-4" y="97" width="22" height="16" fill="#ffffff" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="7" y="108" fill="#0f172a" font-size="7.5" font-weight="bold" text-anchor="middle">1kΩ</text>
+        <line x1="18" y1="105" x2="27" y2="105" stroke="#059669" stroke-width="1.5"/>
+      </g>
+
+      <!-- CHANNEL 3: D5 -> Q3 (2N7000) -> D3 Right -->
+      <g transform="translate(420, 40)">
+        <!-- Vertical power down to Anode -->
+        <line x1="45" y1="-30" x2="45" y2="10" stroke="#dc2626" stroke-width="2"/>
+        <!-- LED 3 Symbol -->
+        <polygon points="35,10 55,10 45,26" fill="#10b981" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="33" y1="26" x2="57" y2="26" stroke="#0f172a" stroke-width="2"/>
+        <line x1="55" y1="16" x2="67" y2="24" stroke="#10b981" stroke-width="1.2"/>
+        <line x1="53" y1="22" x2="65" y2="30" stroke="#10b981" stroke-width="1.2"/>
+        <text x="70" y="18" fill="#0f172a" font-size="10" font-weight="bold">D3</text>
+        <text x="70" y="29" fill="#64748b" font-size="8.5">(Right)</text>
+
+        <!-- Cathode to 100Ω Resistor R3 -->
+        <line x1="45" y1="26" x2="45" y2="40" stroke="#059669" stroke-width="2"/>
+        <rect x="37" y="40" width="16" height="32" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="45" y="58" fill="#0f172a" font-size="8" font-weight="bold" text-anchor="middle">100Ω</text>
+        <line x1="45" y1="72" x2="45" y2="90" stroke="#059669" stroke-width="2"/>
+
+        <!-- 2N7000 MOSFET Q3 Symbol -->
+        <g transform="translate(45, 105)">
+          <rect x="-18" y="-15" width="36" height="30" rx="3" fill="#f8fafc" stroke="#0284c7" stroke-width="1.5"/>
+          <text x="0" y="-3" fill="#0284c7" font-size="8.5" font-weight="bold" text-anchor="middle">Q3</text>
+          <text x="0" y="8" fill="#64748b" font-size="7.5" text-anchor="middle">2N7000</text>
+          <!-- Drain (top) -->
+          <circle cx="0" cy="-15" r="2" fill="#0284c7"/>
+          <text x="8" y="-18" fill="#64748b" font-size="7.5" font-weight="bold">D</text>
+          <!-- Source (bottom) to GND -->
+          <circle cx="0" cy="15" r="2" fill="#0284c7"/>
+          <text x="8" y="24" fill="#64748b" font-size="7.5" font-weight="bold">S</text>
+          <!-- Gate (left) -->
+          <circle cx="-18" cy="0" r="2" fill="#0284c7"/>
+          <text x="-21" y="-6" fill="#64748b" font-size="7.5" font-weight="bold" text-anchor="end">G</text>
+        </g>
+
+        <!-- Source lead to GND Bus -->
+        <line x1="45" y1="120" x2="45" y2="150" stroke="#0f172a" stroke-width="2"/>
+
+        <!-- Gate line from Net Flag via 1kΩ R_G3 -->
+        <polygon points="-95,95 -25,95 -15,105 -25,115 -95,115" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
+        <text x="-88" y="109" fill="#047857" font-size="10" font-weight="bold">LED_HUD3</text>
+        <line x1="-15" y1="105" x2="-4" y2="105" stroke="#059669" stroke-width="1.5"/>
+        <rect x="-4" y="97" width="22" height="16" fill="#ffffff" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="7" y="108" fill="#0f172a" font-size="7.5" font-weight="bold" text-anchor="middle">1kΩ</text>
+        <line x1="18" y1="105" x2="27" y2="105" stroke="#059669" stroke-width="1.5"/>
+      </g>
+
+      <!-- Common Ground Bus Bar for Sources -->
+      <g transform="translate(0, 190)">
+        <line x1="45" y1="0" x2="465" y2="0" stroke="#0f172a" stroke-width="2"/>
+        <circle cx="255" cy="0" r="3" fill="#0f172a"/>
+        <line x1="255" y1="0" x2="255" y2="18" stroke="#0f172a" stroke-width="2"/>
+        <line x1="240" y1="18" x2="270" y2="18" stroke="#0f172a" stroke-width="2.5"/>
+        <line x1="245" y1="22" x2="265" y2="22" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="250" y1="26" x2="260" y2="26" stroke="#0f172a" stroke-width="1"/>
+        <text x="255" y="38" fill="#334155" font-size="9" font-weight="bold" text-anchor="middle">GND</text>
       </g>
     </g>
   </g>

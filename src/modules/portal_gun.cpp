@@ -12,6 +12,7 @@
 #include "soundboard_data.h"
 #include <Arduino.h>
 #include <esp_sleep.h>
+#include <driver/gpio.h>
 
 PortalGun portalGun;
 
@@ -1652,6 +1653,20 @@ void PortalGun::handleDeepSleep() {
     display.clear();
     for (int i = 0; i < 3; i++) leds.setGreen(i, 0.0f);
     leds.clearPortal();
+
+    // Lock 2N7000 MOSFET gate pins LOW with internal 45kΩ pull-down held during Deep Sleep
+    // so external 100kΩ Gate-to-Source pull-downs are not required
+    const int hudPins[3] = {Pins::GreenLed1, Pins::GreenLed2, Pins::GreenLed3};
+    for (int p : hudPins) {
+        ledcDetachPin(p);
+        pinMode(p, OUTPUT);
+        digitalWrite(p, LOW);
+        gpio_num_t gp = (gpio_num_t)digitalPinToGPIONumber(p);
+        gpio_pullup_dis(gp);
+        gpio_pulldown_en(gp);
+        gpio_hold_en(gp);
+    }
+    gpio_deep_sleep_hold_en();
     
     Serial.println("Entering Deep Sleep...");
     

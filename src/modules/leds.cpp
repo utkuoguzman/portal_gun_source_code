@@ -3,6 +3,7 @@
 #include "config.h"
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
+#include <driver/gpio.h>
 
 LedSystem leds;
 
@@ -10,6 +11,16 @@ static Adafruit_NeoPixel strip(Config::PORTAL_LED_COUNT, Pins::PortalData, NEO_G
 static bool torchActive = false;
 
 void LedSystem::begin() {
+    // Release any deep-sleep pad hold and enable internal 45kΩ pull-downs
+    // so 2N7000 MOSFET gates never float even without external 100kΩ resistors
+    const int hudPins[3] = {Pins::GreenLed1, Pins::GreenLed2, Pins::GreenLed3};
+    for (int p : hudPins) {
+        gpio_num_t gp = (gpio_num_t)digitalPinToGPIONumber(p);
+        gpio_hold_dis(gp);
+        gpio_pullup_dis(gp);
+        gpio_pulldown_en(gp);
+    }
+
     // Setup green LED PWM channels
     // Using ledc framework for ESP32
     ledcSetup(0, 5000, 8); // Channel 0, 5 kHz, 8-bit resolution

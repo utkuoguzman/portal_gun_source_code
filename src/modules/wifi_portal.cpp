@@ -160,7 +160,7 @@ void WifiPortalSystem::setupRoutes() {
         const char* part_label = running ? running->label : "app0";
         char buf[256];
         snprintf(buf, sizeof(buf), 
-            "{\"chip\":\"Arduino Nano ESP32\",\"partition\":\"%s\",\"flash_size\":16,\"free_heap\":%u,\"sketch_size\":%u,\"free_sketch_space\":%u}",
+            "{\"chip\":\"ESP32 DevKit V1\",\"partition\":\"%s\",\"flash_size\":4,\"free_heap\":%u,\"sketch_size\":%u,\"free_sketch_space\":%u}",
             part_label, ESP.getFreeHeap(), ESP.getSketchSize(), ESP.getFreeSketchSpace());
         server.send(200, "application/json", buf);
     });

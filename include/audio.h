@@ -36,6 +36,8 @@ private:
     bool isLooping = false;
     float currentVolume = 1.0f; // User volume setting [0.0f .. 1.0f], scaled internally by MAX_SAFE_HEADROOM
     unsigned long playStartTime = 0;
+    int32_t adpcmPred = 0;
+    int32_t adpcmStepIdx = 0;
 };
 
 extern AudioSystem audio;

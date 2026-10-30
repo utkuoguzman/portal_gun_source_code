@@ -9,15 +9,20 @@ public:
     void update();
 
     bool isScanning() const { return scanning; }
-    bool isAlertActive() const { return alertActive; }
-    const char* getAlertText() const { return alertText; }
+    bool isPaired() const { return phonePaired; }
+    float getProximity() const { return proximity; } // 0.0f (far / green) -> 1.0f (very close / red)
+    int getRssi() const { return (int)smoothedRssi; }
+
+    // Legacy compatibility helpers
+    bool isAlertActive() const { return phonePaired; }
+    const char* getAlertText() const { return "R1CK"; }
 
 private:
     bool scanning = false;
-    bool alertActive = false;
+    bool phonePaired = false;
+    float proximity = 0.0f;
+    float smoothedRssi = -88.0f;
     uint32_t scanStartTime = 0;
-    uint32_t alertEndTime = 0;
-    const char* alertText = "FDED";
 
 #ifdef WOKWI_SIM
     uint32_t nextSimAlertTime = 0;
@@ -27,4 +32,3 @@ private:
 };
 
 extern RadarSystem radar;
-

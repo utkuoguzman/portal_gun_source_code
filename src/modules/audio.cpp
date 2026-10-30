@@ -8,6 +8,43 @@
 
 AudioSystem audio;
 
+static const int8_t IMA_INDEX_TABLE[16] = {
+    -1, -1, -1, -1, 2, 4, 6, 8,
+    -1, -1, -1, -1, 2, 4, 6, 8
+};
+
+static const int16_t IMA_STEP_TABLE[89] = {
+    7, 8, 9, 10, 11, 12, 13, 14, 16, 17,
+    19, 21, 23, 25, 28, 31, 34, 37, 41, 45,
+    50, 55, 60, 66, 73, 80, 88, 97, 107, 118,
+    130, 143, 157, 173, 190, 209, 230, 253, 279, 307,
+    337, 371, 408, 449, 494, 544, 598, 658, 724, 796,
+    876, 963, 1060, 1166, 1282, 1411, 1552, 1707, 1878, 2066,
+    2272, 2499, 2749, 3024, 3327, 3660, 4026, 4428, 4871, 5358,
+    5894, 6484, 7132, 7845, 8630, 9493, 10442, 11487, 12635, 13899,
+    15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767
+};
+
+static inline int16_t decodeImaNibble(uint8_t nibble, int32_t& pred, int32_t& stepIdx) {
+    int32_t step = IMA_STEP_TABLE[stepIdx];
+    int32_t vpdiff = step >> 3;
+    if (nibble & 4) vpdiff += step;
+    if (nibble & 2) vpdiff += (step >> 1);
+    if (nibble & 1) vpdiff += (step >> 2);
+
+    if (nibble & 8) pred -= vpdiff;
+    else            pred += vpdiff;
+
+    if (pred > 32767)       pred = 32767;
+    else if (pred < -32768) pred = -32768;
+
+    stepIdx += IMA_INDEX_TABLE[nibble & 0x0F];
+    if (stepIdx < 0)       stepIdx = 0;
+    else if (stepIdx > 88) stepIdx = 88;
+
+    return (int16_t)pred;
+}
+
 #ifdef WOKWI_SIM
 static uint32_t lastToneTime = 0;
 static uint32_t currentToneFreq = 0;
@@ -21,7 +58,7 @@ void AudioSystem::begin() {
 #else
     i2s_config_t i2s_config = {
         .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX),
-        .sample_rate = 11025,
+        .sample_rate = 8400,
         .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
         .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
         .communication_format = I2S_COMM_FORMAT_STAND_I2S,
@@ -48,11 +85,12 @@ void AudioSystem::begin() {
 
 void AudioSystem::update() {
     if (playing && currentData != nullptr) {
+        size_t totalSamples = currentSize * 2; // 2 samples per byte (4-bit IMA ADPCM)
         uint32_t elapsed = millis() - playStartTime;
-        size_t targetPos = (elapsed * 11025) / 1000;
+        size_t targetPos = (elapsed * 8400) / 1000;
         
-        if (targetPos > currentSize) {
-            targetPos = currentSize;
+        if (targetPos > totalSamples) {
+            targetPos = totalSamples;
         }
         
 #ifdef WOKWI_SIM
@@ -70,48 +108,6 @@ void AudioSystem::update() {
                     currentToneFreq = freq;
                 }
             }
-        } else {
-            // General sound effects (Rick quotes, roulette, blasts, etc.)
-            // Rate-limit tone frequency changes to every 40ms to avoid restarting the timer every frame!
-            if (now - lastToneTime >= 40) {
-                lastToneTime = now;
-                
-                size_t sampleIndex = (currentPos >= 256) ? (currentPos - 256) : 0;
-                size_t window = (currentPos - sampleIndex);
-                
-                if (window >= 64) {
-                    uint8_t min_v = 255, max_v = 0;
-                    size_t crossings = 0;
-                    for (size_t i = 0; i < window; i++) {
-                        uint8_t v = currentData[sampleIndex + i];
-                        if (v < min_v) min_v = v;
-                        if (v > max_v) max_v = v;
-                        if (i > 0) {
-                            uint8_t prev = currentData[sampleIndex + i - 1];
-                            if ((prev < 128 && v >= 128) || (prev >= 128 && v < 128)) {
-                                crossings++;
-                            }
-                        }
-                    }
-                    uint8_t amp = max_v - min_v;
-                    
-                    if (amp < 16 || currentVolume < 0.05f) {
-                        if (currentToneFreq != 0) {
-                            noTone(25);
-                            currentToneFreq = 0;
-                        }
-                    } else {
-                        uint32_t freq = (crossings * 11025) / (2 * window);
-                        if (freq < 150) freq = 150;
-                        if (freq > 2600) freq = 2600;
-                        
-                        if (abs((int)freq - (int)currentToneFreq) > 30 || currentToneFreq == 0) {
-                            tone(25, freq);
-                            currentToneFreq = freq;
-                        }
-                    }
-                }
-            }
         }
 #else
         if (targetPos > currentPos) {
@@ -126,8 +122,11 @@ void AudioSystem::update() {
             
             int16_t buffer[CHUNK_SIZE];
             for (size_t i = 0; i < samples_to_write; i++) {
-                int32_t signed_sample = (int32_t)currentData[currentPos + i] - 128;
-                int32_t sample_val = (int32_t)(signed_sample * 256.0f * effectiveVolume);
+                size_t sampleIdx = currentPos + i;
+                uint8_t byteVal = pgm_read_byte(&currentData[sampleIdx >> 1]);
+                uint8_t nibble = (sampleIdx & 1) ? ((byteVal >> 4) & 0x0F) : (byteVal & 0x0F);
+                int16_t decoded_pcm16 = decodeImaNibble(nibble, adpcmPred, adpcmStepIdx);
+                int32_t sample_val = (int32_t)(decoded_pcm16 * effectiveVolume);
                 
                 // Hardware protection clamp: brickwall anti-clipping limiter
                 // Prevents 16-bit integer overflow and rail saturation
@@ -145,9 +144,11 @@ void AudioSystem::update() {
         }
 #endif
         
-        if (currentPos >= currentSize) {
+        if (currentPos >= totalSamples) {
             if (isLooping) {
                 currentPos = 0;
+                adpcmPred = 0;
+                adpcmStepIdx = 0;
                 playStartTime = millis();
             } else {
                 playing = false;
@@ -166,10 +167,12 @@ void AudioSystem::playRaw(const uint8_t* data, size_t size, bool loop) {
     currentData = data;
     currentSize = size;
     currentPos = 0;
+    adpcmPred = 0;
+    adpcmStepIdx = 0;
     playStartTime = millis();
     playing = true;
     isLooping = loop;
-    Serial.println("Audio: Playing raw PCM");
+    Serial.println("Audio: Playing ADPCM stream");
 #ifndef WOKWI_SIM
     i2s_zero_dma_buffer(I2S_PORT);
 #endif

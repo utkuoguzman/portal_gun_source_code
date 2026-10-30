@@ -68,8 +68,11 @@ void InputSystem::update() {
     if (fabsf(nx) < Config::JOYSTICK_DEADZONE) nx = 0.0f;
     if (fabsf(ny) < Config::JOYSTICK_DEADZONE) ny = 0.0f;
 
-    state.x = nx;
-    state.y = ny;
+    // KY-023 mounted with 5-pin header pointing UP (12 o'clock):
+    // - Physical Left/Right is on VRY (ny < -0.5f is Right, ny > 0.5f is Left)
+    // - Physical Up/Down is on VRX (nx < -0.5f is Up toward pins, nx > 0.5f is Down)
+    state.x = -ny;
+    state.y = -nx;
 
     state.left = state.x < -0.5f;
     state.right = state.x > 0.5f;

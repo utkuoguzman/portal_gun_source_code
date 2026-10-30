@@ -13,6 +13,7 @@
 #include <Arduino.h>
 #include <esp_sleep.h>
 #include <driver/gpio.h>
+#include <driver/rtc_io.h>
 
 PortalGun portalGun;
 
@@ -57,8 +58,10 @@ void PortalGun::begin() {
 void PortalGun::update() {
     const auto& joy = input.getState();
     
-    // Global Power Button override (if not already powering down/sleeping)
-    if (joy.powerJustPressed && currentState != PortalState::PowerDown && currentState != PortalState::DeepSleep) {
+    // Global Power Button override or 3-second Joystick button hold (if not already powering down/sleeping)
+    if ((joy.powerJustPressed || joy.justHeld3s) && currentState != PortalState::PowerDown && currentState != PortalState::DeepSleep) {
+        if (currentState == PortalState::WifiPortal) wifiPortal.stopPortal();
+        if (currentState == PortalState::RadarScan) radar.stopScan();
         changeState(PortalState::PowerDown);
         return;
     }
@@ -265,12 +268,14 @@ void PortalGun::handlePowerUpFinalize() {
         audio.playRaw(snd_buckleup, snd_buckleup_size);
         for(int i=0; i<3; i++) leds.setGreen(i, 0.0f);
         
-        // Calculate exact scroll speed to match audio
-        uint32_t audioLengthMs = (snd_buckleup_size > 0) ? (snd_buckleup_size * 1000) / 11025 : 3000;
+        // Calculate scroll speed (2x slower than audio duration for comfortable reading)
+        // Note: snd_buckleup_size is 4-bit ADPCM (2 samples per byte at 8400 Hz)
+        uint32_t audioLengthMs = (snd_buckleup_size > 0) ? (snd_buckleup_size * 2 * 1000) / 8400 : 3000;
         if (audioLengthMs == 0) audioLengthMs = 3000;
         
         // "BUCKLE UP BITCHES " is 18 chars. Total steps = 18 + 4 = 22.
-        int speed = audioLengthMs / 22; 
+        // Multiply step interval by 2 for 2x slower scrolling (~126 ms/step)
+        int speed = (audioLengthMs * 2) / 22; 
         display.startScrolling("BUCKLE UP BITCHES ", speed);
     }
     
@@ -391,24 +396,26 @@ void PortalGun::handleDimensionSelection() {
         static unsigned long lastMove = 0;
         bool dimChanged = false;
         if (millis() - lastMove > 200) {
-            if (joy.up) {
+            if (joy.right) {
                 dimLetter++;
                 if (dimLetter > 'Z') dimLetter = 'A';
+                if (dimLetter == 'S' || dimLetter == 'D') dimNumber = 5;
                 lastMove = millis();
                 dimChanged = true;
-            } else if (joy.down) {
+            } else if (joy.left) {
                 dimLetter--;
                 if (dimLetter < 'A') dimLetter = 'Z';
+                if (dimLetter == 'S' || dimLetter == 'D') dimNumber = 5;
                 lastMove = millis();
                 dimChanged = true;
             }
             
-            if (joy.right) {
+            if (joy.up) {
                 dimNumber++;
                 if (dimNumber > 999) dimNumber = 0;
                 lastMove = millis();
                 dimChanged = true;
-            } else if (joy.left) {
+            } else if (joy.down) {
                 dimNumber--;
                 if (dimNumber < 0) dimNumber = 999;
                 lastMove = millis();
@@ -594,17 +601,30 @@ void PortalGun::handleTorch() {
 
 void PortalGun::handleRadarScan() {
     const auto& joy = input.getState();
-    uint32_t elapsed = millis() - stateStartTime;
-    int remSec = 60 - (int)(elapsed / 1000);
+    uint32_t now = millis();
+    uint32_t elapsed = now - stateStartTime;
+
+    static uint32_t lastTickMs = 0;
+    static uint32_t pairedStartMs = 0;
+    static float blinkAccumMs = 0.0f;
+    static bool blinkOn = true;
+    static bool wasPaired = false;
 
     if (stateInit) {
         stateInit = false;
+        lastTickMs = now;
+        pairedStartMs = now;
+        blinkAccumMs = 0.0f;
+        blinkOn = true;
+        wasPaired = radar.isPaired();
         radar.startScan();
         audio.playRaw(snd_portal_open1, snd_portal_open1_size);
     }
 
-    // Finish scan at 60s or if user 3-clicks early
-    if (remSec <= 0 || joy.tripleClicked) {
+    // Give 5 full minutes (300s) while waiting to pair, and 3 minutes (180s) once paired (or 3-click to exit anytime)
+    uint32_t activeElapsed = wasPaired ? (now - pairedStartMs) : elapsed;
+    uint32_t maxDurationMs = wasPaired ? 180000 : 300000;
+    if (activeElapsed >= maxDurationMs || joy.tripleClicked) {
         input.clearClicks();
         radar.stopScan();
         audio.playRaw(snd_portal_close1, snd_portal_close1_size);
@@ -614,19 +634,72 @@ void PortalGun::handleRadarScan() {
         return;
     }
 
-    // Check for proximity alert
-    if (radar.isAlertActive()) {
-        display.showText(radar.getAlertText());
-        leds.setRadarSweep(0, true); // Alert mode (flashes red/amber)
-    } else {
-        // Display countdown: b-60, b-59 ... b-00
-        char buf[5];
-        snprintf(buf, sizeof(buf), "b-%02d", remSec);
-        display.showText(buf);
+    uint32_t dt = now - lastTickMs;
+    lastTickMs = now;
 
-        // Circular sweep: 120ms per step around outer ring
-        int step = (elapsed / 120) % 6;
-        leds.setRadarSweep(step, false);
+    // Wait for user to pair "Portal-Gun-C137" on their phone (or single-click joystick if already paired on phone)
+    if (!wasPaired) {
+        if (radar.isPaired() || joy.singleClicked) {
+            wasPaired = true;
+            pairedStartMs = now;
+            input.clearClicks();
+            audio.playRaw(snd_portal_open2, snd_portal_open2_size);
+        } else {
+            display.showText("PAIR");
+            int step = (elapsed / 140) % 6;
+            leds.setRadarSweep(step, false);
+            return;
+        }
+    }
+
+    // Paired & sensing distance:
+    // prox = 0.0f (far away -> Green, slow "R1CK" blink)
+    // prox = 1.0f (very close -> Red, rapid "R1CK" blink)
+    float prox = radar.getProximity();
+
+    // 1. Screen turn-on / turn-off animation of "R1CK" gets progressively faster with proximity
+    // Half-period: 650ms (at prox=0.0) down to 65ms (at prox=1.0)
+    float halfPeriodMs = 650.0f - (prox * 585.0f);
+    if (halfPeriodMs < 65.0f) halfPeriodMs = 65.0f;
+
+    blinkAccumMs += (float)dt;
+    if (blinkAccumMs >= halfPeriodMs) {
+        blinkAccumMs = fmodf(blinkAccumMs, halfPeriodMs);
+        blinkOn = !blinkOn;
+    }
+
+    if (blinkOn) {
+        display.showText("R1CK");
+    } else {
+        display.clear();
+    }
+
+    // 2. Lights turn progressively from Green (far) -> Yellow/Amber (mid) -> Red (close)
+    uint8_t r = 0, g = 255;
+    if (prox < 0.5f) {
+        // 0.0 .. 0.5: Pure Green (0, 255, 0) -> Yellow (255, 255, 0)
+        r = (uint8_t)((prox * 2.0f) * 255.0f);
+        g = 255;
+    } else {
+        // 0.5 .. 1.0: Yellow (255, 255, 0) -> Pure Red (255, 0, 0)
+        r = 255;
+        g = (uint8_t)((1.0f - (prox - 0.5f) * 2.0f) * 255.0f);
+    }
+
+    leds.setPortalBrightness(0.25f + 0.20f * prox);
+    uint8_t ringR = blinkOn ? r : (uint8_t)(r * 0.25f);
+    uint8_t ringG = blinkOn ? g : (uint8_t)(g * 0.25f);
+    for (int i = 0; i < Config::PORTAL_LED_COUNT; i++) {
+        leds.setPortalColor(i, ringR, ringG, 0);
+    }
+    leds.showPortal();
+
+    for (int i = 0; i < Config::TOP_LED_COUNT; i++) {
+        leds.setTopColor(ringR, ringG, 0);
+    }
+
+    for (int i = 0; i < 3; i++) {
+        leds.setGreen(i, blinkOn ? (0.4f + 0.6f * prox) : 0.05f);
     }
 }
 
@@ -875,7 +948,7 @@ static SnakeSegment snakeFood = {1, 6};
 static int8_t snakeTargetJunc = 1; // 0:TL, 1:TR, 2:ML, 3:MR, 4:BL, 5:BR
 static int8_t snakeMomentum = 3;   // 0:UP, 1:DOWN, 2:LEFT, 3:RIGHT
 static uint32_t lastSnakeMove = 0;
-static uint32_t snakeSpeed = 220;
+static uint32_t snakeSpeed = 440;
 static uint32_t snakeDeadTime = 0;
 static int snakeScore = 0;
 
@@ -936,7 +1009,7 @@ void PortalGun::handleSnakeGame() {
         snakeBody[0] = {2, 0}; // Head at Digit 2 a
         snakeBody[1] = {1, 0}; // Neck at Digit 1 a
         snakeBody[2] = {0, 0}; // Tail at Digit 0 a
-        snakeSpeed = 220;
+        snakeSpeed = 440;
         lastSnakeMove = now;
         spawnSnakeFood();
         audio.playRaw(snd_snake_jazz, snd_snake_jazz_size, true); // Loop Snake Jazz!
@@ -974,7 +1047,7 @@ void PortalGun::handleSnakeGame() {
         return;
     }
 
-    // Phase 2: LostLife (flashes red, shows life loss)
+    // Phase 2: LostLife (flashes red, shows current score then transitions to ShowLives / Dead)
     if (snakePhase == SnakePhase::LostLife) {
         uint32_t elapsed = now - snakePhaseStart;
         bool flash = ((now / 80) % 2 == 0);
@@ -984,15 +1057,11 @@ void PortalGun::handleSnakeGame() {
         leds.showPortal();
         for (int i = 0; i < 3; i++) leds.setGreen(i, flash ? 1.0f : 0.0f);
 
-        char livesBuf[5];
-        if (snakeLives <= 9) {
-            snprintf(livesBuf, sizeof(livesBuf), "LV %d", snakeLives);
-        } else {
-            snprintf(livesBuf, sizeof(livesBuf), "L%03d", snakeLives);
-        }
-        display.showText(livesBuf);
+        char scoreBuf[5];
+        snprintf(scoreBuf, sizeof(scoreBuf), "SC%02d", snakeScore % 100);
+        display.showText(scoreBuf);
 
-        if (elapsed >= 900) {
+        if (elapsed >= 1200) {
             if (snakeLives > 0) {
                 // Respawn snake at starting position, preserve score
                 snakeLen = 3;
@@ -1006,7 +1075,7 @@ void PortalGun::handleSnakeGame() {
                 snakePhaseStart = now;
                 audio.playRaw(snd_snake_jazz, snd_snake_jazz_size, true);
             } else {
-                // Out of lives -> LV 0 then Dead
+                // Out of lives -> Dead
                 snakePhase = SnakePhase::Dead;
                 snakeDeadTime = now;
                 audio.stop();
@@ -1102,7 +1171,7 @@ void PortalGun::handleSnakeGame() {
             snakeScore++;
             if (snakeLen < 27) snakeLen++;
             spawnSnakeFood();
-            if (snakeSpeed > 130) snakeSpeed -= 5;
+            if (snakeSpeed > 260) snakeSpeed -= 10;
         }
         
         // Shift body forward
@@ -1321,16 +1390,15 @@ void PortalGun::handleRoulette() {
 enum class DinoJumpState { Ground, Rise, Apex, Fall };
 static DinoJumpState dinoJump = DinoJumpState::Ground;
 static uint32_t dinoJumpStart = 0;
-static const uint32_t DINO_JUMP_TOTAL_MS = 620; // Specific air time
-static const uint32_t DINO_JUMP_RISE_MS  = 160;
-static const uint32_t DINO_JUMP_APEX_MS  = 460;
 
 // Track on 4 digits: 0 is player, 1-3 are incoming obstacles
-// 0: Clear, 1: Small Cactus, 2: Tall Cactus, 3: Low Bird, 4: High Bird
+// 0: Clear, 1: Ground ('d'), 3: Mid-level ('g'), 4: Upper-level ('a') (No 2-row obstacle)
 static uint8_t dinoTrack[4] = {0, 0, 0, 0};
 static uint32_t lastDinoStep = 0;
-static uint32_t dinoStepInterval = 330;
-static int dinoEmptyCount = 2;
+static uint32_t dinoStepInterval = 520;
+static int dinoEmptyCount = 3;
+static int dinoObstaclesSpawned = 0;
+static uint32_t dinoSpeedupStartMs = 0;
 
 enum class DinoPhase { ShowLives, Playing, LostLife, Dead };
 static DinoPhase dinoPhase = DinoPhase::ShowLives;
@@ -1343,10 +1411,10 @@ static uint32_t lastDinoPlayTick = 0;
 
 static uint8_t getDinoObstacleBits(uint8_t obsType) {
     switch (obsType) {
-        case 1: return 0x08;        // Small Cactus: bottom 'd'
-        case 2: return 0x08 | 0x40; // Tall Cactus: bottom 'd' + middle 'g'
-        case 3: return 0x40;        // Low Bird: middle 'g'
-        case 4: return 0x01;        // High Bird: top 'a'
+        case 1: return 0x08;        // Ground obstacle: bottom 'd'
+        case 2: return 0x08 | 0x40; // (Unused 2-row obstacle)
+        case 3: return 0x40;        // Mid-level obstacle: middle 'g'
+        case 4: return 0x01;        // Upper-level obstacle: top 'a'
         default: return 0x00;
     }
 }
@@ -1364,12 +1432,14 @@ void PortalGun::handleDinoGame() {
         dinoJumpStart = 0;
         for (int i = 0; i < 4; i++) dinoTrack[i] = 0;
         lastDinoStep = now;
-        dinoStepInterval = 330;
+        dinoStepInterval = 520;
         dinoDeadTime = 0;
         dinoAliveSeconds = 0;
         dinoTotalPlayMs = 0;
         lastDinoPlayTick = now;
         dinoEmptyCount = 2;
+        dinoObstaclesSpawned = 0;
+        dinoSpeedupStartMs = 0;
         audio.playRaw(snd_dino_song, snd_dino_song_size, true); // Loop Dino Song!
     }
     
@@ -1406,7 +1476,7 @@ void PortalGun::handleDinoGame() {
         return;
     }
 
-    // Phase 2: LostLife (flashes red, shows life loss)
+    // Phase 2: LostLife (flashes red, shows score every time you die, then transitions to ShowLives / Dead)
     if (dinoPhase == DinoPhase::LostLife) {
         uint32_t elapsed = now - dinoPhaseStart;
         bool flash = ((now / 80) % 2 == 0);
@@ -1416,25 +1486,23 @@ void PortalGun::handleDinoGame() {
         leds.showPortal();
         for (int i = 0; i < 3; i++) leds.setGreen(i, flash ? 1.0f : 0.0f);
 
-        char livesBuf[5];
-        if (dinoLives <= 9) {
-            snprintf(livesBuf, sizeof(livesBuf), "LV %d", dinoLives);
-        } else {
-            snprintf(livesBuf, sizeof(livesBuf), "L%03d", dinoLives);
-        }
-        display.showText(livesBuf);
+        char scoreBuf[5];
+        snprintf(scoreBuf, sizeof(scoreBuf), "%3ds", dinoAliveSeconds);
+        display.showText(scoreBuf);
 
-        if (elapsed >= 900) {
+        if (elapsed >= 1200) {
             if (dinoLives > 0) {
                 // Clear immediate obstacle track and reset jump so dino doesn't land on obstacle
                 for (int i = 0; i < 4; i++) dinoTrack[i] = 0;
                 dinoJump = DinoJumpState::Ground;
                 dinoEmptyCount = 2;
+                dinoObstaclesSpawned = 0;
+                dinoSpeedupStartMs = 0;
                 dinoPhase = DinoPhase::ShowLives;
                 dinoPhaseStart = now;
                 audio.playRaw(snd_dino_song, snd_dino_song_size, true);
             } else {
-                // Out of lives -> LV 0 then Dead
+                // Out of lives -> Dead
                 dinoPhase = DinoPhase::Dead;
                 dinoDeadTime = now;
                 audio.stop();
@@ -1482,24 +1550,36 @@ void PortalGun::handleDinoGame() {
     lastDinoPlayTick = now;
     dinoAliveSeconds = dinoTotalPlayMs / 1000;
     
-    // Dynamic difficulty: speed up as seconds pass (from 330ms down to 160ms)
-    uint32_t speedUp = min((uint32_t)170, (uint32_t)((dinoAliveSeconds / 4) * 15));
-    dinoStepInterval = 330 - speedUp;
+    // Dynamic difficulty:
+    // Steady 520ms shift for the first 2 obstacles, then progressively faster starting on the 3rd obstacle!
+    if (dinoObstaclesSpawned < 3) {
+        dinoStepInterval = 520;
+    } else {
+        uint32_t postThirdSec = (dinoTotalPlayMs >= dinoSpeedupStartMs)
+                                    ? ((dinoTotalPlayMs - dinoSpeedupStartMs) / 1000)
+                                    : 0;
+        uint32_t extraObs = (uint32_t)(dinoObstaclesSpawned - 2);
+        uint32_t speedUp = min((uint32_t)330, extraObs * 25 + postThirdSec * 10);
+        dinoStepInterval = 520 - speedUp; // Progressively accelerates from 520ms down to 190ms
+    }
     
-    // Jump trigger (UP only)
+    // Jump trigger (UP on joystick)
     if (joy.up && dinoJump == DinoJumpState::Ground) {
         dinoJump = DinoJumpState::Rise;
         dinoJumpStart = now;
     }
     
-    // Jump physics & air time state
+    // Jump physics & air time state (scaled to current landscape shift speed so jump spans ~2.85 shifts)
     if (dinoJump != DinoJumpState::Ground) {
         uint32_t jumpElapsed = now - dinoJumpStart;
-        if (jumpElapsed < DINO_JUMP_RISE_MS) {
+        uint32_t jumpTotalMs = (dinoStepInterval * 285) / 100;
+        uint32_t jumpRiseMs  = (dinoStepInterval * 48) / 100;
+        uint32_t jumpApexMs  = (dinoStepInterval * 237) / 100;
+        if (jumpElapsed < jumpRiseMs) {
             dinoJump = DinoJumpState::Rise;
-        } else if (jumpElapsed < DINO_JUMP_APEX_MS) {
+        } else if (jumpElapsed < jumpApexMs) {
             dinoJump = DinoJumpState::Apex;
-        } else if (jumpElapsed < DINO_JUMP_TOTAL_MS) {
+        } else if (jumpElapsed < jumpTotalMs) {
             dinoJump = DinoJumpState::Fall;
         } else {
             dinoJump = DinoJumpState::Ground;
@@ -1514,24 +1594,30 @@ void PortalGun::handleDinoGame() {
         dinoTrack[1] = dinoTrack[2];
         dinoTrack[2] = dinoTrack[3];
         
-        // Spawn logic on Digit 3
-        if (dinoEmptyCount < 2) {
-            // Keep mandatory jump clearance gap
+        // Spawn logic on Digit 3 (single-row obstacles: 1=ground 'd', 3=mid 'g', 4=upper 'a'; never 2-row)
+        if (dinoEmptyCount < 3) {
+            // Keep mandatory clearance gap
             dinoTrack[3] = 0;
             dinoEmptyCount++;
         } else {
-            int spawnChance = 45 + min(35, (int)(dinoAliveSeconds * 1.5f));
+            int spawnChance = (dinoObstaclesSpawned < 2) ? 100 : (55 + min(30, (int)(dinoAliveSeconds * 2)));
             if (random(100) < spawnChance) {
-                int roll = random(100);
-                if (dinoAliveSeconds < 8) {
-                    dinoTrack[3] = 1; // Small Cactus
-                } else if (dinoAliveSeconds < 20) {
-                    dinoTrack[3] = (roll < 60) ? 1 : 2; // Small or Tall Cactus
+                dinoObstaclesSpawned++;
+                if (dinoObstaclesSpawned == 1) {
+                    // 1st obstacle: always ground ('d')
+                    dinoTrack[3] = 1;
+                } else if (dinoObstaclesSpawned == 2) {
+                    // 2nd obstacle: always mid-level ('g') so the player sees obstacle variety immediately
+                    dinoTrack[3] = 3;
                 } else {
-                    if (roll < 35) dinoTrack[3] = 1;      // Small Cactus
-                    else if (roll < 60) dinoTrack[3] = 2; // Tall Cactus
-                    else if (roll < 80) dinoTrack[3] = 3; // Low Flying Bird
-                    else dinoTrack[3] = 4;                // High Flying Bird
+                    if (dinoObstaclesSpawned == 3) {
+                        dinoSpeedupStartMs = dinoTotalPlayMs;
+                    }
+                    // 3rd+ obstacle: mix of ground (1), mid-level (3), and upper-level (4) — never 2-row (2)
+                    int r = random(100);
+                    if (r < 50) dinoTrack[3] = 1;      // Ground ('d')
+                    else if (r < 80) dinoTrack[3] = 3; // Mid-level ('g')
+                    else dinoTrack[3] = 4;             // Upper-level ('a')
                 }
                 dinoEmptyCount = 0;
             } else {
@@ -1545,11 +1631,11 @@ void PortalGun::handleDinoGame() {
     uint8_t dinoBits = 0;
     if (dinoJump == DinoJumpState::Ground) {
         if (joy.down) {
-            // Ducking stance (flat on ground segment 'd')
+            // Ducking flat on bottom segment 'd'
             dinoBits = 0x08;
         } else {
             // Running leg animation (alternating e=0x10 and c=0x04)
-            uint8_t leg = ((now / 120) % 2 == 0) ? 0x10 : 0x04;
+            uint8_t leg = ((now / 260) % 2 == 0) ? 0x10 : 0x04;
             dinoBits = 0x08 | leg;
         }
     } else if (dinoJump == DinoJumpState::Rise || dinoJump == DinoJumpState::Fall) {
@@ -1668,8 +1754,22 @@ void PortalGun::handleDeepSleep() {
     }
     gpio_deep_sleep_hold_en();
     
+    // Wait for button release before sleeping so a held button doesn't immediately re-wake
+    uint32_t waitStart = millis();
+    while ((digitalRead(Pins::PowerButton) == LOW || digitalRead(Pins::JoystickSw) == LOW) && (millis() - waitStart < 2000)) {
+        delay(20);
+    }
+    delay(50);
+
+    // Keep RTC_PERIPH powered in Deep Sleep so the internal pull-up on D33 (PowerButton) stays active!
+    gpio_num_t wakePin = (gpio_num_t)digitalPinToGPIONumber(Pins::PowerButton);
+    esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON);
+    rtc_gpio_pullup_en(wakePin);
+    rtc_gpio_pulldown_dis(wakePin);
+
     Serial.println("Entering Deep Sleep...");
-    
-    esp_sleep_enable_ext0_wakeup((gpio_num_t)digitalPinToGPIONumber(Pins::PowerButton), 0); 
+    Serial.flush();
+
+    esp_sleep_enable_ext0_wakeup(wakePin, 0); 
     esp_deep_sleep_start();
 }
